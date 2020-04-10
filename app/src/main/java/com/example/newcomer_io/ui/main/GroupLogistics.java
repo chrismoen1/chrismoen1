@@ -1,10 +1,7 @@
 package com.example.newcomer_io.ui.main;
 
 import android.os.Bundle;
-import android.widget.CalendarView;
-import android.widget.CompoundButton;
-import android.widget.Switch;
-import android.widget.TextView;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -26,6 +23,8 @@ public class GroupLogistics extends Fragment {
 
     private ConstraintLayout constraintLayout;
     private OnClickTimeSet mListener;
+
+    private EditText title;
 
     private Switch textDetails;
 
@@ -61,14 +60,17 @@ public class GroupLogistics extends Fragment {
         // Inflate the layout for this fragment0
         //mListener = (OnClickTimeSet) getContext();
         View inflate = inflater.inflate(R.layout.fragment_group_logistics, container, false);
-        startTime = inflate.findViewById(R.id.textView3);
-        endTime = inflate.findViewById(R.id.enddTime);
+        startTime = inflate.findViewById(R.id.startTime);
+        endTime = inflate.findViewById(R.id.endTime);
+        title = inflate.findViewById(R.id.editText);
+        //Edit text paramaters
+        title.setHint("Event Title");
+
         startTime.setText("Click to set");
         endTime.setText("Click to set");
 
+
         android.widget.Switch fa = inflate.findViewById(R.id.switchf);
-
-
         textDetails = new Switch(inflate);
 
         constraintLayout = inflate.findViewById(R.id.frameLayout);
@@ -111,13 +113,27 @@ public class GroupLogistics extends Fragment {
             }
         });
     }
+    public Switch getSwitch(){
+         return textDetails;
+    }
     public void setStartTime(String txt){
+
         startTime.setText(txt);
         return;
     }
     public void setEndTime(String txt){
         endTime.setText(txt);
         return;
+    }
+    public void resetTimes(){
+        startTime.setText("Click to set");
+        endTime.setText("Click to set");
+
+        startDate_Day = null;
+        startDate_Time = null;
+        endDate_Time = null;
+        endDate_Day = null;
+
     }
 
     public Date getstartDate_Day() {
@@ -133,6 +149,8 @@ public class GroupLogistics extends Fragment {
     }
 
     public void setEndDate_Day(Date endDate_Day) {
+        //Start setting the date
+        //If all day is checked, then we want to ensure that this the set to all day
         this.endDate_Day = endDate_Day;
     }
 
@@ -141,7 +159,7 @@ public class GroupLogistics extends Fragment {
     }
 
     public void setStartDate_Time(Date startDate_Time) {
-        this.startDate_Time = startDate_Time;
+            this.startDate_Time = startDate_Time;
     }
 
     public Date getEndDate_Time() {
@@ -149,7 +167,7 @@ public class GroupLogistics extends Fragment {
     }
 
     public void setEndDate_Time(Date endDate_Time) {
-        this.endDate_Time = endDate_Time;
+            this.endDate_Time = endDate_Time;
     }
 
 
@@ -160,10 +178,8 @@ public class GroupLogistics extends Fragment {
     public class Switch{
         private android.widget.Switch  time_dallDay;
         private TextView display;
-        private SimpleDateFormat newFormat;
         public Switch(View v){
 
-            newFormat = new SimpleDateFormat("E, MMMM dd ");
 
             time_dallDay = v.findViewById(R.id.switchf);
             display = v.findViewById(R.id.textView);
@@ -171,24 +187,60 @@ public class GroupLogistics extends Fragment {
             time_dallDay.setChecked(true);
 
         }
+        public boolean getTimeSwitch_Checked(){
+            return time_dallDay.isChecked();
+        }
         public void setSwitchListener(){
             time_dallDay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked == true){
-                        //WE also want to check whether or not it was previously set
-                        if (startDate_Day != null){
+                        //WE also want to check whether or not it was previously setz
+                        SimpleDateFormat newFormat_Day = new SimpleDateFormat("E, MMMM dd ");
+                        SimpleDateFormat newFormat_clock = new SimpleDateFormat("hh:mm a");
+
+                        if (startDate_Day != null && startDate_Time != null){
                             //Then we can set the start date
+                            String startTime_Str = newFormat_clock.format(startDate_Time);
+                            String startDay_Str = newFormat_Day.format(startDate_Day);
+
+                            startTime.setText(startDay_Str+ ": " + startTime_Str);
+
+                        }
+                        if (endDate_Day != null && startDate_Time != null){
+                            String endTime_Str = newFormat_clock.format(endDate_Time);
+                            String endDay_Str = newFormat_Day.format(endDate_Day);
+
+                            endTime.setText(endDay_Str + ": " + endTime_Str);
 
                         }
 
                         display.setText("Time");
                     }
                     else{
+                        SimpleDateFormat  newFormat_Day = new SimpleDateFormat("E, MMMM dd ");
+                        if (startDate_Day != null){
+                            String startDay_Str =  newFormat_Day.format(startDate_Day);
+                            startTime.setText(startDay_Str);
+                            endTime.setText(startDay_Str);
+                            if (endDate_Day == null){
+                                endDate_Day = startDate_Day;
+                                endDate_Time = startDate_Time;
+                            }
+                        }
+                        if (endDate_Day != null){
+                            String endDay_Str = newFormat_Day.format(endDate_Day);
+                            endTime.setText(endDay_Str);
+                            if (startDate_Day == null){
+                                //Then we want to set that at as well
+                                startDate_Day = endDate_Day;
+                                startDate_Time = endDate_Time;
+                                startTime.setText(endDay_Str);
+                            }
+                        }
+
                         //We also need to set the day text to be the day, Month
-                        String format = newFormat.format(startDate_Day);
-                        startTime.setText(format);
-                        endTime.setText(format);
+
 
                         display.setText("All Day");
                     }

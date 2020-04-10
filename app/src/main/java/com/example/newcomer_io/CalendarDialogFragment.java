@@ -22,10 +22,19 @@ public class CalendarDialogFragment extends DialogFragment {
     OnClickDate mListener;
     private String action_type;
 
+    private static String STARTTIME = "Start Time";
+    private static String ENDTIME = "End Time";
 
-    public CalendarDialogFragment(String type){
+    private Date startDate;
+    private Date endDate;
+    private boolean checked;
+
+    public CalendarDialogFragment(String type,Date startDate, Date endDate, boolean checked){ //if checked is set to false then that corresponds to all day, otherwise it set to a specific time fram e
         //This is
         action_type = type;
+        this.checked = checked;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     @Override
@@ -43,14 +52,7 @@ public class CalendarDialogFragment extends DialogFragment {
 
         View v = inflater.inflate(R.layout.calendar_dialog, container, false);
         calendarView = v.findViewById(R.id.calendarView);
-
-        Date currentTime= Calendar.getInstance().getTime();
-        calendarView.setDate(currentTime.getTime(), false,true);
-        long time = currentTime.getTime() + (1000* 3600 * 24 * 14);
-
-        calendarView.setMaxDate(time);
-        calendarView.setMinDate(currentTime.getTime());
-
+        setCalendarTimeFrame();
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
@@ -62,6 +64,14 @@ public class CalendarDialogFragment extends DialogFragment {
         return v;
     }
 
+    public void setCalendarTimeFrame() {
+        Date currentTime= Calendar.getInstance().getTime();
+        //then that means they have specified the start time
+        long time = currentTime.getTime() + (1000* 3600 * 24 * 14);
+        calendarView.setDate(currentTime.getTime(), false,true);
+        calendarView.setMaxDate(time);
+        calendarView.setMinDate(currentTime.getTime());
+    }
     public String getAction_type() {
         return action_type;
     }
