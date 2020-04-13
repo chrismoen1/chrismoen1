@@ -153,7 +153,9 @@ public class GroupLogistics extends Fragment {
         //If all day is checked, then we want to ensure that this the set to all day
         this.endDate_Day = endDate_Day;
     }
-
+    public EditText getTitle(){
+        return title;
+    }
     public Date getStartDate_Time() {
         return startDate_Time;
     }

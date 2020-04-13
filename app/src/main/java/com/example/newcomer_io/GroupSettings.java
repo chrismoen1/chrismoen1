@@ -5,10 +5,7 @@ import android.content.Context;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
-import android.widget.Switch;
-import android.widget.TextView;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.R;
@@ -25,6 +22,8 @@ public class GroupSettings{
     private TextView endTime;
     private android.widget.Switch time_dallDay;
     private TextView display;
+
+    private EditText eventTitle;
 
     private Date startDate;
     private Date endDate;
@@ -50,6 +49,8 @@ public class GroupSettings{
 
         startTime_Horizontal = fragment_groupLogistics.findViewById(R.id.startTime_Horiziontal);
         endTime_Horizontal = fragment_groupLogistics.findViewById(R.id.endTime_Horizontal);
+
+        eventTitle = fragment_groupLogistics.findViewById(R.id.editText);
 
         startTime = fragment_groupLogistics.findViewById(R.id.startTime);
         endTime = fragment_groupLogistics.findViewById(R.id.endTime);
@@ -116,6 +117,10 @@ public class GroupSettings{
                 startTime_Horizontal.setBackgroundResource(0);
             }
         }.start();
+    }
+
+    public EditText getEventTitle(){
+        return eventTitle;
     }
 
     public void resetTimes(){

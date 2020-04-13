@@ -3,12 +3,15 @@ package com.example.newcomer_io;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
+import androidx.fragment.app.FragmentManager;
 import com.example.newcomer_io.R;
+import com.example.newcomer_io.ui.main.LocationType;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
@@ -23,7 +26,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import java.util.Arrays;
 import java.util.List;
 
-public class LocationLogistics{
+public class LocationLogistics extends CreateGroup{
     private static final int MAXSPINNER = 5;
     private static final int RESULT_OK = 1 ;
     //This class holds all of the relevant information to the group location logistics information box
@@ -52,17 +55,20 @@ public class LocationLogistics{
         checked = false;
         //Initialize all of the places
         locationName = fragment_groupLocation.findViewById(R.id.editText4);
+
         minAge = fragment_groupLocation.findViewById(R.id.minAge);
         maxAge = fragment_groupLocation.findViewById(R.id.maxAge);
+
         groupNumber = fragment_groupLocation.findViewById(R.id.spinner);
+
         eventNotes = fragment_groupLocation.findViewById(R.id.editText2);
         ageCustom = fragment_groupLocation.findViewById(R.id.ageCustom);
+
         ageCustom.setVisibility(View.INVISIBLE);
         String[] arr = {"3 People","4 People","5 People ","6 People", "7 People", "Enter a size"};
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,arr);
         groupNumber.setAdapter(arrayAdapter);
 
-        initializePlacesComplete();
         initializeGroupSize();
         //View fragment_groupLogistics = inflater.inflate(R.layout.fragment_group_logistics, scroll, true);
     }
@@ -92,20 +98,23 @@ public class LocationLogistics{
     public View getFragment_groupLocation_View(){
         return this.fragment_groupLocation;
     }
-
-    private void initializePlacesComplete() {
+    public EditText locationName(){
+        return locationName;
+    }
+    /*private void initializePlacesComplete() {
         locationName.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    callPlacesIntent();
-
+                    //callPlacesIntent();
+                    Intent intent = new Intent(context, LocationType.class);
+                    startActivity(intent);
                 }
                 return false;
             }
         });
 
-    }
+    }*/
     public EditText getLocationVal() {
         //This gets the location value of the edit text paramater
         return locationName;

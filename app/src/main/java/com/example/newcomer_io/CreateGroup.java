@@ -1,11 +1,10 @@
 package com.example.newcomer_io;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
@@ -13,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.ui.main.GroupLogistics;
+import com.example.newcomer_io.ui.main.LocationType;
 import com.example.newcomer_io.ui.main.TimePickerFragment;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
@@ -52,6 +52,16 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
                 checkValidity(); //we need to check the validity of the paramaters that the user has entered before going to the next
             }
         });
+        EditText locationVal = locationLogistics.getLocationVal();
+        locationVal.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Intent intent = new Intent(v.getContext(), LocationType.class);
+                startActivity(intent);
+
+                return false;
+            }
+        });
 
         //scroll.addView(fragment_groupLogistics);
         // scroll.addView(fragment_groupLocation);
@@ -62,28 +72,61 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
     }
 
     private void checkValidity() {
+
+
         if (startDate == null || endDate == null){
             //then we display the error message
             errorDialogBox("Invalid Timing", "Please select valid start and end times");
         }
         //With the remaining, ltee' sjust set error hint s
-        EditText getLocation = locationLogistics.getLocationVal();
+        EditText getLocation;
+        EditText minAge;
+        EditText maxAge;
 
-        EditText minAge = locationLogistics.getAgeMin();
-        EditText maxAge = locationLogistics.getAgeMax();
+        getLocation = locationLogistics.getLocationVal();
+        minAge = locationLogistics.getAgeMin();
+        maxAge = locationLogistics.getAgeMax();
+        EditText title = groupLogistics.getEventTitle();
+
+        int minimumAge = 0;
+        int maximumAge = 0;
+        if (minAge.getText().toString().length() != 0){
+            minimumAge = Integer.parseInt(minAge.getText().toString());
+        }
+        if (maxAge.getText().toString().length() != 0){
+            maximumAge = Integer.parseInt((maxAge.getText().toString()));
+        }
+
+        //We want to check that the user did initiate a minimum age that is greater than the maximum age \s
+        if (minimumAge > maximumAge){
+            //set the error
+            minAge.setError("Please enter a minimum age smaller than the maximum age");
+            minAge.setText("");
+            maxAge.setText("");
+            minAge.requestFocus();
+
+        }
 
         //Set the paramaters to hte length of the appropriate values for hte length if it is zero than we want ot
         if (minAge.getText().toString().length() == 0){
             minAge.setError("Please enter a minimum age");
+        }
+         if (maxAge.getText().toString().length() == 0) {
+             maxAge.setError("Please enter a maximum age");
+         }
+
+        if (title.getText().toString().length() == 0) {
+            title.setError("Please enter an event title");
 
         }
-         if (maxAge.getText().toString().length() == 0){
-            maxAge.setError("Please enter a maximum age");
+            if (getLocation.getText().toString().trim().length() == 0) {
+                getLocation.setError("Please enter a location");
         }
-         if (getLocation.getText().toString().trim().length() == 0){ ;
-            getLocation.setError("Please enter a location");
-         }
-    }
+
+
+
+        }
+
 
  /*   private void createLocationLogisticsFrag(){
         NestedScrollView scroll = findViewById(R.id.nestedScrollView);
