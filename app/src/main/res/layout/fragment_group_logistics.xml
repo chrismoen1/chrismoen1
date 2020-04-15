@@ -7,30 +7,46 @@
     android:layout_height="wrap_content"
     tools:context=".ui.main.GroupLogistics">
 
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="278dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:text="Customize \nYour \nGroup"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="350dp"
-        android:layout_height="280dp"
+        android:layout_width="408dp"
+        android:layout_height="304dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:scaleType="fitXY"
-        android:src="@drawable/backdrop"
+        android:src="@drawable/form"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <LinearLayout
         android:id="@+id/paramaters"
         android:layout_width="0dp"
-        android:layout_height="253dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginLeft="48dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:layout_marginBottom="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/imageView2"
@@ -75,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Start Time "
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -89,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Time: "
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -105,7 +121,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="End Time"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -120,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity=""
                 android:text="Time: "
-                android:textColor="@color/white"
+                android:textColor="@color/black"
 
                 android:textSize="18sp" />
         </LinearLayout>
@@ -143,7 +159,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="37dp"
                 android:checked="false"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textOff="All Day"
                 android:textOn="All Day" />
 
@@ -157,4 +173,5 @@
                 app:fontFamily="serif" />
         </LinearLayout>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

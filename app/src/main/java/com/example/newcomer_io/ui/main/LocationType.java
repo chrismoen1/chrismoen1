@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.newcomer_io.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -35,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,8 +50,9 @@ public class LocationType extends AppCompatActivity {
     private static final int PROXIMITY_RADIUS = 5000;
 
     private Location currLocation;
-    private ImageView customLocation;
-    private ImageView trendingLocations;
+
+    private LinearLayout scrollHorizontal;
+
     private PlacesClient placesClient;
     private String googleBrowserKEY = "AIzaSyAjGcF4XC-OEVJHKPmPefDUxGjxiSCbFK8";
     private UserData userData;
@@ -62,39 +66,21 @@ public class LocationType extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_type);
 
-        customLocation = findViewById(R.id.imageView12);
-        trendingLocations = findViewById(R.id.imageView13);
+        scrollHorizontal = findViewById(R.id.scrollHorizontal);
+
         Places.initialize(getApplicationContext(), googleBrowserKEY);
         placesClient = Places.createClient(getApplicationContext());
         //userData = (UserData) getApplicationContext();
 
-        customLocation.setOnClickListener(new View.OnClickListener() {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-            @Override
-            public void onClick(View v) {
+        LocationNode trendingPlaces = new LocationNode(this,2);
+        LocationNode customPlace = new LocationNode(this,1);
+        View trending_View = trendingPlaces.getView();
+        View customPlace_View = customPlace.getView();
 
-                //Set the paramaters as needed
-
-                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG);
-
-                // autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG));
-                // Start the autocomplete intent.
-
-                Intent intent = new Autocomplete.IntentBuilder(
-                        AutocompleteActivityMode.FULLSCREEN, fields)
-                        .setTypeFilter(TypeFilter.ADDRESS)
-                        .build(v.getContext());
-                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-            }
-        });
-
-        trendingLocations.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-             getCurrentLocation();
-            }
-        });
+        scrollHorizontal.addView(trending_View,params);
+        scrollHorizontal.addView(customPlace_View,params);
 
     }
 
@@ -148,10 +134,32 @@ public class LocationType extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         // Display the response string.
                         String t= ";alsdkfj";
+                        ArrayList<TrendingContent> trendingContentArray  = new ArrayList<TrendingContent>();
+
                         try {
                              JSONArray results = response.getJSONArray("results");
                              for (int i =0; i < results.length();i++){
                                  JSONObject objectInArray = results.getJSONObject(i);
+
+                                 //Now we want to populate some of the data pertaining to the
+
+                                 double lat = objectInArray.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+                                 double lon = objectInArray.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+
+                                String name = objectInArray.getString("name");
+
+                                boolean isOpen = objectInArray.getJSONObject("opening_hours").getBoolean("open_now");
+
+                                int priceLev = objectInArray.getInt("price_level");
+
+                                float rating = (float) objectInArray.getDouble("rating");
+
+                                String photo_reference = objectInArray.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
+
+                                TrendingContent trendingContent = new TrendingContent(new LatLng(lat,lon),name, priceLev,rating,photo_reference,isOpen);
+                                trendingContentArray.add(trendingContent);
+                                //now that we have all of the data, then we can go to the next screen in order to show all of this data in kind of like filter scren showing of the data
+
 
                              }
                         } catch (JSONException e) {

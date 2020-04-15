@@ -44,6 +44,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
         groupLogistics = new GroupSettings(this);
         locationLogistics = new LocationLogistics(this);
+
         createTheGroup = locationLogistics.getFragment_groupLocation_View().findViewById(R.id.floatingActionButton);
 
         createTheGroup.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +57,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         locationVal.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
                 Intent intent = new Intent(v.getContext(), LocationType.class);
                 startActivity(intent);
 
