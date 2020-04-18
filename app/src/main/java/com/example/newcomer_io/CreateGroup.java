@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.ui.main.GroupLogistics;
-import com.example.newcomer_io.ui.main.LocationType;
 import com.example.newcomer_io.ui.main.TimePickerFragment;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
@@ -57,9 +56,11 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         locationVal.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN){
+                    Intent intent = new Intent(v.getContext(), LocationType.class);
+                    startActivity(intent);
+                }
 
-                Intent intent = new Intent(v.getContext(), LocationType.class);
-                startActivity(intent);
 
                 return false;
             }

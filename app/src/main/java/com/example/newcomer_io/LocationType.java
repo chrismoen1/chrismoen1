@@ -1,45 +1,40 @@
-package com.example.newcomer_io.ui.main;
+package com.example.newcomer_io;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import androidx.annotation.NonNull;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.newcomer_io.R;
+import com.example.newcomer_io.ui.main.LocationNode;
+import com.example.newcomer_io.ui.main.TrendingContent;
+import com.example.newcomer_io.ui.main.UserData;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class LocationType extends AppCompatActivity {
 
@@ -67,21 +62,43 @@ public class LocationType extends AppCompatActivity {
         setContentView(R.layout.activity_location_type);
 
         scrollHorizontal = findViewById(R.id.scrollHorizontal);
+        userData = (UserData) getApplicationContext();
 
         Places.initialize(getApplicationContext(), googleBrowserKEY);
         placesClient = Places.createClient(getApplicationContext());
+
         //userData = (UserData) getApplicationContext();
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        LocationNode trendingPlaces = new LocationNode(this,2);
         LocationNode customPlace = new LocationNode(this,1);
+        LocationNode trendingPlaces = new LocationNode(this,2);
+
         View trending_View = trendingPlaces.getView();
         View customPlace_View = customPlace.getView();
 
-        scrollHorizontal.addView(trending_View,params);
         scrollHorizontal.addView(customPlace_View,params);
+        scrollHorizontal.addView(trending_View,params);
 
+        setClickListener_Trending(customPlace_View);
+
+    }
+
+    private void setClickListener_Trending(View trending) {
+        ImageView pic = trending.findViewById(R.id.imageView9);
+        TextView description = trending.findViewById(R.id.description);
+        pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCurrentLocation();
+            }
+        });
+        description.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCurrentLocation();
+            }
+        });
     }
 
     private void getCurrentLocation() {
@@ -117,16 +134,19 @@ public class LocationType extends AppCompatActivity {
         }
 
     private void requestTrendingLocations(Location currLocation) {
+
         //This function will get all of the list of trending locations based on the API call
         int PLACE_PICKER_REQUEST = 1;
         //we will want to send the request to the Google backend database
         String type = "bar";
+
         StringBuilder googlePlacesUrl =
                 new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         googlePlacesUrl.append("location=").append(currLocation.getLatitude()).append(",").append(currLocation.getLongitude());
         googlePlacesUrl.append("&radius=").append(PROXIMITY_RADIUS);
         googlePlacesUrl.append("&types=").append(type);
         googlePlacesUrl.append("&key=" + googleBrowserKEY);
+
         //Request a string response from the URL resource
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, googlePlacesUrl.toString(),null,
                 new Response.Listener<JSONObject>() {
@@ -148,20 +168,52 @@ public class LocationType extends AppCompatActivity {
 
                                 String name = objectInArray.getString("name");
 
-                                boolean isOpen = objectInArray.getJSONObject("opening_hours").getBoolean("open_now");
+                                //-----------------------------------------Accounting for errors-----------------------------------------------------//
+                                boolean isOpen;
+                                try{
+                                    isOpen = objectInArray.getJSONObject("opening_hours").getBoolean("open_now");
 
-                                int priceLev = objectInArray.getInt("price_level");
+                                }catch(Exception e){
+                                    isOpen = false;
+                                }
 
-                                float rating = (float) objectInArray.getDouble("rating");
+                                int priceLev;
+                                 try{
+                                     priceLev = objectInArray.getInt("price_level");
 
-                                String photo_reference = objectInArray.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
+                                }
+                                 catch(Exception e){
+                                     priceLev = -1;
+                                 }
+
+                                float rating;
+                                 try{
+                                     rating = (float) objectInArray.getDouble("rating");
+                                 }
+                                 catch(Exception e){
+                                     rating = -1; //Invalid rating
+                                 }
+
+                                String photo_reference;
+                                try{
+                                    photo_reference = objectInArray.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
+                                }catch (Exception e){
+                                    photo_reference = ""; //aka specify that it is an error
+                                }
 
                                 TrendingContent trendingContent = new TrendingContent(new LatLng(lat,lon),name, priceLev,rating,photo_reference,isOpen);
                                 trendingContentArray.add(trendingContent);
+
                                 //now that we have all of the data, then we can go to the next screen in order to show all of this data in kind of like filter scren showing of the data
 
-
                              }
+                             Intent intent = new Intent(LocationType.this,TrendingDisplay.class);
+                             //intent.putExtra("TrendingContent", trendingContentArray);
+
+                            userData.setTrendingContent(trendingContentArray);
+
+                            startActivity(intent);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -178,6 +230,8 @@ public class LocationType extends AppCompatActivity {
         queue.add(objectRequest);
 
     }
+
+
 
 }
 
