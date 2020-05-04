@@ -1,10 +1,9 @@
-package com.example.newcomer_io;
+package com.example.newcomer_io.ui.main.LocationSettings;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.view.View;
@@ -18,12 +17,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.newcomer_io.ui.main.LocationNode;
-import com.example.newcomer_io.ui.main.TrendingContent;
-import com.example.newcomer_io.ui.main.UserData;
+import com.example.newcomer_io.R;
+import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
@@ -51,6 +48,8 @@ public class LocationType extends AppCompatActivity {
     private PlacesClient placesClient;
     private String googleBrowserKEY = "AIzaSyAjGcF4XC-OEVJHKPmPefDUxGjxiSCbFK8";
     private UserData userData;
+
+
 
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -114,6 +113,8 @@ public class LocationType extends AppCompatActivity {
                         if (location != null) {
                             //Keep the location
                             currLocation = location;
+                            userData.setLocation(location);
+
                             //userData.setLocation(currLocation);
                             //Get trending locations
 
@@ -138,7 +139,7 @@ public class LocationType extends AppCompatActivity {
         //This function will get all of the list of trending locations based on the API call
         int PLACE_PICKER_REQUEST = 1;
         //we will want to send the request to the Google backend database
-        String type = "bar";
+        final String type = "night_club";
 
         StringBuilder googlePlacesUrl =
                 new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
@@ -148,12 +149,12 @@ public class LocationType extends AppCompatActivity {
         googlePlacesUrl.append("&key=" + googleBrowserKEY);
 
         //Request a string response from the URL resource
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, googlePlacesUrl.toString(),null,
+        final JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, googlePlacesUrl.toString(),null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         // Display the response string.
-                        String t= ";alsdkfj";
+
                         ArrayList<TrendingContent> trendingContentArray  = new ArrayList<TrendingContent>();
 
                         try {
@@ -161,53 +162,68 @@ public class LocationType extends AppCompatActivity {
                              for (int i =0; i < results.length();i++){
                                  JSONObject objectInArray = results.getJSONObject(i);
 
-                                 //Now we want to populate some of the data pertaining to the
 
-                                 double lat = objectInArray.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
-                                 double lon = objectInArray.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+                                 JSONArray types1 = objectInArray.getJSONArray("types");
 
-                                String name = objectInArray.getString("name");
+                                 if (existsArray(types1, type)== true) {
 
-                                //-----------------------------------------Accounting for errors-----------------------------------------------------//
-                                boolean isOpen;
-                                try{
-                                    isOpen = objectInArray.getJSONObject("opening_hours").getBoolean("open_now");
 
-                                }catch(Exception e){
-                                    isOpen = false;
-                                }
+                                     //Now we want to populate some of the data pertaining to the
 
-                                int priceLev;
-                                 try{
-                                     priceLev = objectInArray.getInt("price_level");
+                                     double lat = objectInArray.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+                                     double lon = objectInArray.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
 
-                                }
-                                 catch(Exception e){
-                                     priceLev = -1;
+                                     String name = objectInArray.getString("name");
+
+                                     //-----------------------------------------Accounting for errors-----------------------------------------------------//
+                                     boolean isOpen;
+                                     try {
+                                         isOpen = objectInArray.getJSONObject("opening_hours").getBoolean("open_now");
+
+                                     } catch (Exception e) {
+                                         isOpen = false;
+                                     }
+
+                                     int priceLev;
+                                     try {
+                                         priceLev = objectInArray.getInt("price_level");
+
+                                     } catch (Exception e) {
+                                         priceLev = -1;
+                                     }
+                                     String streetName;
+                                     try{
+                                         streetName = objectInArray.getString("vicinity");
+                                     }
+                                     catch (Exception e) {
+                                     streetName = "";
+                                     }
+
+                                     float rating;
+                                     try {
+                                         rating = (float) objectInArray.getDouble("rating");
+                                     } catch (Exception e) {
+                                         rating = -1; //Invalid rating
+                                     }
+
+                                     String photo_reference;
+                                     try {
+                                         photo_reference = objectInArray.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
+                                     } catch (Exception e) {
+                                         photo_reference = ""; //aka specify that it is an error
+                                     }
+
+                                     if (rating != -1 && priceLev != -1)
+                                     {
+                                         TrendingContent trendingContent = new TrendingContent(new LatLng(lat, lon), name, priceLev, rating, photo_reference, isOpen);
+                                         trendingContentArray.add(trendingContent);
+                                     }
                                  }
-
-                                float rating;
-                                 try{
-                                     rating = (float) objectInArray.getDouble("rating");
-                                 }
-                                 catch(Exception e){
-                                     rating = -1; //Invalid rating
-                                 }
-
-                                String photo_reference;
-                                try{
-                                    photo_reference = objectInArray.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
-                                }catch (Exception e){
-                                    photo_reference = ""; //aka specify that it is an error
-                                }
-
-                                TrendingContent trendingContent = new TrendingContent(new LatLng(lat,lon),name, priceLev,rating,photo_reference,isOpen);
-                                trendingContentArray.add(trendingContent);
 
                                 //now that we have all of the data, then we can go to the next screen in order to show all of this data in kind of like filter scren showing of the data
 
                              }
-                             Intent intent = new Intent(LocationType.this,TrendingDisplay.class);
+                             Intent intent = new Intent(LocationType.this, TrendingDisplay.class);
                              //intent.putExtra("TrendingContent", trendingContentArray);
 
                             userData.setTrendingContent(trendingContentArray);
@@ -231,6 +247,19 @@ public class LocationType extends AppCompatActivity {
 
     }
 
+    private boolean existsArray(JSONArray types1, String type) {
+        for (int i =0; i < types1.length();i++){
+            try {
+                if (types1.getString(i).equals(type) == true){
+                    return true;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+
+    }
 
 
 }

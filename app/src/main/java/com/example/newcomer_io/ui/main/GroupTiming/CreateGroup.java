@@ -1,4 +1,4 @@
-package com.example.newcomer_io;
+package com.example.newcomer_io.ui.main.GroupTiming;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,8 +11,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
-import com.example.newcomer_io.ui.main.GroupLogistics;
-import com.example.newcomer_io.ui.main.TimePickerFragment;
+import com.example.newcomer_io.*;
+import com.example.newcomer_io.ui.main.LocationSettings.LocationType;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;

@@ -1,4 +1,4 @@
-package com.example.newcomer_io.ui.main;
+package com.example.newcomer_io.ui.main.GroupTiming;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;

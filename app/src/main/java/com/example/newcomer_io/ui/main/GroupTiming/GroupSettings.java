@@ -1,7 +1,6 @@
-package com.example.newcomer_io;
+package com.example.newcomer_io.ui.main.GroupTiming;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +8,6 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.R;
-import com.example.newcomer_io.ui.main.GroupLogistics;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

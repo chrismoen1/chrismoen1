@@ -1,4 +1,4 @@
-package com.example.newcomer_io.ui.main;
+package com.example.newcomer_io.ui.main.GroupTiming;
 
 import android.os.Bundle;
 import android.widget.*;
@@ -181,7 +181,6 @@ public class GroupLogistics extends Fragment {
         private android.widget.Switch  time_dallDay;
         private TextView display;
         public Switch(View v){
-
 
             time_dallDay = v.findViewById(R.id.switchf);
             display = v.findViewById(R.id.textView);

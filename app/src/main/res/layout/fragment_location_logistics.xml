@@ -5,7 +5,7 @@
     android:id="@+id/mainFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.LocationLogistics">
+    tools:context=".ui.main.LocationSettings.LocationLogistics">
 
     <ImageView
         android:id="@+id/imageView"
@@ -207,7 +207,6 @@
         android:backgroundTint="@color/DarkCyan"
         android:clickable="true"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTintMode="multiply"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/paramateres"
         app:layout_constraintHorizontal_bias="0.76"

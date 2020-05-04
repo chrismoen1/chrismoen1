@@ -5,8 +5,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
-import com.example.newcomer_io.ui.main.GroupLogistics;
+import com.example.newcomer_io.ui.main.GroupTiming.CreateGroup;
 import com.example.newcomer_io.ui.main.MainFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 

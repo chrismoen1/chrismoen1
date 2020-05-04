@@ -1,4 +1,4 @@
-package com.example.newcomer_io;
+package com.example.newcomer_io.ui.main.GroupTiming;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import com.example.newcomer_io.R;
 
 import java.util.Calendar;
 import java.util.Date;

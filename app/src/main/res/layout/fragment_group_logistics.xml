@@ -5,20 +5,20 @@
     android:id="@+id/frameLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context=".ui.main.GroupLogistics">
+    tools:context=".ui.main.GroupTiming.GroupLogistics">
 
     <TextView
         android:id="@+id/textView6"
-        android:layout_width="278dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:text="Customize \nYour \nGroup"
-        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
-        android:textSize="40sp"
+        android:fontFamily="@font/open_sans_light"
+        android:text="Customize Your Group"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="30sp"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/imageView2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

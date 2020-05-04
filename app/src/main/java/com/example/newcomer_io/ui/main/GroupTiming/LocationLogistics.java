@@ -1,10 +1,12 @@
-package com.example.newcomer_io;
+package com.example.newcomer_io.ui.main.GroupTiming;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
+import com.example.newcomer_io.R;
+import com.example.newcomer_io.ui.main.GroupTiming.CreateGroup;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -16,7 +18,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import java.util.Arrays;
 import java.util.List;
 
-public class LocationLogistics extends CreateGroup{
+public class LocationLogistics extends CreateGroup {
     private static final int MAXSPINNER = 5;
     private static final int RESULT_OK = 1 ;
     //This class holds all of the relevant information to the group location logistics information box

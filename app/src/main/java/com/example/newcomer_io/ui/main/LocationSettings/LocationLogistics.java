@@ -1,4 +1,4 @@
-package com.example.newcomer_io.ui.main;
+package com.example.newcomer_io.ui.main.LocationSettings;
 
 import android.content.Context;
 import android.net.Uri;

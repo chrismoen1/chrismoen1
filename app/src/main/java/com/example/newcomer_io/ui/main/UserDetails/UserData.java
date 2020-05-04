@@ -1,15 +1,17 @@
-package com.example.newcomer_io.ui.main;
+package com.example.newcomer_io.ui.main.UserDetails;
 
 import android.app.Application;
 import android.content.Context;
 import android.location.Location;
+import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class UserData extends Application {
     private Location location;
     private ArrayList<TrendingContent> trendingContentArray;
+    private int UserID;
+    private TrendingContent chosenContent;
 
     public void setLocation(Location location){
         this.location = location;
@@ -28,5 +30,13 @@ public class UserData extends Application {
     }
     public ArrayList<TrendingContent> getTrendingContentArray(){
         return this.trendingContentArray;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setChosenLocation(TrendingContent chosenContent) {
+        this.chosenContent = chosenContent;
     }
 }
