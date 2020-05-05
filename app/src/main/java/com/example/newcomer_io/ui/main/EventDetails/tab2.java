@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.newcomer_io.R;
+import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
 
 
 /**
@@ -22,9 +23,11 @@ public class tab2 extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private EventCreate eventCreate;
 
-    public tab2() {
+    public tab2(EventCreate eventCreate) {
         // Required empty public constructor
+        this.eventCreate = eventCreate;
     }
 
     /**
@@ -35,15 +38,7 @@ public class tab2 extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment tab2.
      */
-    // TODO: Rename and change types and number of parameters
-    public static tab2 newInstance(String param1, String param2) {
-        tab2 fragment = new tab2();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

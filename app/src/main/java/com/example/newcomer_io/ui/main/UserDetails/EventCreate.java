@@ -28,12 +28,14 @@ public class EventCreate {
 
     private Activity activity;
     private String eventNotes;
+    private String locationName;
 
-    public EventCreate(Activity activity, String eventName, Date startTime, Date endTime, String eventNotes){
+    public EventCreate(Activity activity, String eventName, Date startTime, Date endTime, String eventNotes, String locationName){
 
         this.activity = activity;
         this.eventName = eventName;
         this.startTime = startTime;
+        this.locationName = locationName;
         this.endTime = endTime;
         this.eventNotes = eventNotes;
         this.postsArrayList = new ArrayList<Posts>();
@@ -49,6 +51,7 @@ public class EventCreate {
 
     }
 
+    public String getEventNotes(){return this.eventNotes; }
     public String getEventName() {
         return eventName;
     }
@@ -110,6 +113,7 @@ public class EventCreate {
 
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(activity.LAYOUT_INFLATER_SERVICE);
             user_row = inflater.inflate(R.layout.user_row,null);
+
             constraintLayout = user_row.findViewById(R.id.constraintLayout);
             constraintLayout.setId(postId);
 

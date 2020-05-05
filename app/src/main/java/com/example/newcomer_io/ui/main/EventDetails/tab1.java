@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.newcomer_io.R;
+import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
 
 import java.util.Date;
@@ -30,9 +31,11 @@ public class tab1 extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private TrendingContent content;
 
-    public tab1() {
+    public tab1(EventCreate eventCreate) {
         // Required empty public constructor
+        //this.content = content;
     }
 
     /**
@@ -44,14 +47,6 @@ public class tab1 extends Fragment {
      * @return A new instance of fragment tab1.
      */
     // TODO: Rename and change types and number of parameters
-    public static tab1 newInstance(String param1, String param2) {
-        tab1 fragment = new tab1();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,10 +67,7 @@ public class tab1 extends Fragment {
         View inflate = inflater.inflate(R.layout.fragment_tab1, container, false);
         LinearLayout scrollView = inflate.findViewById(R.id.scrollLayout); //This represents the scroll for all of the posts
 
-        Date startTime = new Date(120,11, 12);
-        Date endTime = new Date(120,11, 13);
 
-        eventCreate = new EventCreate((Activity) inflate.getContext(),"Attack of the Tiitans",startTime,endTime,"This is the best event ever");
 
        /* for (int i =0 ; i < 3;i++){
             View trending_content = inflater.inflate(R.layout.user_row, null);

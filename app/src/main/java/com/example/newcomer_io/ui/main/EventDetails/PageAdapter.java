@@ -1,25 +1,33 @@
 package com.example.newcomer_io.ui.main.EventDetails;
 
+import android.app.Activity;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
+
+import java.util.Date;
+
+import static java.security.AccessController.getContext;
 
 public class PageAdapter extends FragmentPagerAdapter {
     private int numTabs;
+    private EventCreate eventCreate;
 
-    public PageAdapter(FragmentManager fm, int tabCount) {
+    public PageAdapter(FragmentManager fm, int tabCount,EventCreate eventCreate) {
         super(fm);
         this.numTabs = 2; //equal to the number of tabs
+        this.eventCreate = eventCreate;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return new tab1();
+                return new tab1(eventCreate);
             case 1:
-                return new tab2();
+                return new tab2(eventCreate);
             default:
                 return null;
         }
