@@ -39,4 +39,7 @@ public class UserData extends Application {
     public void setChosenLocation(TrendingContent chosenContent) {
         this.chosenContent = chosenContent;
     }
+    public TrendingContent getChosenContent(){
+        return this.chosenContent;
+    }
 }

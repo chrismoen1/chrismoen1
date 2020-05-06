@@ -36,6 +36,8 @@ public class tab1 extends Fragment {
     public tab1(EventCreate eventCreate) {
         // Required empty public constructor
         //this.content = content;
+        this.eventCreate = eventCreate;
+
     }
 
     /**
@@ -78,7 +80,6 @@ public class tab1 extends Fragment {
             scrollView.addView(trending_content);
 
         }*/
-
 
         eventCreate.addPost("John Dobalina","You mama is so fat, that one day she went to the store to go to the store", scrollView);
         eventCreate.addPost("Joe Smoe", "Hi guys!!!!", scrollView);

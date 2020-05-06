@@ -1,6 +1,7 @@
 package com.example.newcomer_io.ui.main.EventDetails;
 
 import android.os.Bundle;
+import android.widget.LinearLayout;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +54,10 @@ public class tab2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tab2, container, false);
+        View inflate = inflater.inflate(R.layout.fragment_tab2, container, false);
+        LinearLayout linearLayout = inflate.findViewById(R.id.scrollLayout);
+
+        eventCreate.addUser("John", 351,"Ottawa, Ontario", 1,linearLayout);
+        return inflate;
     }
 }

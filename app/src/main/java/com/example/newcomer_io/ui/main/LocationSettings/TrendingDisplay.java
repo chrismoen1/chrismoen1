@@ -1,6 +1,7 @@
 package com.example.newcomer_io.ui.main.LocationSettings;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.view.LayoutInflater;
@@ -187,7 +188,8 @@ public class TrendingDisplay extends AppCompatActivity {
                     TrendingContent trendingContent1 = getTrendingContent(trendingContentArray, id);
 
                     userData.setChosenLocation(trendingContent1);
-
+                    Intent intent = new Intent(TrendingDisplay.this,GroupConfirmation.class);
+                    startActivity(intent);
                     //chooseLocation.color
 
                 }
