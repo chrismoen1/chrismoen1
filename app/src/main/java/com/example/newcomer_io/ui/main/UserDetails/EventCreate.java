@@ -21,8 +21,16 @@ public class EventCreate {
     //the people that have joined the group
 
     private String eventName;
+
     private Date startTime;
+    private Date startTime_Day;
+    private String startTime_txt;
+
     private Date endTime;
+    private Date endTime_Day;
+    private String endTime_txt;
+
+
     private Location location;
 
     private int postNumber;
@@ -36,22 +44,26 @@ public class EventCreate {
     private String locationName;
     private Bitmap photo;
 
-    public EventCreate(Activity activity, String eventName, Date startTime, Date endTime, String eventNotes, String locationName, Bitmap photo){
+    public EventCreate(Activity activity){
 
         this.activity = activity;
-        this.eventName = eventName;
-        this.startTime = startTime;
-        this.locationName = locationName;
-        this.endTime = endTime;
-        this.eventNotes = eventNotes;
         this.postsArrayList = new ArrayList<Posts>();
         this.postNumber = 0;
         this.userNumber = 0;
-        this.photo = photo;
         this.joinedUsersArrayList = new ArrayList<JoinedUsers>();
-        this.eventDetails = new EventDetails(activity,eventName,eventNotes,locationName, startTime,endTime,photo);
 //        public EventDetails(Activity activity_group, String eventName, String eventNotes, String locationName, Date startTime, Date endTime, Bitmap displayPhoto){
     }
+    public void setPhoto(Bitmap photo){
+        this.photo = photo;
+    }
+
+    public void createEventDetails(){
+        this.eventDetails = new EventDetails(this.activity,this.eventName,this.eventNotes,this.locationName,this.startTime,this.endTime,this.photo);
+    }
+
+    public void setEventNotes(String eventNotes){this.eventNotes = eventNotes;}
+
+
     public void addPost(String personName, String postText, LinearLayout scrollLayout_Tab1){
         this.postNumber += 1;
         Posts posts = new Posts(this.activity, personName, postText,  scrollLayout_Tab1, postNumber);
@@ -60,6 +72,14 @@ public class EventCreate {
         //we also want to add it to the view
 
     }
+
+    public int getPostNumber(){
+        return this.postNumber;
+    }
+    public void setIntPostNumber(int postNumber){
+        this.postNumber = postNumber;
+    }
+
     public void addUser(String userName, int eventsAttended, String Location, int postNumber,LinearLayout linearLayout){
         this.userNumber += 1;
         JoinedUsers joinedUsers = new JoinedUsers(this.activity,userName, eventsAttended,Location,postNumber);
@@ -70,7 +90,7 @@ public class EventCreate {
 
     public String getEventNotes(){return this.eventNotes; }
     public String getEventName() {
-        return eventName;
+        return this.eventName;
     }
 
     public void setEventName(String eventName) {
@@ -78,19 +98,26 @@ public class EventCreate {
     }
 
     public Date getStartTime() {
-        return startTime;
+        return this.startTime;
     }
+    public Date getStartTime_Day(){return this.startTime_Day;}
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(Date startTime, Date startTime_Day, String txt)
+    {
         this.startTime = startTime;
+        this.startTime_Day = startTime_Day;
+        this.startTime_txt = txt;
     }
 
     public Date getEndTime() {
-        return endTime;
+        return this.endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public Date getEndTime_Day(){return this.endTime_Day; }
+    public void setEndTime(Date endTime, Date endTime_Day, String txt) {
         this.endTime = endTime;
+        this.endTime_Day = endTime_Day;
+        this.endTime_txt = txt;
     }
 
     public String getLocationName() {
@@ -99,6 +126,14 @@ public class EventCreate {
 
     public void setLocationName(String locationName) {
         this.locationName = locationName;
+    }
+
+    public int getUserNumber() {
+        return userNumber;
+    }
+
+    public void setUserNumber(int userNumber) {
+        this.userNumber = userNumber;
     }
 
 
@@ -136,10 +171,11 @@ public class EventCreate {
             ImageView displayPhoto_image = this.activity_group.findViewById(R.id.displayPhoto);
 
             String timeStampe_EventStart_EventStop = getTimeStamp_Start_Stop(endTime,startTime);
+
+            eventLocationDetails.setText(this.locationName);
             eventTimeDetails_Txt.setText(timeStampe_EventStart_EventStop);
             displayPhoto_image.setImageBitmap(this.displayPhoto);
             eventTitle.setText(this.eventName);
-
             eventNotes.setText(this.eventNotes);
 
         }

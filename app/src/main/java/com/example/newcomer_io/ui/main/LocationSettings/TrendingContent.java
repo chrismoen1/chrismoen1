@@ -143,4 +143,9 @@ public class TrendingContent {
     public View getContentView() {
         return contentView;
     }
+
+    public void addImage(Bitmap response) {
+        this.photo = response;
+    }
+
 }

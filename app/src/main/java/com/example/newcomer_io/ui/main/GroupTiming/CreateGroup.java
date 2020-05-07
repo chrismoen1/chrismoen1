@@ -4,8 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +15,8 @@ import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.*;
 import com.example.newcomer_io.ui.main.LocationSettings.LocationType;
+import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
+import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
@@ -36,10 +40,17 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
     private FloatingActionButton createTheGroup;
     private LocationLogistics locationLogistics;
     private GroupSettings groupLogistics;
+    private UserData userData;
+    private EventCreate eventCreate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
+
+        userData = (UserData) getApplicationContext();
+        eventCreate = new EventCreate(this);
+
+        userData.setEventCreate(eventCreate);
 
         groupLogistics = new GroupSettings(this);
         locationLogistics = new LocationLogistics(this);
@@ -60,12 +71,19 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
                     Intent intent = new Intent(v.getContext(), LocationType.class);
                     startActivity(intent);
                 }
-
-
                 return false;
             }
         });
-
+        EditText eventNotes = locationLogistics.getEventNotes();
+        eventNotes.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE ){
+                    //Now we updat the event details to include the details of the event (updated)
+                }
+                return false;
+            }
+        });
         //scroll.addView(fragment_groupLogistics);
         // scroll.addView(fragment_groupLocation);
 
@@ -153,6 +171,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
     @Override
     public void sendButtonClick_startTime() {
+
         displayCalendarDialog(STARTTIME);
     }
 
@@ -174,6 +193,9 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         groupLogistics.setstartDate_Day(startDate_Day);
         groupLogistics.setStartDate_Time(startDate_Time);
         groupLogistics.setStartTime(txt);
+        eventCreate.setStartTime(startDate_Time, startDate_Day,txt);
+
+
 
     }
     private void setEndDate(Date endDate_Day, Date endDate_Time,String txt){
@@ -181,6 +203,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         groupLogistics.setEndDate_Day(endDate_Day);
         groupLogistics.setEndDate_Time(endDate_Time);
         groupLogistics.setEndTime(txt);
+        eventCreate.setEndTime(endDate_Time, endDate_Day,txt);
 
     }
     @Override

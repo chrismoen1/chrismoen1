@@ -54,11 +54,14 @@ public class GroupConfirmation extends AppCompatActivity {
         String placeName = chosenContent.getPlaceName();
         Bitmap photo = chosenContent.getPhoto();
 
-        eventCreate = new EventCreate(this,"Attack of the Tiitans",
-                startTime,endTime,"This is the best event ever:", "Clock Tower Brewery",photo);
+        eventCreate = new EventCreate(this,"Attack",
+                startTime,endTime,"This is the best event ever:", placeName,photo);
 
         pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount(),eventCreate);
         viewPager.setAdapter(pageAdapter);
+
+        //We want to add this detail to the firebase data base
+        //Add to firebase
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

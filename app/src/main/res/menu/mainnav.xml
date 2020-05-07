@@ -5,5 +5,10 @@
             android:icon="@drawable/groupsymbol"
             android:title="Create Group"
     />
+    <item
+        android:id="@+id/merge"
+        android:icon="@drawable/ic_merge_type_24px"
+        android:title="Join A Group"
+        />
 
 </menu>

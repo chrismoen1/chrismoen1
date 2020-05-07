@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, CreateGroup.class);
                         startActivity(intent);
                 }
-
                 return false;
             }
         });

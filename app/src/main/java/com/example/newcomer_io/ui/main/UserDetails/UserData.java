@@ -12,6 +12,7 @@ public class UserData extends Application {
     private ArrayList<TrendingContent> trendingContentArray;
     private int UserID;
     private TrendingContent chosenContent;
+    private EventCreate eventCreate;
 
     public void setLocation(Location location){
         this.location = location;
@@ -42,4 +43,9 @@ public class UserData extends Application {
     public TrendingContent getChosenContent(){
         return this.chosenContent;
     }
+
+    public void setEventCreate(EventCreate eventCreate) {
+        this.eventCreate = eventCreate;
+    }
+
 }

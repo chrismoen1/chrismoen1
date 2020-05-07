@@ -18,6 +18,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.newcomer_io.R;
+import com.example.newcomer_io.ui.main.GroupTiming.CreateGroup;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -166,7 +167,7 @@ public class TrendingDisplay extends AppCompatActivity {
             ContentNode contentNode = new ContentNode(rating,placeName,i);
             //We want to insert the image
 
-            getPhotoRequest(photoReference,contentNode); //call the photo reference API
+            getPhotoRequest(photoReference,contentNode, trendingContent); //call the photo reference API
             View content_view = contentNode.getView();
             trendingContent.setContentView(content_view);
 
@@ -188,7 +189,7 @@ public class TrendingDisplay extends AppCompatActivity {
                     TrendingContent trendingContent1 = getTrendingContent(trendingContentArray, id);
 
                     userData.setChosenLocation(trendingContent1);
-                    Intent intent = new Intent(TrendingDisplay.this,GroupConfirmation.class);
+                    Intent intent = new Intent(TrendingDisplay.this, CreateGroup.class);
                     startActivity(intent);
                     //chooseLocation.color
 
@@ -331,7 +332,7 @@ public class TrendingDisplay extends AppCompatActivity {
 
     }
 
-    private void getPhotoRequest(final String photoReference, final ContentNode contentNode) {
+    private void getPhotoRequest(final String photoReference, final ContentNode contentNode, final TrendingContent trendingContent) {
         //https://maps.googleapis.com/maps/api/place/photo?photoreference=PHOTO_REFERENCE&sensor=false&maxheight=MAX_HEIGHT&maxwidth=MAX_WIDTH&key=YOUR_API_KEY
         String type = "bar";
         StringBuilder googlePlacesUrl =
@@ -352,6 +353,9 @@ public class TrendingDisplay extends AppCompatActivity {
                     public void onResponse(Bitmap response) {
                         //trendingContent.setPhoto(response);
                         contentNode.setImage(response);
+                        trendingContent.addImage(response);
+                        //We also need to set the Trending Content type as well
+
                         //with this response, then we will want to send the iage back in
 
                     }
