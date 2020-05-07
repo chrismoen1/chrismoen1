@@ -30,11 +30,14 @@ public class EventCreate {
     private Date endTime_Day;
     private String endTime_txt;
 
+    private String ageMin;
+    private String ageMax;
 
     private Location location;
 
     private int postNumber;
     private int userNumber;
+    private int groupSize;
 
     private ArrayList<Posts> postsArrayList;
     private ArrayList<JoinedUsers> joinedUsersArrayList;
@@ -134,6 +137,41 @@ public class EventCreate {
 
     public void setUserNumber(int userNumber) {
         this.userNumber = userNumber;
+    }
+
+    public String getStartTime_txt() {
+        return startTime_txt;
+    }
+
+    public void setStartTime_txt(String startTime_txt) {
+        this.startTime_txt = startTime_txt;
+    }
+
+    public String getEndTime_txt() {
+        return endTime_txt;
+    }
+
+    public void setEndTime_txt(String endTime_txt) {
+        this.endTime_txt = endTime_txt;
+    }
+
+    public String getAgeMin() {
+        return ageMin;
+    }
+
+    public void setAgeMin(String ageMin) {
+        this.ageMin = ageMin;
+    }
+
+    public String getAgeMax() {
+        return ageMax;
+    }
+
+    public void setAgeMax(String ageMax) {
+        this.ageMax = ageMax;
+    }
+
+    public void setGroupSize(int sizeoMadeo) {
     }
 
 

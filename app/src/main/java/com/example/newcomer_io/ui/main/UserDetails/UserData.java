@@ -47,5 +47,8 @@ public class UserData extends Application {
     public void setEventCreate(EventCreate eventCreate) {
         this.eventCreate = eventCreate;
     }
+    public EventCreate getEventCreate(){
+        return this.eventCreate;
+    }
 
 }

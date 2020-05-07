@@ -48,9 +48,18 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         setContentView(R.layout.activity_create_group);
 
         userData = (UserData) getApplicationContext();
-        eventCreate = new EventCreate(this);
 
-        userData.setEventCreate(eventCreate);
+        if (userData.getEventCreate() == null){
+
+            eventCreate = new EventCreate(this);
+            userData.setEventCreate(eventCreate);
+
+        }else{
+
+            eventCreate = userData.getEventCreate();
+            fillEventDetails(eventCreate);
+
+        }
 
         groupLogistics = new GroupSettings(this);
         locationLogistics = new LocationLogistics(this);
@@ -63,6 +72,20 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
                 checkValidity(); //we need to check the validity of the paramaters that the user has entered before going to the next
             }
         });
+
+        locationLogisticsListeners(locationLogistics);
+
+        //scroll.addView(fragment_groupLogistics);
+        // scroll.addView(fragment_groupLocation);
+
+        //Now we create the group in th is class
+        //createLocationLogisticsFrag();
+        //createGroupLogisticsFrag();t
+    }
+
+    private void locationLogisticsListeners(LocationLogistics locationLogistics) {
+
+
         EditText locationVal = locationLogistics.getLocationVal();
         locationVal.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -74,26 +97,110 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
                 return false;
             }
         });
-        EditText eventNotes = locationLogistics.getEventNotes();
-        eventNotes.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        final EditText eventNotes = locationLogistics.getEventNotes();
+        eventNotes.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE ){
-                    //Now we updat the event details to include the details of the event (updated)
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    eventCreate.setEventNotes(eventNotes.getText().toString());
+                    return true;
                 }
                 return false;
             }
         });
-        //scroll.addView(fragment_groupLogistics);
-        // scroll.addView(fragment_groupLocation);
 
-        //Now we create the group in th is class
-        //createLocationLogisticsFrag();
-        //createGroupLogisticsFrag();t
+        final EditText ageMax = locationLogistics.getAgeMax();
+        final EditText ageMin = locationLogistics.getAgeMin();
+        ageMax.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    eventCreate.setAgeMax(ageMax.getText().toString());
+                    return true;
+                }
+                return false;
+            }
+        });
+        ageMin.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    eventCreate.setAgeMin(ageMin.getText().toString());
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        final Spinner groupSpinner = locationLogistics.getGroupSpinner();
+        final int MAXSPINNERSIZE = locationLogistics.getMaxSpinnerSize();
+        final int[] arr_GroupSize = locationLogistics.getArr_groupSize();
+        /*
+        if (position != MAXSPINNERSIZE){
+                                int sizeoMadeo = arr_GroupSize[position];
+                                eventCreate.setGroupSize(sizeoMadeo);
+                            }
+   if (position == MAXSPINNER){//aka the last value in the spinner
+                    //Then we display the edit text
+                   ageCustom.setVisibility(View.VISIBLE);
+                }
+                else{
+                    //Then we hide
+                    ageCustom.setVisibility(View.INVISIBLE);
+                }
+         */
+        final EditText customAge = locationLogistics.getAgeCustom();
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position != MAXSPINNERSIZE){//aka the last value in the spinner
+                    //Then we display the edit text
+                    int sizeoMadeo = arr_GroupSize[position];
+
+                    eventCreate.setGroupSize(sizeoMadeo);
+                    customAge.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    customAge.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        customAge.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    eventCreate.setGroupSize(Integer.valueOf(ageMin.getText().toString()));
+                    return true;
+                }
+                return false;
+            }
+        });
+
+    }
+
+    private void fillEventDetails(EventCreate eventCreate) {
+        String EventNotes = eventCreate.getEventNotes();
+        String eventName = eventCreate.getEventName();
+        String endTime_txt = eventCreate.getEndTime_txt();
+        String startTime_txt = eventCreate.getStartTime_txt();
+        eventCreate.groupSize
+
+        EditText eventNotes = locationLogistics.getEventNotes();
+        EditText ageMin = locationLogistics.getAgeMin();
+        EditText ageMax = locationLogistics.getAgeMax();
+        Spinner groupSize = locationLogistics.getGroupSpinner();
+        EditText ageCustom = locationLogistics.getAgeCustom();
+
     }
 
     private void checkValidity() {
-
 
         if (startDate == null || endDate == null){
             //then we display the error message
@@ -143,10 +250,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
             if (getLocation.getText().toString().trim().length() == 0) {
                 getLocation.setError("Please enter a location");
         }
-
-
-
-        }
+    }
 
 
  /*   private void createLocationLogisticsFrag(){
@@ -194,8 +298,6 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         groupLogistics.setStartDate_Time(startDate_Time);
         groupLogistics.setStartTime(txt);
         eventCreate.setStartTime(startDate_Time, startDate_Day,txt);
-
-
 
     }
     private void setEndDate(Date endDate_Day, Date endDate_Time,String txt){

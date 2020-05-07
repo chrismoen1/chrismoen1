@@ -34,6 +34,8 @@ public class LocationLogistics extends CreateGroup {
 
     private EditText minAge;
     private EditText maxAge;
+    private String[] arr_groupSize_name;
+    private int[] arr_groupSize;
 
     private Activity context;
 
@@ -58,35 +60,21 @@ public class LocationLogistics extends CreateGroup {
         ageCustom = fragment_groupLocation.findViewById(R.id.ageCustom);
 
         ageCustom.setVisibility(View.INVISIBLE);
-        String[] arr = {"3 People","4 People","5 People ","6 People", "7 People", "Enter a size"};
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,arr);
+        arr_groupSize_name = new String[]{"3 People", "4 People", "5 People ", "6 People", "7 People", "Enter a size"};
+        arr_groupSize = new int[]{3,4,5,6,7};
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,arr_groupSize_name);
         groupNumber.setAdapter(arrayAdapter);
 
-        initializeGroupSize();
+       // initializeGroupSize();
         //View fragment_groupLogistics = inflater.inflate(R.layout.fragment_group_logistics, scroll, true);
     }
 
-    private void initializeGroupSize() {
-        groupNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == MAXSPINNER){//aka the last value in the spinner
-                    //Then we display the edit text
-                   ageCustom.setVisibility(View.VISIBLE);
-                }
-                else{
-                    //Then we hide
-                    ageCustom.setVisibility(View.INVISIBLE);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
+    public Spinner getGroupSpinner(){return this.groupNumber; }
+    public int[] getArr_groupSize(){return this.arr_groupSize; }
+        public EditText getAgeCustom() {
+        return ageCustom;
     }
+    public String[] getArr(){return this.arr_groupSize_name;}
 
     public View getFragment_groupLocation_View(){
         return this.fragment_groupLocation;
@@ -148,6 +136,10 @@ public class LocationLogistics extends CreateGroup {
     }
     public EditText getAgeMax(){
         return maxAge;
+    }
+
+    public int getMaxSpinnerSize() {
+        return this.MAXSPINNER;
     }
 
 }
