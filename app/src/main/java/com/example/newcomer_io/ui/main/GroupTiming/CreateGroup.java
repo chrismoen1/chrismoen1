@@ -25,6 +25,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,10 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
         userData = (UserData) getApplicationContext();
 
+
+        groupLogistics = new GroupSettings(this);
+        locationLogistics = new LocationLogistics(this);
+
         if (userData.getEventCreate() == null){
 
             eventCreate = new EventCreate(this);
@@ -60,10 +65,6 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
             fillEventDetails(eventCreate);
 
         }
-
-        groupLogistics = new GroupSettings(this);
-        locationLogistics = new LocationLogistics(this);
-
         createTheGroup = locationLogistics.getFragment_groupLocation_View().findViewById(R.id.floatingActionButton);
 
         createTheGroup.setOnClickListener(new View.OnClickListener() {
@@ -90,43 +91,15 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         locationVal.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    //We also want to fill all of the values
+
+                    fillValues();
+
                     Intent intent = new Intent(v.getContext(), LocationType.class);
                     startActivity(intent);
-                }
-                return false;
-            }
-        });
-        final EditText eventNotes = locationLogistics.getEventNotes();
-        eventNotes.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    eventCreate.setEventNotes(eventNotes.getText().toString());
-                    return true;
-                }
-                return false;
-            }
-        });
 
-        final EditText ageMax = locationLogistics.getAgeMax();
-        final EditText ageMin = locationLogistics.getAgeMin();
-        ageMax.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    eventCreate.setAgeMax(ageMax.getText().toString());
-                    return true;
-                }
-                return false;
-            }
-        });
-        ageMin.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    eventCreate.setAgeMin(ageMin.getText().toString());
-                    return true;
                 }
                 return false;
             }
@@ -162,6 +135,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
                 }
                 else{
                     customAge.setVisibility(View.VISIBLE);
+
                 }
             }
 
@@ -171,17 +145,34 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
             }
         });
 
+    }
 
-        customAge.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    eventCreate.setGroupSize(Integer.valueOf(ageMin.getText().toString()));
-                    return true;
-                }
-                return false;
-            }
-        });
+    private void fillValues() {
+
+         EditText customAge = locationLogistics.getAgeCustom();
+         Spinner groupSpinner = locationLogistics.getGroupSpinner();
+         EditText ageMax = locationLogistics.getAgeMax();
+         EditText ageMin = locationLogistics.getAgeMin();
+         int MAXSPINNERSIZE = locationLogistics.getMaxSpinnerSize();
+
+        EditText locationVal = locationLogistics.getLocationVal();
+        EditText eventNotes = locationLogistics.getEventNotes();
+
+        if (ageMin.length() != 0){
+            eventCreate.setAgeMin(ageMin.getText().toString());
+        }
+        if (ageMax.length() != 0){
+            eventCreate.setAgeMax(ageMax.getText().toString());
+        }
+        if (eventNotes.length() != 0){
+            eventCreate.setEventNotes(eventNotes.getText().toString());
+        }
+        if (eventNotes.length() != 0){
+            eventCreate.setEventNotes(eventNotes.getText().toString());
+        }
+        if (groupSpinner.getId() == MAXSPINNERSIZE){
+            eventCreate.setGroupSize(MAXSPINNERSIZE);
+        }
 
     }
 
@@ -190,14 +181,32 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         String eventName = eventCreate.getEventName();
         String endTime_txt = eventCreate.getEndTime_txt();
         String startTime_txt = eventCreate.getStartTime_txt();
-        eventCreate.groupSize
+        int groupSize1 = eventCreate.getGroupSize();
+        String ageMin1 = eventCreate.getAgeMin();
+        String eventLocation = eventCreate.getLocationName();
+        String ageMax1 = eventCreate.getAgeMax();
 
         EditText eventNotes = locationLogistics.getEventNotes();
+        EditText locationName = locationLogistics.locationName();
         EditText ageMin = locationLogistics.getAgeMin();
         EditText ageMax = locationLogistics.getAgeMax();
-        Spinner groupSize = locationLogistics.getGroupSpinner();
         EditText ageCustom = locationLogistics.getAgeCustom();
+        ArrayAdapter<String> arrayAdapter = locationLogistics.getArrayAdapter();
 
+        Spinner spinner = locationLogistics.getGroupSpinner();
+        int spinnerId = locationLogistics.getSpinnerId(groupSize1);
+        int MAXSIZE = locationLogistics.getMaxSpinnerSize();
+
+        eventNotes.setText(EventNotes);
+        ageMin.setText(ageMin1);
+        locationName.setText(eventLocation);
+        ageMax.setText(ageMax1);
+
+        if (spinnerId == MAXSIZE){
+            //then we also update the age custom
+            ageCustom.setText(String.valueOf(groupSize1));
+        }
+        spinner.setSelection(spinnerId);
     }
 
     private void checkValidity() {

@@ -172,8 +172,9 @@ public class EventCreate {
     }
 
     public void setGroupSize(int sizeoMadeo) {
+        this.groupSize = sizeoMadeo;
     }
-
+    public int getGroupSize(){return this.groupSize;}
 
     public class EventDetails{
         private Bitmap displayPhoto;

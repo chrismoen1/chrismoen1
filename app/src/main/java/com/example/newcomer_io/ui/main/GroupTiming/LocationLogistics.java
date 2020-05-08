@@ -36,13 +36,13 @@ public class LocationLogistics extends CreateGroup {
     private EditText maxAge;
     private String[] arr_groupSize_name;
     private int[] arr_groupSize;
+    private ArrayAdapter<String> arrayAdapter;
 
     private Activity context;
 
     public LocationLogistics(Activity context){
         LinearLayout scroll = context.findViewById(R.id.layout);
         this.context = context;
-
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
@@ -62,13 +62,15 @@ public class LocationLogistics extends CreateGroup {
         ageCustom.setVisibility(View.INVISIBLE);
         arr_groupSize_name = new String[]{"3 People", "4 People", "5 People ", "6 People", "7 People", "Enter a size"};
         arr_groupSize = new int[]{3,4,5,6,7};
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,arr_groupSize_name);
+        arrayAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,arr_groupSize_name);
+
         groupNumber.setAdapter(arrayAdapter);
 
        // initializeGroupSize();
         //View fragment_groupLogistics = inflater.inflate(R.layout.fragment_group_logistics, scroll, true);
     }
 
+    public ArrayAdapter<String> getArrayAdapter(){return this.arrayAdapter; }
     public Spinner getGroupSpinner(){return this.groupNumber; }
     public int[] getArr_groupSize(){return this.arr_groupSize; }
         public EditText getAgeCustom() {
@@ -142,4 +144,12 @@ public class LocationLogistics extends CreateGroup {
         return this.MAXSPINNER;
     }
 
+    public int getSpinnerId(int groupSize1) {
+        for (int i =0 ; i < this.arr_groupSize.length;i++){
+            if (arr_groupSize[i] == groupSize1){
+                return i;
+            }
+        }
+        return MAXSPINNER;
+    }
 }
