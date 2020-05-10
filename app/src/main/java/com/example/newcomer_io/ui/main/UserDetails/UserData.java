@@ -70,7 +70,7 @@ public class UserData extends Application {
         //This method will push the firebase to the firebase server
         //pushTrendingContent
         //push individual user ID
-        mFunctions.getHttpsCallable("getGroupGuid")
+        mFunctions.getHttpsCallable("getGroupGUID")
                 .call().continueWith(new Continuation<HttpsCallableResult, String>() {
             @Override
             public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
