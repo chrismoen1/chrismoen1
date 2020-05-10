@@ -14,7 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.*;
+import com.example.newcomer_io.ui.main.LocationSettings.GroupConfirmation;
 import com.example.newcomer_io.ui.main.LocationSettings.LocationType;
+import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.google.android.gms.common.api.Status;
@@ -49,7 +51,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         setContentView(R.layout.activity_create_group);
 
         userData = (UserData) getApplicationContext();
-
+        userData.pushFireBaseUpdates();
 
         groupLogistics = new GroupSettings(this);
         locationLogistics = new LocationLogistics(this);
@@ -62,7 +64,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         }else{
 
             eventCreate = userData.getEventCreate();
-            fillEventDetails(eventCreate);
+            fillEventDetails(eventCreate,userData.getChosenContent());
 
         }
         createTheGroup = locationLogistics.getFragment_groupLocation_View().findViewById(R.id.floatingActionButton);
@@ -76,6 +78,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
         locationLogisticsListeners(locationLogistics);
 
+
         //scroll.addView(fragment_groupLogistics);
         // scroll.addView(fragment_groupLocation);
 
@@ -86,6 +89,18 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
     private void locationLogisticsListeners(LocationLogistics locationLogistics) {
 
+        FloatingActionButton floatingActionButton = locationLogistics.getFloatingActionButton();
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Then we go to the other page that displays the group paramaters\
+                userData.pushFireBaseUpdates();
+                Intent intent = new Intent(CreateGroup.this, GroupConfirmation.class);
+                startActivity(intent);
+
+            }
+        });
 
         EditText locationVal = locationLogistics.getLocationVal();
         locationVal.setOnTouchListener(new View.OnTouchListener() {
@@ -95,7 +110,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
                     //We also want to fill all of the values
 
-                    fillValues();
+                    setValues();
 
                     Intent intent = new Intent(v.getContext(), LocationType.class);
                     startActivity(intent);
@@ -147,16 +162,19 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
     }
 
-    private void fillValues() {
+    private void setValues() {
 
-         EditText customAge = locationLogistics.getAgeCustom();
-         Spinner groupSpinner = locationLogistics.getGroupSpinner();
-         EditText ageMax = locationLogistics.getAgeMax();
-         EditText ageMin = locationLogistics.getAgeMin();
-         int MAXSPINNERSIZE = locationLogistics.getMaxSpinnerSize();
-
+        EditText customAge = locationLogistics.getAgeCustom();
+        Spinner groupSpinner = locationLogistics.getGroupSpinner();
+        EditText ageMax = locationLogistics.getAgeMax();
+        EditText ageMin = locationLogistics.getAgeMin();
+        int MAXSPINNERSIZE = locationLogistics.getMaxSpinnerSize();
         EditText locationVal = locationLogistics.getLocationVal();
         EditText eventNotes = locationLogistics.getEventNotes();
+
+        EditText eventTitle = groupLogistics.getEventTitle();
+        Switch aSwitch = groupLogistics.getSwitch();
+
 
         if (ageMin.length() != 0){
             eventCreate.setAgeMin(ageMin.getText().toString());
@@ -173,18 +191,31 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         if (groupSpinner.getId() == MAXSPINNERSIZE){
             eventCreate.setGroupSize(MAXSPINNERSIZE);
         }
-
+        if (eventTitle.length() != 0) {
+            eventCreate.setEventName(eventTitle.getText().toString());
+        }
+        eventCreate.setSwitchParam(aSwitch.isChecked());
     }
 
-    private void fillEventDetails(EventCreate eventCreate) {
+    private void fillEventDetails(EventCreate eventCreate, TrendingContent chosenContent) {
         String EventNotes = eventCreate.getEventNotes();
         String eventName = eventCreate.getEventName();
         String endTime_txt = eventCreate.getEndTime_txt();
         String startTime_txt = eventCreate.getStartTime_txt();
         int groupSize1 = eventCreate.getGroupSize();
         String ageMin1 = eventCreate.getAgeMin();
-        String eventLocation = eventCreate.getLocationName();
+        String eventLocation = chosenContent.getPlaceName();
         String ageMax1 = eventCreate.getAgeMax();
+        boolean switchParam = eventCreate.getSwitchParam();
+
+        Date endTime1 = eventCreate.getEndTime();
+        Date endTime_day = eventCreate.getEndTime_Day();
+
+        Date startTime_day = eventCreate.getStartTime_Day();
+        Date startTime1 = eventCreate.getStartTime();
+
+
+        ///-------------------------Location Logistic Paramaters ---------------------------------------///
 
         EditText eventNotes = locationLogistics.getEventNotes();
         EditText locationName = locationLogistics.locationName();
@@ -192,6 +223,11 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         EditText ageMax = locationLogistics.getAgeMax();
         EditText ageCustom = locationLogistics.getAgeCustom();
         ArrayAdapter<String> arrayAdapter = locationLogistics.getArrayAdapter();
+
+        EditText eventTitle = groupLogistics.getEventTitle();
+        TextView endTime = groupLogistics.getEndTime();
+        TextView startTime = groupLogistics.getStartTime();
+        Switch aSwitch = groupLogistics.getSwitch();
 
         Spinner spinner = locationLogistics.getGroupSpinner();
         int spinnerId = locationLogistics.getSpinnerId(groupSize1);
@@ -201,12 +237,23 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         ageMin.setText(ageMin1);
         locationName.setText(eventLocation);
         ageMax.setText(ageMax1);
+        eventTitle.setText(eventName);
+
+        if (endTime_txt.equals("Click to set") == false){
+            endTime.setText(endTime_txt);
+        }
+        if (startTime_txt.equals("Click to set") == false){
+            startTime.setText(startTime_txt);
+        }
 
         if (spinnerId == MAXSIZE){
             //then we also update the age custom
             ageCustom.setText(String.valueOf(groupSize1));
         }
         spinner.setSelection(spinnerId);
+        aSwitch.setChecked(switchParam);
+
+
     }
 
     private void checkValidity() {

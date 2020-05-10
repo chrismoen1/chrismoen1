@@ -14,6 +14,7 @@ import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 public class LocationLogistics extends CreateGroup {
     private static final int MAXSPINNER = 5;
     private static final int RESULT_OK = 1 ;
+    private FloatingActionButton floatingActionButton;
     //This class holds all of the relevant information to the group location logistics information box
     private View fragment_groupLocation;
     int AUTOCOMPLETE_REQUEST_CODE = 1;
@@ -55,7 +57,7 @@ public class LocationLogistics extends CreateGroup {
         maxAge = fragment_groupLocation.findViewById(R.id.maxAge);
 
         groupNumber = fragment_groupLocation.findViewById(R.id.spinner);
-
+        floatingActionButton = fragment_groupLocation.findViewById(R.id.floatingActionButton);
         eventNotes = fragment_groupLocation.findViewById(R.id.editText2);
         ageCustom = fragment_groupLocation.findViewById(R.id.ageCustom);
 
@@ -151,5 +153,13 @@ public class LocationLogistics extends CreateGroup {
             }
         }
         return MAXSPINNER;
+    }
+
+    public FloatingActionButton getFloatingActionButton() {
+        return floatingActionButton;
+    }
+
+    public void setFloatingActionButton(FloatingActionButton floatingActionButton) {
+        this.floatingActionButton = floatingActionButton;
     }
 }

@@ -99,7 +99,7 @@
                 android:layout_weight="0"
                 android:ems="10"
                 android:gravity="center"
-                android:hint="Event Notes"
+                android:hint="Event Notes (eg Where to meet?)"
                 android:inputType="textPersonName" />
         </LinearLayout>
 

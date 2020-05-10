@@ -37,6 +37,7 @@ public class GroupSettings{
 
     LinearLayout startTime_Horizontal;
     LinearLayout endTime_Horizontal;
+
     public GroupSettings(Activity context){
 
         mMainActivity = context;
@@ -89,6 +90,13 @@ public class GroupSettings{
 
             }
         });
+    }
+
+    public TextView getStartTime(){
+        return this.startTime;
+    }
+    public TextView getEndTime(){
+        return this.endTime;
     }
 
     private void setEndClick() {

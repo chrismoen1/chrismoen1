@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.newcomer_io.R;
+import com.google.firebase.functions.FirebaseFunctions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class EventCreate {
     private int postNumber;
     private int userNumber;
     private int groupSize;
+    private boolean switchParam;
 
     private ArrayList<Posts> postsArrayList;
     private ArrayList<JoinedUsers> joinedUsersArrayList;
@@ -46,6 +48,8 @@ public class EventCreate {
     private String eventNotes;
     private String locationName;
     private Bitmap photo;
+    private String GUID;
+    private FirebaseFunctions mFunctions;
 
     public EventCreate(Activity activity){
 
@@ -54,6 +58,10 @@ public class EventCreate {
         this.postNumber = 0;
         this.userNumber = 0;
         this.joinedUsersArrayList = new ArrayList<JoinedUsers>();
+        this.endTime_txt = "Click to set"; 
+        this.startTime_txt = "Click to set";
+        mFunctions = FirebaseFunctions.getInstance();
+
 //        public EventDetails(Activity activity_group, String eventName, String eventNotes, String locationName, Date startTime, Date endTime, Bitmap displayPhoto){
     }
     public void setPhoto(Bitmap photo){
@@ -72,6 +80,7 @@ public class EventCreate {
         Posts posts = new Posts(this.activity, personName, postText,  scrollLayout_Tab1, postNumber);
         posts.setPostText(postText);
         postsArrayList.add(posts);
+        //postsArrayList.add(posts);
         //we also want to add it to the view
 
     }
@@ -95,6 +104,8 @@ public class EventCreate {
     public String getEventName() {
         return this.eventName;
     }
+    public void setSwitchParam(boolean switchVal){this.switchParam = switchVal;}
+    public boolean getSwitchParam(){return this.switchParam; }
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
