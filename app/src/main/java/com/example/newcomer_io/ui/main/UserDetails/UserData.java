@@ -74,7 +74,7 @@ public class UserData extends Application {
                 .call().continueWith(new Continuation<HttpsCallableResult, String>() {
             @Override
             public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                String result = (String) task.getResult().getData();
+                String result = (String) task.getResult().getData(); 
                 return null;
             }
         });
