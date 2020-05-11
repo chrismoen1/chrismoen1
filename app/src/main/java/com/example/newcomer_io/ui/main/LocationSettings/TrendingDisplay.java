@@ -157,45 +157,47 @@ public class TrendingDisplay extends AppCompatActivity {
     private void displayTrendingContent(final ArrayList<TrendingContent> trendingContentArray, final ArrayList<ContentNode> viewList){
 
         //scrollView.removeAllViews();
-        for (int i = 0; i < trendingContentArray.size();i++){
-            //First get all of the data associarted with this indx
-            TrendingContent trendingContent = trendingContentArray.get(i);
-            String photoReference = trendingContent.getPhotoReference();
-            String placeName = trendingContent.getPlaceName();
-            float rating = trendingContent.getRating();
+        if (trendingContentArray.size() != 0) {
+            for (int i = 0; i < trendingContentArray.size(); i++) {
+                //First get all of the data associarted with this indx
+                TrendingContent trendingContent = trendingContentArray.get(i);
+                String photoReference = trendingContent.getPhotoReference();
+                String placeName = trendingContent.getPlaceName();
+                float rating = trendingContent.getRating();
 
-            ContentNode contentNode = new ContentNode(rating,placeName,i);
-            //We want to insert the image
+                ContentNode contentNode = new ContentNode(rating, placeName, i);
+                //We want to insert the image
 
-            getPhotoRequest(photoReference,contentNode, trendingContent); //call the photo reference API
-            View content_view = contentNode.getView();
-            trendingContent.setContentView(content_view);
+                getPhotoRequest(photoReference, contentNode, trendingContent); //call the photo reference API
+                View content_view = contentNode.getView();
+                trendingContent.setContentView(content_view);
 
-            //Now we want to insert additional paramaters
+                //Now we want to insert additional paramaters
 
-            scrollView.addView(content_view);
-            final ConstraintLayout constraintView = contentNode.getConstraintView();
-            constraintView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                scrollView.addView(content_view);
+                final ConstraintLayout constraintView = contentNode.getConstraintView();
+                constraintView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                    //Then we will show that the indiviaul icon has a border around it
-                    constraintView.setBackground(getResources().getDrawable(R.drawable.border_card));
-                    //we need to get the content node based on the user's click so that we can unclick the other nodes
-                    int id = constraintView.getId();
-                    uncheckOtherIds(id, viewList); //Uncheck the other IDs that aren't relevant to the ONE WE JUSET CLICKECD
-                    //Here is where we go tot he next place
-                    //Based ont eh ID, then we have the chosen location to be used for the user's event
-                    TrendingContent trendingContent1 = getTrendingContent(trendingContentArray, id);
+                        //Then we will show that the indiviaul icon has a border around it
+                        constraintView.setBackground(getResources().getDrawable(R.drawable.border_card));
+                        //we need to get the content node based on the user's click so that we can unclick the other nodes
+                        int id = constraintView.getId();
+                        uncheckOtherIds(id, viewList); //Uncheck the other IDs that aren't relevant to the ONE WE JUSET CLICKECD
+                        //Here is where we go tot he next place
+                        //Based ont eh ID, then we have the chosen location to be used for the user's event
+                        TrendingContent trendingContent1 = getTrendingContent(trendingContentArray, id);
 
-                    userData.setChosenLocation(trendingContent1);
-                    Intent intent = new Intent(TrendingDisplay.this, CreateGroup.class);
-                    startActivity(intent);
-                    //chooseLocation.color
+                        userData.setChosenLocation(trendingContent1);
+                        Intent intent = new Intent(TrendingDisplay.this, CreateGroup.class);
+                        startActivity(intent);
+                        //chooseLocation.color
 
-                }
-            });
-            viewList.add(contentNode);
+                    }
+                });
+                viewList.add(contentNode);
+            }
         }
     }
 
@@ -306,7 +308,6 @@ public class TrendingDisplay extends AppCompatActivity {
                                         LatLng place_location = new LatLng(lat,lon);
                                         Location userLocation = userData.getLocation();
                                         TrendingContent trendingContent = new TrendingContent(place_location, name, priceLev, rating, photo_reference, isOpen);
-
 
                                         trendingContent.setDistanceBetweenLocation(place_location,new LatLng(userLocation.getLatitude(),userLocation.getLongitude()),getApplicationContext());
                                         trendingContentArray.add(trendingContent);

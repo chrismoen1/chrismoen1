@@ -2,6 +2,7 @@ package com.example.newcomer_io.ui.main.EventDetails;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.cardview.widget.CardView;
@@ -14,6 +15,7 @@ import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -69,20 +71,37 @@ public class tab1 extends Fragment {
         View inflate = inflater.inflate(R.layout.fragment_tab1, container, false);
         LinearLayout scrollView = inflate.findViewById(R.id.scrollLayout); //This represents the scroll for all of the posts
 
+        ArrayList<EventCreate.Posts> postsArrayList = eventCreate.getPostsArrayList();
+
+        Button addPost = new Button(inflater.getContext());
+        addPost.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        if (postsArrayList.size() != 0){
+            //then it is not empty and we can add the posts in
+            scrollView.addView(addPost);
+        }
+        else{
+            //Then we display the people of have added a post in
+          for (int i =0 ; i < postsArrayList.size();i++){
+
+                View trending_content = inflater.inflate(R.layout.user_row, null);
+                ConstraintLayout cardr = trending_content.findViewById(R.id.constraintLayout);
+                cardr.setId(i);
+                trending_content.setId(i);
+
+                scrollView.addView(trending_content);
+                //Set the paramaters of the post
+                postsArrayList.get(i).setPostParams(trending_content);
+        }
+          scrollView.addView(addPost);
+
+    }
 
 
-       /* for (int i =0 ; i < 3;i++){
-            View trending_content = inflater.inflate(R.layout.user_row, null);
-            ConstraintLayout cardr = trending_content.findViewById(R.id.constraintLayout);
-            cardr.setId(i);
-            trending_content.setId(i);
 
-            scrollView.addView(trending_content);
 
-        }*/
-
-        eventCreate.addPost("John Dobalina","You mama is so fat, that one day she went to the store to go to the store", scrollView);
-        eventCreate.addPost("Joe Smoe", "Hi guys!!!!", scrollView);
+        //eventCreate.addPost("John Dobalina","You mama is so fat, that one day she went to the store to go to the store", scrollView);
+        //eventCreate.addPost("Joe Smoe", "Hi guys!!!!", scrollView);
 
         return inflate;
     }

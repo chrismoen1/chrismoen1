@@ -29,9 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnClickTimeSet, CalendarDialogFragment.OnClickDate, TimePickerFragment.OnInputListener{
 
@@ -51,7 +49,6 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         setContentView(R.layout.activity_create_group);
 
         userData = (UserData) getApplicationContext();
-        userData.pushFireBaseUpdates();
 
         groupLogistics = new GroupSettings(this);
         locationLogistics = new LocationLogistics(this);
@@ -62,7 +59,6 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
             userData.setEventCreate(eventCreate);
 
         }else{
-
             eventCreate = userData.getEventCreate();
             fillEventDetails(eventCreate,userData.getChosenContent());
 
@@ -72,46 +68,29 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         createTheGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkValidity(); //we need to check the validity of the paramaters that the user has entered before going to the next
+                boolean b = checkValidity();//we need to check the validity of the paramaters that the user has entered before going to the next
+                if (!b){
+                    Intent intent = new Intent(CreateGroup.this, GroupConfirmation.class);
+                    setValues();
+                    userData.pushGroupCreationUpdates();
+                    startActivity(intent);
+                }
             }
         });
 
         locationLogisticsListeners(locationLogistics);
 
-
-        //scroll.addView(fragment_groupLogistics);
-        // scroll.addView(fragment_groupLocation);
-
-        //Now we create the group in th is class
-        //createLocationLogisticsFrag();
-        //createGroupLogisticsFrag();t
     }
 
     private void locationLogisticsListeners(LocationLogistics locationLogistics) {
-
-        FloatingActionButton floatingActionButton = locationLogistics.getFloatingActionButton();
-
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Then we go to the other page that displays the group paramaters\
-                userData.pushFireBaseUpdates();
-                Intent intent = new Intent(CreateGroup.this, GroupConfirmation.class);
-                startActivity(intent);
-
-            }
-        });
 
         EditText locationVal = locationLogistics.getLocationVal();
         locationVal.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
                     //We also want to fill all of the values
-
                     setValues();
-
                     Intent intent = new Intent(v.getContext(), LocationType.class);
                     startActivity(intent);
 
@@ -120,23 +99,10 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
             }
         });
 
+
         final Spinner groupSpinner = locationLogistics.getGroupSpinner();
         final int MAXSPINNERSIZE = locationLogistics.getMaxSpinnerSize();
         final int[] arr_GroupSize = locationLogistics.getArr_groupSize();
-        /*
-        if (position != MAXSPINNERSIZE){
-                                int sizeoMadeo = arr_GroupSize[position];
-                                eventCreate.setGroupSize(sizeoMadeo);
-                            }
-   if (position == MAXSPINNER){//aka the last value in the spinner
-                    //Then we display the edit text
-                   ageCustom.setVisibility(View.VISIBLE);
-                }
-                else{
-                    //Then we hide
-                    ageCustom.setVisibility(View.INVISIBLE);
-                }
-         */
         final EditText customAge = locationLogistics.getAgeCustom();
         groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -159,6 +125,12 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
             }
         });
+        customAge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventCreate.setGroupSize(Integer.parseInt(customAge.getText().toString()));
+            }
+        });
 
     }
 
@@ -171,10 +143,9 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         int MAXSPINNERSIZE = locationLogistics.getMaxSpinnerSize();
         EditText locationVal = locationLogistics.getLocationVal();
         EditText eventNotes = locationLogistics.getEventNotes();
-
+        EditText locationName = locationLogistics.locationName();
         EditText eventTitle = groupLogistics.getEventTitle();
         Switch aSwitch = groupLogistics.getSwitch();
-
 
         if (ageMin.length() != 0){
             eventCreate.setAgeMin(ageMin.getText().toString());
@@ -189,11 +160,15 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
             eventCreate.setEventNotes(eventNotes.getText().toString());
         }
         if (groupSpinner.getId() == MAXSPINNERSIZE){
-            eventCreate.setGroupSize(MAXSPINNERSIZE);
+            eventCreate.setGroupSize(Integer.parseInt(customAge.getText().toString()));
         }
         if (eventTitle.length() != 0) {
             eventCreate.setEventName(eventTitle.getText().toString());
         }
+        if (locationName.length() != 0){
+            eventCreate.setLocationName(locationName.getText().toString());
+        }
+
         eventCreate.setSwitchParam(aSwitch.isChecked());
     }
 
@@ -204,16 +179,21 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         String startTime_txt = eventCreate.getStartTime_txt();
         int groupSize1 = eventCreate.getGroupSize();
         String ageMin1 = eventCreate.getAgeMin();
-        String eventLocation = chosenContent.getPlaceName();
+
         String ageMax1 = eventCreate.getAgeMax();
         boolean switchParam = eventCreate.getSwitchParam();
 
         Date endTime1 = eventCreate.getEndTime();
         Date endTime_day = eventCreate.getEndTime_Day();
+        endDate = endTime_day;
+        groupLogistics.setEndDate_Day(endTime_day);
+        groupLogistics.setEndDate_Time(endTime1);
 
         Date startTime_day = eventCreate.getStartTime_Day();
         Date startTime1 = eventCreate.getStartTime();
-
+        startDate = startTime_day;
+        groupLogistics.setstartDate_Day(startTime_day);
+        groupLogistics.setStartDate_Time(startTime1);
 
         ///-------------------------Location Logistic Paramaters ---------------------------------------///
 
@@ -233,9 +213,12 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         int spinnerId = locationLogistics.getSpinnerId(groupSize1);
         int MAXSIZE = locationLogistics.getMaxSpinnerSize();
 
+        if (chosenContent != null){
+            String eventLocation = chosenContent.getPlaceName();
+            locationName.setText(eventLocation);
+        }
         eventNotes.setText(EventNotes);
         ageMin.setText(ageMin1);
-        locationName.setText(eventLocation);
         ageMax.setText(ageMax1);
         eventTitle.setText(eventName);
 
@@ -256,11 +239,12 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
     }
 
-    private void checkValidity() {
-
+    private boolean checkValidity() {
+        boolean returnFlag = false;
         if (startDate == null || endDate == null){
             //then we display the error message
             errorDialogBox("Invalid Timing", "Please select valid start and end times");
+            returnFlag = true;
         }
         //With the remaining, ltee' sjust set error hint s
         EditText getLocation;
@@ -276,6 +260,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         int maximumAge = 0;
         if (minAge.getText().toString().length() != 0){
             minimumAge = Integer.parseInt(minAge.getText().toString());
+
         }
         if (maxAge.getText().toString().length() != 0){
             maximumAge = Integer.parseInt((maxAge.getText().toString()));
@@ -288,46 +273,32 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
             minAge.setText("");
             maxAge.setText("");
             minAge.requestFocus();
+            returnFlag = true;
 
         }
 
         //Set the paramaters to hte length of the appropriate values for hte length if it is zero than we want ot
         if (minAge.getText().toString().length() == 0){
             minAge.setError("Please enter a minimum age");
+            returnFlag = true;
+
         }
          if (maxAge.getText().toString().length() == 0) {
              maxAge.setError("Please enter a maximum age");
+             returnFlag = true;
+
          }
 
         if (title.getText().toString().length() == 0) {
             title.setError("Please enter an event title");
-
+            returnFlag = true;
         }
-            if (getLocation.getText().toString().trim().length() == 0) {
+        if (getLocation.getText().toString().trim().length() == 0) {
                 getLocation.setError("Please enter a location");
+                returnFlag = true;
         }
+        return returnFlag;
     }
-
-
- /*   private void createLocationLogisticsFrag(){
-        NestedScrollView scroll = findViewById(R.id.nestedScrollView);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        Fragment locationLogistics = new LocationLogistics();
-        fragmentTransaction.add(scroll.getId(),locationLogistics,"Location Logistics Fragment");
-        fragmentTransaction.commit();
-    }*/
-/*    private void createGroupLogisticsFrag() {
-        LinearLayout scroll = findViewById(R.id.linearLayout);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        Fragment groupLogistics = new GroupLogistics();
-        fragmentTransaction.add(scroll.getId(),groupLogistics,"Group Logistics Fragment");
-        fragmentTransaction.commit();
-
-    }*/
 
     @Override
     public void sendButtonClick_startTime() {
@@ -375,12 +346,15 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         //Display the time picker dialog fragment
         if (type.equals(STARTTIME) == true){
             //Then we set the start time\
-            startDate = new Date(year,month,dayOfMonth);
+            Calendar myCalendar = new GregorianCalendar(year, month, dayOfMonth);
+            startDate = myCalendar.getTime();
             displayTimeDialogFragment(STARTTIME);
 
         }
         else{
-            endDate = new Date(year,month,dayOfMonth);
+            Calendar myCalendar = new GregorianCalendar(year, month, dayOfMonth);
+            endDate = myCalendar.getTime();
+
             displayTimeDialogFragment(ENDTIME);
         }
 

@@ -14,16 +14,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.main.LocationSettings.GroupConfirmation">
-        </activity>
-        <activity android:name=".ui.main.LocationSettings.TrendingDisplay" />
-        <activity android:name=".ui.main.LocationSettings.LocationType" />
-        <activity android:name=".ui.main.GroupTiming.CreateGroup" />
-        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".ui.main.LocationSettings.TrendingDisplay" />
+        <activity android:name=".ui.main.LocationSettings.LocationType" />
+        <activity android:name=".ui.main.GroupTiming.CreateGroup" />
+        <activity android:name=".MainActivity">
+
         </activity>
 
         <meta-data

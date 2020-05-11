@@ -57,7 +57,7 @@ public class GroupSettings{
         endTime.setText("Click to set");
 
         time_dallDay = fragment_groupLogistics.findViewById(R.id.switchf);
-        time_dallDay.setChecked(false);
+        time_dallDay.setChecked(true);
 
         display = fragment_groupLogistics.findViewById(R.id.textView);
         display.setText("All Day");

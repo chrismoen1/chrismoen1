@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class GroupConfirmation extends AppCompatActivity {
+public class GroupConfirmation extends AppCompatActivity implements UserData.OnGroupUpdate {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private TabItem tab1, tab2,tab3;
@@ -33,12 +33,11 @@ public class GroupConfirmation extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_confirmation);
-
         //EventCreate eventCreate = new EventCreate("The attack of the titans");
 
         UserData userData = (UserData) getApplicationContext();
-        TrendingContent chosenContent = userData.getChosenContent();
-        
+        userData.updateEventContent();
+
         tabLayout = findViewById(R.id.tabLayout);
 
         tabLayout = findViewById(R.id.tabLayout);
@@ -46,14 +45,12 @@ public class GroupConfirmation extends AppCompatActivity {
         tab2 = (TabItem) findViewById(R.id.tab2);
         viewPager = findViewById(R.id.viewPager);
 
-
         Date startTime = new Date(120,11, 12);
         Date endTime = new Date(120,11, 13);
 
         //Thje event create holds all of the detail regarding comments, like posts, event details event Details
-        String placeName = chosenContent.getPlaceName();
-        Bitmap photo = chosenContent.getPhoto();
-
+        //String placeName = chosenContent.getPlaceName();
+        //Bitmap photo = chosenContent.getPhoto();
 
         pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount(),eventCreate);
         viewPager.setAdapter(pageAdapter);
@@ -87,4 +84,8 @@ public class GroupConfirmation extends AppCompatActivity {
     }
 
 
+    @Override
+    public void sendGroupUpdate(String eventName) {
+
+    }
 }

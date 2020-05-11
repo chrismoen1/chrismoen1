@@ -3,19 +3,28 @@ package com.example.newcomer_io.ui.main.UserDetails;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.newcomer_io.R;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
+import com.google.gson.JsonObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOError;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 public class EventCreate {
     //This class summarizes the event that has been created in terms of its details regarding the name of the place, the location time, the location place, the people that have made a post
@@ -50,6 +59,7 @@ public class EventCreate {
     private Bitmap photo;
     private String GUID;
     private FirebaseFunctions mFunctions;
+    private DatabaseReference mDatabase;
 
     public EventCreate(Activity activity){
 
@@ -61,7 +71,9 @@ public class EventCreate {
         this.endTime_txt = "Click to set"; 
         this.startTime_txt = "Click to set";
         mFunctions = FirebaseFunctions.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        setStringGUID();
 //        public EventDetails(Activity activity_group, String eventName, String eventNotes, String locationName, Date startTime, Date endTime, Bitmap displayPhoto){
     }
     public void setPhoto(Bitmap photo){
@@ -74,7 +86,6 @@ public class EventCreate {
 
     public void setEventNotes(String eventNotes){this.eventNotes = eventNotes;}
 
-
     public void addPost(String personName, String postText, LinearLayout scrollLayout_Tab1){
         this.postNumber += 1;
         Posts posts = new Posts(this.activity, personName, postText,  scrollLayout_Tab1, postNumber);
@@ -84,6 +95,7 @@ public class EventCreate {
         //we also want to add it to the view
 
     }
+    public ArrayList<Posts> getPostsArrayList(){return this.postsArrayList; }
 
     public int getPostNumber(){
         return this.postNumber;
@@ -133,7 +145,21 @@ public class EventCreate {
         this.endTime_Day = endTime_Day;
         this.endTime_txt = txt;
     }
+    public void setStringGUID(){
+            //This method will push the firebase to the firebase server
+            //pushTrendingContent
+            //push individual user ID
+            mFunctions.getHttpsCallable("getGroupGUID")
+                    .call().continueWith(new Continuation<HttpsCallableResult, String>() {
+                @Override
+                public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                    String data = (String) task.getResult().getData();
+                    setGUID(data);
+                    return data;
+                }
+            });
 
+    }
     public String getLocationName() {
         return locationName;
     }
@@ -187,6 +213,14 @@ public class EventCreate {
     }
     public int getGroupSize(){return this.groupSize;}
 
+    public String getGUID() {
+        return GUID;
+    }
+
+    public void setGUID(String GUID) {
+        this.GUID = GUID;
+    }
+
     public class EventDetails{
         private Bitmap displayPhoto;
         private TextView displayTitle;
@@ -197,7 +231,6 @@ public class EventCreate {
         private String locationName;
         private Date startTime;
         private Date endTime;
-
 
         public EventDetails(Activity activity_group, String eventName, String eventNotes, String locationName, Date startTime, Date endTime, Bitmap displayPhoto){
 
@@ -396,6 +429,11 @@ public class EventCreate {
 
         public int getComments() {
             return comments;
+        }
+
+        public void setPostParams(View trending_content) {
+
+
         }
     }
     public class JoinedUsers{

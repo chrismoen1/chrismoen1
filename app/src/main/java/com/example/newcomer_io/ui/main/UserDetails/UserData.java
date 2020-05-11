@@ -3,17 +3,22 @@ package com.example.newcomer_io.ui.main.UserDetails;
 import android.app.Application;
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 import androidx.annotation.NonNull;
+import com.example.newcomer_io.ui.main.LocationSettings.GroupConfirmation;
 import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.io.IOError;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class UserData extends Application {
     private Location location;
@@ -22,15 +27,17 @@ public class UserData extends Application {
     private TrendingContent chosenContent;
     private EventCreate eventCreate;
 
-    private FirebaseDatabase database;
+
+    private DatabaseReference mDatabase;
     private FirebaseFunctions mFunctions;
+
     public void setLocation(Location location){
         this.location = location;
+
     }
 
     @Override
     public void onCreate(){
-        database = FirebaseDatabase.getInstance();
         mFunctions = FirebaseFunctions.getInstance();
 
         super.onCreate();
@@ -51,34 +58,131 @@ public class UserData extends Application {
     public Location getLocation() {
         return location;
     }
-
     public void setChosenLocation(TrendingContent chosenContent) {
         this.chosenContent = chosenContent;
     }
     public TrendingContent getChosenContent(){
         return this.chosenContent;
     }
+    public void updateEventContent(){
+            //Then we try calling the data base
+        String guid = this.eventCreate.getGUID();
 
+        mDatabase.child("Groups/" + guid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Load all of the data related to the trending content
+                String fa = "";
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
     public void setEventCreate(EventCreate eventCreate) {
         this.eventCreate = eventCreate;
     }
     public EventCreate getEventCreate(){
         return this.eventCreate;
     }
+    public void pushGroupCreationUpdates() {
+        //This function will push all of the updates to hte database
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        JSONObject eventDetails = new JSONObject();
+        JSONObject userKey = new JSONObject();
+        //Created these two json objects to hold ll of the values regarding the JSON data that will be inputtec into the database
+        JSONObject locationObject = new JSONObject();
+        JSONObject timing = new JSONObject();
+        JSONObject ageRange = new JSONObject();
 
-    public void pushFireBaseUpdates() {
-        //This method will push the firebase to the firebase server
-        //pushTrendingContent
-        //push individual user ID
-        mFunctions.getHttpsCallable("getGroupGUID")
-                .call().continueWith(new Continuation<HttpsCallableResult, String>() {
-            @Override
-            public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                String result = (String) task.getResult().getData(); 
-                return null;
+        try{
+            userKey.put("Event Name", eventCreate.getEventName());
+            userKey.put("Group Size", eventCreate.getGroupSize());
+
+            //---------------------------------Location Paramaters------------------------------------//
+            locationObject.put("Lattitude",chosenContent.getLocation().latitude);
+            locationObject.put("Longitude", chosenContent.getLocation().longitude);
+            locationObject.put("Name", eventCreate.getLocationName());
+
+            //---------------------------------Date Paramaters----------------------------------------//
+            SimpleDateFormat simpleDateFormat_Days = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat simpleDateFormat_Time = new SimpleDateFormat( "HH:mm");
+            String format_Days_StartTime = simpleDateFormat_Days.format(eventCreate.getStartTime_Day());
+
+            String format_Time_StartTime = simpleDateFormat_Time.format(eventCreate.getStartTime());
+
+            String format_Days_EndTime = simpleDateFormat_Days.format(eventCreate.getEndTime_Day());
+            String format_Time_EndTime = simpleDateFormat_Time.format(eventCreate.getEndTime());
+            timing.put("Start Time",format_Days_StartTime + " " + format_Time_StartTime);
+            timing.put("End Time", format_Days_EndTime + " " + format_Time_EndTime);
+
+            //---------------------------------Location Paramaters------------------------------------//
+            ageRange.put("Min Age", eventCreate.getAgeMin());
+            ageRange.put("Max Age", eventCreate.getAgeMax());
+            userKey.put("Age Range", ageRange);
+            userKey.put("Timing", timing);
+            userKey.put("Location", locationObject);
+
+            eventDetails.put(eventCreate.getGUID(), userKey);
+        }catch(IOError | JSONException e){
+            Log.d("JSONCreateGroupFailure", "Unable to create the JSON structure");
+        }
+        try {
+            mDatabase.child("Groups").updateChildren(jsonToMap(eventDetails));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public static Map<String, Object> jsonToMap(JSONObject json) throws JSONException {
+        Map<String, Object> retMap = new HashMap<String, Object>();
+
+        if(json != JSONObject.NULL) {
+            retMap = toMap(json);
+        }
+        return retMap;
+    }
+
+    public static Map<String, Object> toMap(JSONObject object) throws JSONException {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        Iterator<String> keysItr = object.keys();
+        while(keysItr.hasNext()) {
+            String key = keysItr.next();
+            Object value = object.get(key);
+
+            if(value instanceof JSONArray) {
+                value = toList((JSONArray) value);
             }
-        });
 
+            else if(value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    public static List<Object> toList(JSONArray array) throws JSONException {
+        List<Object> list = new ArrayList<Object>();
+        for(int i = 0; i < array.length(); i++) {
+            Object value = array.get(i);
+            if(value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            }
+
+            else if(value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            list.add(value);
+        }
+        return list;
+    }
+    public interface OnGroupUpdate {
+        //This function represents the ongroup update that occurs after the firebase database is updated
+         void sendGroupUpdate(String eventName);
     }
 
 }

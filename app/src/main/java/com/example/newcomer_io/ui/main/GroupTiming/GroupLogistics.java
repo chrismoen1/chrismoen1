@@ -49,9 +49,7 @@ public class GroupLogistics extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         mListener = (OnClickTimeSet) getActivity();
-
     }
 
     @Override
@@ -70,7 +68,6 @@ public class GroupLogistics extends Fragment {
         endTime.setText("Click to set");
 
 
-        android.widget.Switch fa = inflate.findViewById(R.id.switchf);
         textDetails = new Switch(inflate);
 
         constraintLayout = inflate.findViewById(R.id.frameLayout);
