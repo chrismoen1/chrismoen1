@@ -4,17 +4,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.*;
-import com.example.newcomer_io.ui.main.LocationSettings.GroupConfirmation;
+import com.example.newcomer_io.ui.main.EventDetails.GroupConfirmation;
 import com.example.newcomer_io.ui.main.LocationSettings.LocationType;
 import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
@@ -27,7 +25,6 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.*;
 

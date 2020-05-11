@@ -25,10 +25,7 @@ public class TrendingContent {
     private String API_KEY = "AIzaSyAjGcF4XC-OEVJHKPmPefDUxGjxiSCbFK8";
     private Response.Listener<ImageRequest> context;
     private String pageToken;
-
-
     private Bitmap photo;
-    private LatLng currLocation;
 
     public TrendingContent(LatLng location, String placeName, int priceLevel, float rating, String photoReference, boolean isOpen) {
         this.location = location;

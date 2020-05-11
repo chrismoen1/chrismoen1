@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.newcomer_io.R;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +44,7 @@ public class EventCreate {
     private String ageMin;
     private String ageMax;
 
-    private Location location;
+    private LatLng eventlocation;
 
     private int postNumber;
     private int userNumber;
@@ -219,6 +220,14 @@ public class EventCreate {
 
     public void setGUID(String GUID) {
         this.GUID = GUID;
+    }
+
+    public LatLng getEventlocation() {
+        return eventlocation;
+    }
+
+    public void setEventlocation(LatLng eventlocation) {
+        this.eventlocation = eventlocation;
     }
 
     public class EventDetails{

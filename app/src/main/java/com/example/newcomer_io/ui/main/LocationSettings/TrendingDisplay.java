@@ -160,7 +160,7 @@ public class TrendingDisplay extends AppCompatActivity {
         if (trendingContentArray.size() != 0) {
             for (int i = 0; i < trendingContentArray.size(); i++) {
                 //First get all of the data associarted with this indx
-                TrendingContent trendingContent = trendingContentArray.get(i);
+                final TrendingContent trendingContent = trendingContentArray.get(i);
                 String photoReference = trendingContent.getPhotoReference();
                 String placeName = trendingContent.getPlaceName();
                 float rating = trendingContent.getRating();
@@ -189,7 +189,10 @@ public class TrendingDisplay extends AppCompatActivity {
                         //Based ont eh ID, then we have the chosen location to be used for the user's event
                         TrendingContent trendingContent1 = getTrendingContent(trendingContentArray, id);
 
-                        userData.setChosenLocation(trendingContent1);
+
+                        userData.getEventCreate().setLocationName(trendingContent1.getPlaceName());
+                        userData.getEventCreate().setPhoto(trendingContent1.getPhoto());
+                        userData.getEventCreate().setEventlocation(trendingContent1.getLocation());
                         Intent intent = new Intent(TrendingDisplay.this, CreateGroup.class);
                         startActivity(intent);
                         //chooseLocation.color

@@ -1,23 +1,17 @@
-package com.example.newcomer_io.ui.main.LocationSettings;
+package com.example.newcomer_io.ui.main.EventDetails;
 
-import android.graphics.Bitmap;
-import android.util.EventLog;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.SimpleExpandableListAdapter;
-import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.viewpager.widget.ViewPager;
-import com.example.newcomer_io.ui.main.EventDetails.PageAdapter;
 import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class GroupConfirmation extends AppCompatActivity implements UserData.OnGroupUpdate {
@@ -28,15 +22,18 @@ public class GroupConfirmation extends AppCompatActivity implements UserData.OnG
     private EventCreate eventCreate;
     private PageAdapter pageAdapter;
     private ImageView displayPhoto; 
-    
+    private UserData userData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_confirmation);
         //EventCreate eventCreate = new EventCreate("The attack of the titans");
 
-        UserData userData = (UserData) getApplicationContext();
-        userData.updateEventContent();
+        EventCreate eventCreate = new EventCreate(this);
+        userData = (UserData) getApplicationContext();
+        userData.setEventCreate(eventCreate);
+        userData.updateEventContent(this);
 
         tabLayout = findViewById(R.id.tabLayout);
 
@@ -83,9 +80,16 @@ public class GroupConfirmation extends AppCompatActivity implements UserData.OnG
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 
-
     @Override
-    public void sendGroupUpdate(String eventName) {
+    public void sendGroupUpdate(int maxAge, int minAge, String event_name, LatLng latLng, String location_name, int groupSize, Date startTime_Days_DT, Date startTime_Time_DT, Date endTime_date, Date startTime_date, String eventNotes) {
+        EventCreate eventCreate = userData.getEventCreate();
+        eventCreate.setEventName(event_name);
+        eventCreate.setAgeMax(String.valueOf(maxAge));
+        eventCreate.setAgeMin(String.valueOf(minAge));
+        eventCreate.setLocationName(location_name);
+        eventCreate.setEventlocation(latLng);
+        eventCreate.setGroupSize(groupSize);
+
 
     }
 }
