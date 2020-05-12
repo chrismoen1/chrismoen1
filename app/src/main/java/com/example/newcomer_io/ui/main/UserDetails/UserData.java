@@ -82,7 +82,7 @@ public class UserData extends Application {
 
                 double lattitude = Double.parseDouble(dataSnapshot.child("Location").child("Lattitude").getValue().toString());
                 double longitude = Double.parseDouble(dataSnapshot.child("Location").child("Longitude").getValue().toString());
-                String location_name = dataSnapshot.child("Location").child("Longitude").getValue().toString();
+                String location_name = dataSnapshot.child("Location").child("Name").getValue().toString();
 
                 int groupSize = Integer.parseInt(dataSnapshot.child("Group Size").getValue().toString());
 
@@ -97,8 +97,9 @@ public class UserData extends Application {
                 String startTime_Days = s1[0];
                 String startTime_Time = s1[1];
 
-                SimpleDateFormat simpleDateFormat_Days = new SimpleDateFormat("E, MMMM dd ");
-                SimpleDateFormat simpleDateFormat_Time = new SimpleDateFormat("hh:mm a");
+                SimpleDateFormat simpleDateFormat_Days = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat simpleDateFormat_Time = new SimpleDateFormat( "HH:mm");
+
 
                 Date endTime_Days_DT = null;
                 Date endTime_Time_DT = null;
@@ -115,9 +116,23 @@ public class UserData extends Application {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                String endDate_Txt;
+                String startDate_Txt;
+                SimpleDateFormat newFormat_Day = new SimpleDateFormat("E, MMMM dd ");
+                SimpleDateFormat newFormat_clock = new SimpleDateFormat("hh:mm a");
+
+                if (startTime_Time_DT.equals(endTime_Time_DT) == true) {
+                    ///Then we have an all day event endDate_Txt
+                    startDate_Txt = newFormat_Day.format(startTime_Days_DT);
+                    endDate_Txt = newFormat_Day.format(endTime_Days_DT);
+                }else{
+                    endDate_Txt = newFormat_Day.format(endTime_Days_DT) + " : " + newFormat_clock.format(endTime_Time_DT);
+                    startDate_Txt = newFormat_Day.format(startTime_Days_DT) + " : " + newFormat_clock.format(startTime_Time_DT);
+                }
+
                 String eventNotes = dataSnapshot.child("Event Notes").getValue().toString();
                 onGroupUpdate.sendGroupUpdate(maxAge,minAge,event_name,new LatLng(lattitude,longitude), location_name,groupSize,startTime_Days_DT, startTime_Time_DT
-                        ,endTime_Days_DT,endTime_Time_DT,eventNotes);
+                        ,endTime_Days_DT,endTime_Time_DT,startDate_Txt,endDate_Txt,eventNotes);
             }
 
             @Override
@@ -201,7 +216,6 @@ public class UserData extends Application {
             if(value instanceof JSONArray) {
                 value = toList((JSONArray) value);
             }
-
             else if(value instanceof JSONObject) {
                 value = toMap((JSONObject) value);
             }
@@ -227,7 +241,8 @@ public class UserData extends Application {
     }
     public interface OnGroupUpdate {
         //This function represents the ongroup update that occurs after the firebase database is updated
-        void sendGroupUpdate(int maxAge, int minAge, String event_name, LatLng latLng, String location_name, int groupSize, Date startTime_Days_DT, Date startTime_Time_DT, Date endTime_date, Date startTime_date, String eventNotes);
+        void sendGroupUpdate(int maxAge, int minAge, String event_name, LatLng latLng, String location_name,
+                             int groupSize, Date startTime_Days_DT, Date startTime_Time_DT, Date endTime_Days_DT, Date endTime_Time_DT, String startDate_Txt,String endDate_Txt,String eventNotes);
     }
 
 }

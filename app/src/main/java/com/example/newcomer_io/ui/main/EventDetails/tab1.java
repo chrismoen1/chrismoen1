@@ -1,12 +1,16 @@
 package com.example.newcomer_io.ui.main.EventDetails;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +25,6 @@ import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link tab1#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class tab1 extends Fragment {
@@ -42,26 +45,9 @@ public class tab1 extends Fragment {
 
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment tab1.
-     */
-    // TODO: Rename and change types and number of parameters
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //    * @param   year    the year minus 1900.
-        //     * @param   month   the month between 0-11.
-        //     * @param   date    the day of the month between 1-31.
-        //     * @param   hrs     the hours between 0-23.
-        //     * @param   min     the minutes between 0-59.
-
-
     }
 
     @Override
@@ -73,8 +59,20 @@ public class tab1 extends Fragment {
 
         ArrayList<EventCreate.Posts> postsArrayList = eventCreate.getPostsArrayList();
 
+        //This button represents the functionality to add a post to a portion of the UI.
         Button addPost = new Button(inflater.getContext());
-        addPost.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.CENTER;
+
+        addPost.setLayoutParams(layoutParams);
+        addPost.setText("Click to Create A Post");
+        Typeface typeface = ResourcesCompat.getFont(getContext(), R.font.open_sans);
+        int paddingDp = 8;
+        float density = getContext().getResources().getDisplayMetrics().density;
+        int paddingPixel = (int)(paddingDp * density);
+        addPost.setTypeface(typeface);
+        addPost.setPadding(paddingPixel,0,paddingPixel,0);
+        addPost.setBackgroundResource(R.drawable.rounded_border);
 
         if (postsArrayList.size() != 0){
             //then it is not empty and we can add the posts in

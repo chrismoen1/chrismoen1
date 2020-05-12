@@ -33,6 +33,7 @@ public class GroupConfirmation extends AppCompatActivity implements UserData.OnG
         EventCreate eventCreate = new EventCreate(this);
         userData = (UserData) getApplicationContext();
         userData.setEventCreate(eventCreate);
+        userData.getEventCreate().setGUID("ee493abb-5a86-4c1b-9eae-201336c3a283");
         userData.updateEventContent(this);
 
         tabLayout = findViewById(R.id.tabLayout);
@@ -81,7 +82,10 @@ public class GroupConfirmation extends AppCompatActivity implements UserData.OnG
     }
 
     @Override
-    public void sendGroupUpdate(int maxAge, int minAge, String event_name, LatLng latLng, String location_name, int groupSize, Date startTime_Days_DT, Date startTime_Time_DT, Date endTime_date, Date startTime_date, String eventNotes) {
+    public void sendGroupUpdate(int maxAge, int minAge, String event_name, LatLng latLng, String location_name, int groupSize, Date startTime_Days_DT, Date startTime_Time_DT,
+                                Date endTime_Days_DT, Date endTime_Time_DT,String startDate_Txt,String endDate_Txt,String eventNotes) {
+
+        // Set the event create data
         EventCreate eventCreate = userData.getEventCreate();
         eventCreate.setEventName(event_name);
         eventCreate.setAgeMax(String.valueOf(maxAge));
@@ -89,7 +93,16 @@ public class GroupConfirmation extends AppCompatActivity implements UserData.OnG
         eventCreate.setLocationName(location_name);
         eventCreate.setEventlocation(latLng);
         eventCreate.setGroupSize(groupSize);
+        eventCreate.setStartTime(startTime_Time_DT,startTime_Days_DT,startDate_Txt);
+        eventCreate.setEndTime(endTime_Time_DT,endTime_Days_DT,endDate_Txt);
+        eventCreate.setEventNotes(eventNotes);
 
+        if (eventCreate.getEventDetails() == null){
+            eventCreate.createEventDetails();
 
+        }else{
+            eventCreate.updateEventDetails();
+        }
+        userData.setEventCreate(eventCreate);
     }
 }

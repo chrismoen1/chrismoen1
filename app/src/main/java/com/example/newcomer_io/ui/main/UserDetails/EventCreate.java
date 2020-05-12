@@ -74,7 +74,7 @@ public class EventCreate {
         mFunctions = FirebaseFunctions.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        setStringGUID();
+        //setStringGUID();
 //        public EventDetails(Activity activity_group, String eventName, String eventNotes, String locationName, Date startTime, Date endTime, Bitmap displayPhoto){
     }
     public void setPhoto(Bitmap photo){
@@ -84,6 +84,16 @@ public class EventCreate {
     public void createEventDetails(){
         this.eventDetails = new EventDetails(this.activity,this.eventName,this.eventNotes,this.locationName,this.startTime,this.endTime,this.photo);
     }
+    public void updateEventDetails(){
+        this.eventDetails.setEventName(this.eventName);
+        this.eventDetails.setEventNotes(this.eventNotes);
+        this.eventDetails.setLocationName(this.locationName);
+        this.eventDetails.setStartTime(this.startTime);
+        this.eventDetails.setEndTime(this.endTime);
+        this.eventDetails.setDisplayPhoto(this.photo);
+        this.eventDetails.fillEventDetails();
+    }
+    public EventDetails getEventDetails(){return this.eventDetails;}
 
     public void setEventNotes(String eventNotes){this.eventNotes = eventNotes;}
 
@@ -253,6 +263,19 @@ public class EventCreate {
             fillEventDetails();
 
         }
+
+        public void setDisplayPhoto(Bitmap displayPhoto) {
+            this.displayPhoto = displayPhoto;
+        }
+
+        public void setEventName(String eventName){
+            this.eventName = eventName;
+        }
+        public void setEventNotes(String eventNotes){this.eventNotes = eventNotes;}
+        public void setLocationName(String locationName){this.locationName = locationName;}
+        public void setStartTime(Date startTime){this.startTime = startTime;}
+        public void setEndTime(Date endTime){this.endTime = endTime;}
+
         private void fillEventDetails() {
             //this function will fill in all of the event details for the current page
             TextView eventTitle = this.activity_group.findViewById(R.id.eventTitle);
@@ -324,6 +347,14 @@ public class EventCreate {
 
                 return (days + " days and " + hours + " hrs"); //Return the proper value
             }
+        }
+
+        public TextView getDisplayTitle() {
+            return displayTitle;
+        }
+
+        public void setDisplayTitle(TextView displayTitle) {
+            this.displayTitle = displayTitle;
         }
     }
 
