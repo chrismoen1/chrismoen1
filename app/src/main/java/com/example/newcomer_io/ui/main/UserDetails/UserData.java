@@ -25,9 +25,9 @@ public class UserData extends Application {
     private int UserID;
     private TrendingContent chosenContent;
     private EventCreate eventCreate;
-    OnGroupUpdate onGroupUpdate;
     private DatabaseReference mDatabase;
     private FirebaseFunctions mFunctions;
+
 
     public void setLocation(Location location){
         this.location = location;
@@ -62,85 +62,9 @@ public class UserData extends Application {
     public TrendingContent getChosenContent(){
         return this.chosenContent;
     }
-    public void updateEventContent(Activity context){
-        //Then we try calling the data base
-        onGroupUpdate = (OnGroupUpdate) context;
-        final String guid = eventCreate.getGUID();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
-        mDatabase.child("Groups/" + guid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //Load all of the data related to the trending content
-                String fa = "";
-
-                //Let's start with the data children
-                int maxAge = Integer.parseInt(dataSnapshot.child("Age Range").child("Max Age").getValue().toString());
-                int minAge= Integer.parseInt(dataSnapshot.child("Age Range").child("Min Age").getValue().toString());
-
-                String event_name = dataSnapshot.child("Event Name").getValue().toString();
-
-                double lattitude = Double.parseDouble(dataSnapshot.child("Location").child("Lattitude").getValue().toString());
-                double longitude = Double.parseDouble(dataSnapshot.child("Location").child("Longitude").getValue().toString());
-                String location_name = dataSnapshot.child("Location").child("Name").getValue().toString();
-
-                int groupSize = Integer.parseInt(dataSnapshot.child("Group Size").getValue().toString());
-
-                String endTime = dataSnapshot.child("Timing").child("End Time").getValue().toString();
-                String startTime = dataSnapshot.child("Timing").child("Start Time").getValue().toString();
-
-                String[] s = endTime.split(" ");
-                String endTime_Days = s[0];
-                String endTime_Time = s[1];
-
-                String[] s1 = startTime.split(" ");
-                String startTime_Days = s1[0];
-                String startTime_Time = s1[1];
-
-                SimpleDateFormat simpleDateFormat_Days = new SimpleDateFormat("yyyy-MM-dd");
-                SimpleDateFormat simpleDateFormat_Time = new SimpleDateFormat( "HH:mm");
 
 
-                Date endTime_Days_DT = null;
-                Date endTime_Time_DT = null;
 
-                Date startTime_Days_DT = null;
-                Date startTime_Time_DT = null;
-                try {
-                    startTime_Days_DT = simpleDateFormat_Days.parse(startTime_Days);
-                    startTime_Time_DT = simpleDateFormat_Time.parse(startTime_Time);
-
-                    endTime_Days_DT = simpleDateFormat_Days.parse(endTime_Days);
-                    endTime_Time_DT = simpleDateFormat_Time.parse(endTime_Time);
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                String endDate_Txt;
-                String startDate_Txt;
-                SimpleDateFormat newFormat_Day = new SimpleDateFormat("E, MMMM dd ");
-                SimpleDateFormat newFormat_clock = new SimpleDateFormat("hh:mm a");
-
-                if (startTime_Time_DT.equals(endTime_Time_DT) == true) {
-                    ///Then we have an all day event endDate_Txt
-                    startDate_Txt = newFormat_Day.format(startTime_Days_DT);
-                    endDate_Txt = newFormat_Day.format(endTime_Days_DT);
-                }else{
-                    endDate_Txt = newFormat_Day.format(endTime_Days_DT) + " : " + newFormat_clock.format(endTime_Time_DT);
-                    startDate_Txt = newFormat_Day.format(startTime_Days_DT) + " : " + newFormat_clock.format(startTime_Time_DT);
-                }
-
-                String eventNotes = dataSnapshot.child("Event Notes").getValue().toString();
-                onGroupUpdate.sendGroupUpdate(maxAge,minAge,event_name,new LatLng(lattitude,longitude), location_name,groupSize,startTime_Days_DT, startTime_Time_DT
-                        ,endTime_Days_DT,endTime_Time_DT,startDate_Txt,endDate_Txt,eventNotes);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
     public void setEventCreate(EventCreate eventCreate) {
         this.eventCreate = eventCreate;
     }
@@ -238,11 +162,6 @@ public class UserData extends Application {
             list.add(value);
         }
         return list;
-    }
-    public interface OnGroupUpdate {
-        //This function represents the ongroup update that occurs after the firebase database is updated
-        void sendGroupUpdate(int maxAge, int minAge, String event_name, LatLng latLng, String location_name,
-                             int groupSize, Date startTime_Days_DT, Date startTime_Time_DT, Date endTime_Days_DT, Date endTime_Time_DT, String startDate_Txt,String endDate_Txt,String eventNotes);
     }
 
 }

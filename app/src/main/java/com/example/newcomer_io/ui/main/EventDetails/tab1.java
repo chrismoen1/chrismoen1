@@ -1,12 +1,15 @@
 package com.example.newcomer_io.ui.main.EventDetails;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -18,9 +21,12 @@ import android.view.ViewGroup;
 import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
+import com.example.newcomer_io.ui.main.UserDetails.UserData;
+import com.google.firebase.database.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.zip.Inflater;
 
 
 /**
@@ -37,6 +43,15 @@ public class tab1 extends Fragment {
     private String mParam1;
     private String mParam2;
     private TrendingContent content;
+    private LinearLayout scrollView;
+    private boolean flag_Button_Added;
+    private Button addPost;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+    }
 
     public tab1(EventCreate eventCreate) {
         // Required empty public constructor
@@ -50,20 +65,29 @@ public class tab1 extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    private void setFlag_Button_Added(boolean val){this.flag_Button_Added = val; }
+    private boolean getFlag_Button_Added(){return this.flag_Button_Added; }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View inflate = inflater.inflate(R.layout.fragment_tab1, container, false);
-        LinearLayout scrollView = inflate.findViewById(R.id.scrollLayout); //This represents the scroll for all of the posts
 
-        ArrayList<EventCreate.Posts> postsArrayList = eventCreate.getPostsArrayList();
+        View inflate = inflater.inflate(R.layout.fragment_tab1, container, false);
+        scrollView = inflate.findViewById(R.id.scrollLayout); //This represents the scroll for all of the posts
+        setFlag_Button_Added(false);
 
         //This button represents the functionality to add a post to a portion of the UI.
-        Button addPost = new Button(inflater.getContext());
+        updatePostContent(eventCreate,inflate,inflater);
+
+        return inflate;
+    }
+
+    private void createButton(View inflate){
+        addPost = new Button(inflate.getContext());
+        addPost.setId(200);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.CENTER;
-
         addPost.setLayoutParams(layoutParams);
         addPost.setText("Click to Create A Post");
         Typeface typeface = ResourcesCompat.getFont(getContext(), R.font.open_sans);
@@ -73,34 +97,76 @@ public class tab1 extends Fragment {
         addPost.setTypeface(typeface);
         addPost.setPadding(paddingPixel,0,paddingPixel,0);
         addPost.setBackgroundResource(R.drawable.rounded_border);
+    }
+    private Button getButtonView(){
+        return addPost;
+    }
 
-        if (postsArrayList.size() != 0){
+    public void updateScrollPostContentView(View inflate, LayoutInflater inflater){
+
+        ArrayList<EventCreate.Posts> postsArrayList = this.eventCreate.getPostsArrayList();
+        boolean flag_button_added = getFlag_Button_Added();
+
+        //if (this.scrollView.getChildCount() != 0) {
+            this.scrollView.removeAllViews();
+        //}
+        if (!flag_button_added){
+            createButton(inflate);
+        }
+
+        if (postsArrayList.size() == 0){
             //then it is not empty and we can add the posts in
-            scrollView.addView(addPost);
+            this.scrollView.addView(this.addPost);
+            setFlag_Button_Added(true);
         }
         else{
             //Then we display the people of have added a post in
-          for (int i =0 ; i < postsArrayList.size();i++){
+            for (int i =0 ; i < postsArrayList.size();i++){
+                EventCreate.Posts posts = postsArrayList.get(i);
+                if (posts.getPostParamsView() != null && this.scrollView != null){
 
-                View trending_content = inflater.inflate(R.layout.user_row, null);
-                ConstraintLayout cardr = trending_content.findViewById(R.id.constraintLayout);
-                cardr.setId(i);
-                trending_content.setId(i);
+                    this.scrollView.addView(posts.getPostParamsView());
 
-                scrollView.addView(trending_content);
-                //Set the paramaters of the post
-                postsArrayList.get(i).setPostParams(trending_content);
+                }
+
+            }
+            this.scrollView.addView(addPost);
+
+
         }
-          scrollView.addView(addPost);
-
     }
 
+    public void updatePostContent(EventCreate eventCreate, final View inflate, final LayoutInflater inflater){
+         String guid = eventCreate.getGUID();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase.child("Groups/" + guid + "/Posts").addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                sendData_Post(dataSnapshot.getChildren(),inflate,inflater);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void sendData_Post(Iterable<DataSnapshot> posts, View inflate, LayoutInflater inflater) {
+        for (DataSnapshot childNode : posts) {
+            //Then we will get each fo the element
+            int comments = Integer.parseInt(childNode.child("Comments").getValue().toString());
+
+            int likes = Integer.parseInt(childNode.child("Likes").getValue().toString());
+            String userId = childNode.child("Id").getValue().toString();
+            String message = childNode.child("Message").getValue().toString();
+            String name = childNode.child("Name").getValue().toString();
+            this.eventCreate.addPost(name, message, likes, comments,userId);
+
+        }
+        updateScrollPostContentView(inflate,inflater);
 
 
-
-        //eventCreate.addPost("John Dobalina","You mama is so fat, that one day she went to the store to go to the store", scrollView);
-        //eventCreate.addPost("Joe Smoe", "Hi guys!!!!", scrollView);
-
-        return inflate;
     }
 }

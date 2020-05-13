@@ -14,15 +14,17 @@ import static java.security.AccessController.getContext;
 public class PageAdapter extends FragmentPagerAdapter {
     private int numTabs;
     private EventCreate eventCreate;
-
-    public PageAdapter(FragmentManager fm, int tabCount,EventCreate eventCreate) {
+    private Activity mainActivityContext;
+    public PageAdapter(FragmentManager fm, int tabCount,EventCreate eventCreate, Activity mainActivityContext) {
         super(fm);
         this.numTabs = 2; //equal to the number of tabs
         this.eventCreate = eventCreate;
+        this.mainActivityContext = mainActivityContext;
     }
 
     @Override
     public Fragment getItem(int position) {
+
         switch (position){
             case 0:
                 return new tab1(eventCreate);

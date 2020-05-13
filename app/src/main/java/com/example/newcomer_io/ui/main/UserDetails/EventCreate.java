@@ -1,6 +1,7 @@
 package com.example.newcomer_io.ui.main.UserDetails;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
@@ -15,8 +16,7 @@ import com.example.newcomer_io.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.gson.JsonObject;
@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOError;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -93,15 +94,38 @@ public class EventCreate {
         this.eventDetails.setDisplayPhoto(this.photo);
         this.eventDetails.fillEventDetails();
     }
+
+
     public EventDetails getEventDetails(){return this.eventDetails;}
 
     public void setEventNotes(String eventNotes){this.eventNotes = eventNotes;}
 
-    public void addPost(String personName, String postText, LinearLayout scrollLayout_Tab1){
-        this.postNumber += 1;
-        Posts posts = new Posts(this.activity, personName, postText,  scrollLayout_Tab1, postNumber);
-        posts.setPostText(postText);
-        postsArrayList.add(posts);
+    public void addPost(String personName, String postText, int likes, int comments, String userId){
+        //First we check if the post already exists
+        boolean flag = false;
+        int postId = -1;
+        Posts posts_Dup = null;
+        for (int i = 0; i < this.postsArrayList.size();i++){
+            if (this.postsArrayList.get(i).getUserId().equals(userId) == true){
+                flag = true;
+                postId = i;
+                posts_Dup = this.postsArrayList.get(i);
+                break;
+            }
+        }
+        if (flag == false) {
+            this.postNumber += 1;
+            Posts posts = new Posts(this.activity, personName, postText, postNumber, likes, comments, userId);
+            posts.setPostText(postText);
+            postsArrayList.add(posts);
+        }else{
+            //Then we udpate the post
+            if (posts_Dup != null && postId != -1){
+                posts_Dup.updateParams(personName,postText,postNumber,likes,comments,userId);
+                this.postsArrayList.set(postId,posts_Dup);
+            }
+
+        }
         //postsArrayList.add(posts);
         //we also want to add it to the view
 
@@ -240,6 +264,16 @@ public class EventCreate {
         this.eventlocation = eventlocation;
     }
 
+    public interface OnGroupUpdate {
+        //This function represents the ongroup update that occurs after the firebase database is updated
+        void sendGroupUpdate(int maxAge, int minAge, String event_name, LatLng latLng, String location_name, int groupSize,
+                             Date startTime_Days_DT, Date startTime_Time_DT, Date endTime_Days_DT, Date endTime_Time_DT, String startDate_Txt, String endDate_Txt, String eventNotes);
+
+    }
+    public interface OnPostUpdate{
+        void sendPostUpdate(int comments, int likes, String message, String name);
+    }
+
     public class EventDetails{
         private Bitmap displayPhoto;
         private TextView displayTitle;
@@ -359,7 +393,7 @@ public class EventCreate {
     }
 
     //Both these extension classes represent hte
-    public class Posts{
+    public  class Posts{
 
         //This function represents the posts that occur on an individual group
         private  String personName;
@@ -369,49 +403,51 @@ public class EventCreate {
         private ImageView profilePicture;
 
         private int likes;
+        private int comments;
 
         private TextView likes_Txt;
         private TextView comments_Txt;
         private TextView personName_Txt;
 
-        private int comments;
         private int postId;
         private Date postDate;
         private TextView postDate_Txt;
 
         private int MAXPOSTNUMBER;
         private View user_row;
-
+        private String userId;
         private ConstraintLayout constraintLayout;
         // SimpleDateFormat newFormat_Day = new SimpleDateFormat("E, MMMM dd ");
         // String startTime_Str = newFormat_clock.format(startDate_Time);
 
-        public Posts(Activity activity, String personName, String postText, LinearLayout scrollLayout_Tab1, int postId){
+        public Posts(Activity activity, String personName, String postText, int postId, int likes, int comments, String userId){
 
             this.personName = personName;
             this.postText = postText;
             this.postId = postId;
+            this.comments = comments;
+            this.likes = likes;
+            this.userId = userId;
 
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(activity.LAYOUT_INFLATER_SERVICE);
             user_row = inflater.inflate(R.layout.user_row,null);
 
             constraintLayout = user_row.findViewById(R.id.constraintLayout);
             constraintLayout.setId(postId);
-
             user_row.setId(postId); //set the unique ID to be different so that it doens't get mixed up with other stuff
-            scrollLayout_Tab1.addView(user_row);
 
             this.postText_Txt = user_row.findViewById(R.id.location);
             this.personName_Txt = user_row.findViewById(R.id.name);
             this.postDate_Txt = user_row.findViewById(R.id.textView16);
-
             this.likes_Txt = user_row.findViewById(R.id.textView19);
             this.comments_Txt = user_row.findViewById(R.id.textView18);
 
             this.MAXPOSTNUMBER = 52;
 
-            likes_Txt.setText("0");
-            comments_Txt.setText("0");
+            likes_Txt.setText(String.valueOf(likes));
+            comments_Txt.setText(String.valueOf(comments));
+            postText_Txt.setText(postText);
+            personName_Txt.setText(personName);
         }
         public View getLayoutView(){
             return this.user_row;
@@ -473,6 +509,37 @@ public class EventCreate {
 
         public void setPostParams(View trending_content) {
 
+        }
+        public View getPostParamsView(){return this.user_row;}
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public void updateParams(String personName, String postText, int postNumber, int likes, int comments, String userId) {
+            this.personName = personName;
+            this.postText = postText;
+            this.postId = postNumber;
+            this.comments = comments;
+            this.likes = likes;
+            this.userId = userId;
+
+            user_row.setId(postId); //set the unique ID to be different so that it doens't get mixed up with other stuff
+
+            this.postText_Txt = user_row.findViewById(R.id.location);
+            this.personName_Txt = user_row.findViewById(R.id.name);
+            this.postDate_Txt = user_row.findViewById(R.id.textView16);
+            this.likes_Txt = user_row.findViewById(R.id.textView19);
+            this.comments_Txt = user_row.findViewById(R.id.textView18);
+
+            likes_Txt.setText(String.valueOf(likes));
+            comments_Txt.setText(String.valueOf(comments));
+            postText_Txt.setText(postText);
+            personName_Txt.setText(personName);
 
         }
     }

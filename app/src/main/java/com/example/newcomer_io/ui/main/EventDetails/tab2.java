@@ -55,7 +55,7 @@ public class tab2 extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View inflate = inflater.inflate(R.layout.fragment_tab2, container, false);
-        LinearLayout linearLayout = inflate.findViewById(R.id.scrollLayout);
+        //LinearLayout linearLayout = inflate.findViewById(R.id.scrollLayout);
 
         //eventCreate.addUser("John", 351,"Ottawa, Ontario", 1,linearLayout);
         return inflate;
