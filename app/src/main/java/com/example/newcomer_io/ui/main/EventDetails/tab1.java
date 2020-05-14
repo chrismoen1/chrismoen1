@@ -2,11 +2,13 @@ package com.example.newcomer_io.ui.main.EventDetails;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -23,7 +25,10 @@ import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.google.firebase.database.*;
+import org.w3c.dom.Text;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.zip.Inflater;
@@ -46,6 +51,7 @@ public class tab1 extends Fragment {
     private LinearLayout scrollView;
     private boolean flag_Button_Added;
     private Button addPost;
+    private boolean clicked_like;
 
     @Override
     public void onAttach(Context context) {
@@ -76,6 +82,7 @@ public class tab1 extends Fragment {
         View inflate = inflater.inflate(R.layout.fragment_tab1, container, false);
         scrollView = inflate.findViewById(R.id.scrollLayout); //This represents the scroll for all of the posts
         setFlag_Button_Added(false);
+        setClicked_like(false);
 
         //This button represents the functionality to add a post to a portion of the UI.
         updatePostContent(eventCreate,inflate,inflater);
@@ -153,20 +160,80 @@ public class tab1 extends Fragment {
             }
         });
     }
-    private void sendData_Post(Iterable<DataSnapshot> posts, View inflate, LayoutInflater inflater) {
+    private void sendData_Post(Iterable<DataSnapshot> posts, final View inflate, LayoutInflater inflater) {
+
         for (DataSnapshot childNode : posts) {
             //Then we will get each fo the element
             int comments = Integer.parseInt(childNode.child("Comments").getValue().toString());
 
             int likes = Integer.parseInt(childNode.child("Likes").getValue().toString());
+            Date postDate = getDate_Str(childNode.child("Date").getValue().toString());
             String userId = childNode.child("Id").getValue().toString();
             String message = childNode.child("Message").getValue().toString();
             String name = childNode.child("Name").getValue().toString();
-            this.eventCreate.addPost(name, message, likes, comments,userId);
+            this.eventCreate.addPost(name, message, likes, comments,userId,postDate);
+
+            //Now we want to increment whenever there is a potential like button click
+            final EventCreate.Posts currPost = this.eventCreate.getPost_Id(userId);
+            final ImageView likeButton = currPost.getLikeButton();
+            final TextView likeText = currPost.getLikeText();
+            final ImageView commentButton = currPost.getCommentButton();
+
+            //set the onclick listener
+            likeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean alreadyLiked = currPost.isAlreadyLiked();
+
+                    if (!alreadyLiked) {
+
+                        //Then if we get the onclick listener
+                        likeButton.setImageDrawable(ContextCompat.getDrawable(v.getContext(),R.drawable.ic_thumb_up_alt_24_bluepx));
+                        int num_likes = Integer.parseInt(likeText.getText().toString());
+                        likeText.setText(String.valueOf(num_likes + 1));
+                        currPost.setAlreadyLiked(true);
+                    }
+                    else{
+                        //Then if we get the onclick listener
+                        likeButton.setImageDrawable(ContextCompat.getDrawable(v.getContext(),R.drawable.ic_thumb_up_alt_24px));
+                        int num_likes = Integer.parseInt(likeText.getText().toString());
+                        likeText.setText(String.valueOf(num_likes - 1));
+                        currPost.setAlreadyLiked(false);
+                    }
+                }
+            });
+            commentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Thne we go tot he comments sections
+                    Intent intent = new Intent(getActivity(),CommentsPage.class);
+                    startActivity(intent);
+                }
+            });
 
         }
         updateScrollPostContentView(inflate,inflater);
+    }
+
+    private Date getDate_Str(String date){
+        SimpleDateFormat simpleDateFormat_Days = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date1;
+        try{
+            date1 = simpleDateFormat_Days.parse(date);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            date1 = null;
+        }
+        return date1;
+    }
 
 
+    public boolean isClicked_like() {
+        return clicked_like;
+    }
+
+    public void setClicked_like(boolean clicked_like) {
+        this.clicked_like = clicked_like;
     }
 }

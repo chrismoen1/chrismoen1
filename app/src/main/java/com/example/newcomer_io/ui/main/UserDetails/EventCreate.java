@@ -100,7 +100,7 @@ public class EventCreate {
 
     public void setEventNotes(String eventNotes){this.eventNotes = eventNotes;}
 
-    public void addPost(String personName, String postText, int likes, int comments, String userId){
+    public void addPost(String personName, String postText, int likes, int comments, String userId, Date postDate){
         //First we check if the post already exists
         boolean flag = false;
         int postId = -1;
@@ -115,13 +115,13 @@ public class EventCreate {
         }
         if (flag == false) {
             this.postNumber += 1;
-            Posts posts = new Posts(this.activity, personName, postText, postNumber, likes, comments, userId);
+            Posts posts = new Posts(this.activity, personName, postText, postNumber, likes, comments, userId,postDate);
             posts.setPostText(postText);
             postsArrayList.add(posts);
         }else{
             //Then we udpate the post
             if (posts_Dup != null && postId != -1){
-                posts_Dup.updateParams(personName,postText,postNumber,likes,comments,userId);
+                posts_Dup.updateParams(personName,postText,postNumber,likes,comments,userId,postDate);
                 this.postsArrayList.set(postId,posts_Dup);
             }
 
@@ -131,7 +131,14 @@ public class EventCreate {
 
     }
     public ArrayList<Posts> getPostsArrayList(){return this.postsArrayList; }
-
+    public Posts getPost_Id(String id){
+        for (int i = 0; i < this.postsArrayList.size();i++){
+            if (this.postsArrayList.get(i).getUserId().equals(id)) {
+                return this.postsArrayList.get(i);
+            }
+        }
+        return null;
+    }
     public int getPostNumber(){
         return this.postNumber;
     }
@@ -139,13 +146,12 @@ public class EventCreate {
         this.postNumber = postNumber;
     }
 
-    public void addUser(String userName, int eventsAttended, String Location, int postNumber,LinearLayout linearLayout){
+    public void addUser(String userName, int eventsAttended, String Location){
         this.userNumber += 1;
-        JoinedUsers joinedUsers = new JoinedUsers(this.activity,userName, eventsAttended,Location,postNumber);
+        JoinedUsers joinedUsers = new JoinedUsers(this.activity,userName, eventsAttended,Location);
         joinedUsersArrayList.add(joinedUsers);
-        View layoutView_users = joinedUsers.getLayoutView_Users();
-        linearLayout.addView(layoutView_users);
     }
+    public ArrayList<JoinedUsers> getJoinedUsersArrayList(){return this.joinedUsersArrayList;}
 
     public String getEventNotes(){return this.eventNotes; }
     public String getEventName() {
@@ -408,7 +414,7 @@ public class EventCreate {
         private TextView likes_Txt;
         private TextView comments_Txt;
         private TextView personName_Txt;
-
+        private boolean alreadyLiked;
         private int postId;
         private Date postDate;
         private TextView postDate_Txt;
@@ -420,7 +426,7 @@ public class EventCreate {
         // SimpleDateFormat newFormat_Day = new SimpleDateFormat("E, MMMM dd ");
         // String startTime_Str = newFormat_clock.format(startDate_Time);
 
-        public Posts(Activity activity, String personName, String postText, int postId, int likes, int comments, String userId){
+        public Posts(Activity activity, String personName, String postText, int postId, int likes, int comments, String userId, Date postDate){
 
             this.personName = personName;
             this.postText = postText;
@@ -428,6 +434,8 @@ public class EventCreate {
             this.comments = comments;
             this.likes = likes;
             this.userId = userId;
+            this.postDate = postDate;
+            this.alreadyLiked = false;
 
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(activity.LAYOUT_INFLATER_SERVICE);
             user_row = inflater.inflate(R.layout.user_row,null);
@@ -444,6 +452,7 @@ public class EventCreate {
 
             this.MAXPOSTNUMBER = 52;
 
+            setPostDate(this.postDate);
             likes_Txt.setText(String.valueOf(likes));
             comments_Txt.setText(String.valueOf(comments));
             postText_Txt.setText(postText);
@@ -466,12 +475,32 @@ public class EventCreate {
             }
         }
         public void setPostDate(Date date){
+            Calendar cal = Calendar.getInstance();
+            Date currTime = cal.getTime();
             int day = date.getDay();
-            if (day == 1){
+            Long delta = currTime.getTime() - date.getTime();
+            int days_ago = (int) ((delta)/(1000 * 60*60*24));
+            int hours = (int) ((delta)/(1000 * 60*60));
+            int minutes = (int)((delta)/(1000 *60));
+
+            if (days_ago == 1){
                 this.postDate_Txt.setText("1 day ago");
             }
-            else if(day < 30){
-                this.postDate_Txt.setText(day + " days ago");
+            else if (days_ago < 1){
+                if (hours == 1){
+                    this.postDate_Txt.setText("1 hour ago");
+                }else if (hours > 1){
+                    this.postDate_Txt.setText(String.valueOf(hours) + " hours ago");
+                }else if (minutes == 1){
+                    this.postDate_Txt.setText("1 minute ago");
+                }else if (minutes > 1){
+                    this.postDate_Txt.setText(String.valueOf(minutes) + " minutes ago");
+                }else{
+                    this.postDate_Txt.setText("< 1 minute ago");
+                }
+            }
+            else if(days_ago < 30){
+                this.postDate_Txt.setText(String.valueOf(day) + " days ago");
             }
             else{
                 SimpleDateFormat newFormat_Day = new SimpleDateFormat("E-MMMM-dd ");
@@ -520,14 +549,14 @@ public class EventCreate {
             this.userId = userId;
         }
 
-        public void updateParams(String personName, String postText, int postNumber, int likes, int comments, String userId) {
+        public void updateParams(String personName, String postText, int postNumber, int likes, int comments, String userId, Date postDate) {
             this.personName = personName;
             this.postText = postText;
             this.postId = postNumber;
             this.comments = comments;
             this.likes = likes;
             this.userId = userId;
-
+            this.postDate = postDate;
             user_row.setId(postId); //set the unique ID to be different so that it doens't get mixed up with other stuff
 
             this.postText_Txt = user_row.findViewById(R.id.location);
@@ -540,25 +569,47 @@ public class EventCreate {
             comments_Txt.setText(String.valueOf(comments));
             postText_Txt.setText(postText);
             personName_Txt.setText(personName);
+            setPostDate(postDate);
 
+        }
+
+        public ImageView getLikeButton() {
+            return this.user_row.findViewById(R.id.likes);
+        }
+
+        public TextView getLikeText() {
+            return this.likes_Txt;
+        }
+
+        public boolean isAlreadyLiked() {
+            return this.alreadyLiked;
+        }
+        public void setAlreadyLiked(boolean alreadyLiked){
+            this.alreadyLiked = alreadyLiked;
+        }
+
+        public ImageView getCommentButton() {
+            return this.user_row.findViewById(R.id.comment);
         }
     }
     public class JoinedUsers{
 
         private TextView userName;
         private View user_overviewer;
+
         private TextView events_attended;
         private TextView location;
         private TextView postNumber;
         private ConstraintLayout constraintLayout;
-        public JoinedUsers(Activity currActvity, String userName, int eventsAttended, String location, int postNumber){
+
+        public JoinedUsers(Activity currActvity, String userName, int eventsAttended, String location){
 
             LayoutInflater inflater = (LayoutInflater) currActvity.getSystemService(currActvity.LAYOUT_INFLATER_SERVICE);
             user_overviewer = inflater.inflate(R.layout.user_overview,null);
 
             this.constraintLayout = user_overviewer.findViewById(R.id.constraintInner);
 
-            constraintLayout.setId(postNumber);
+            //constraintLayout.setId(postNumber);
 
             this.userName = user_overviewer.findViewById(R.id.name);
             this.events_attended = user_overviewer.findViewById(R.id.eventsAttended);
@@ -571,6 +622,7 @@ public class EventCreate {
 
         }
 
+        public View getJoinedParamsView(){return this.user_overviewer;}
         public TextView getUserName() {
             return userName;
         }
