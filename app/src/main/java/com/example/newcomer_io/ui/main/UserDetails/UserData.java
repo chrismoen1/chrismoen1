@@ -8,8 +8,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.*;
 import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
+import com.google.firebase.storage.FirebaseStorage;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,12 +26,11 @@ import java.util.*;
 public class UserData extends Application {
     private Location location;
     private ArrayList<TrendingContent> trendingContentArray;
-    private int UserID;
+    private String UserID;
     private TrendingContent chosenContent;
     private EventCreate eventCreate;
     private DatabaseReference mDatabase;
     private FirebaseFunctions mFunctions;
-
 
     public void setLocation(Location location){
         this.location = location;
@@ -37,7 +40,6 @@ public class UserData extends Application {
     @Override
     public void onCreate(){
         mFunctions = FirebaseFunctions.getInstance();
-
         super.onCreate();
     }
 
@@ -62,8 +64,6 @@ public class UserData extends Application {
     public TrendingContent getChosenContent(){
         return this.chosenContent;
     }
-
-
 
     public void setEventCreate(EventCreate eventCreate) {
         this.eventCreate = eventCreate;
@@ -120,6 +120,19 @@ public class UserData extends Application {
             e.printStackTrace();
         }
     }
+
+    private void setUUID(){
+        mFunctions.getHttpsCallable("getUserGUID")
+                .call().continueWith(new Continuation<HttpsCallableResult, String>() {
+            @Override
+            public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                String data = (String) task.getResult().getData();
+                setUserID(data);
+                return data;
+            }
+        });
+    }
+
     public static Map<String, Object> jsonToMap(JSONObject json) throws JSONException {
         Map<String, Object> retMap = new HashMap<String, Object>();
 
@@ -164,4 +177,11 @@ public class UserData extends Application {
         return list;
     }
 
+    public String getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(String userID) {
+        UserID = userID;
+    }
 }

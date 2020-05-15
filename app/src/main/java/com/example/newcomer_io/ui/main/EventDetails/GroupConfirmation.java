@@ -1,6 +1,8 @@
 package com.example.newcomer_io.ui.main.EventDetails;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,10 +12,14 @@ import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.*;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.text.BreakIterator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,7 +44,7 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         userData = (UserData) getApplicationContext();
         userData.setEventCreate(eventCreate);
         userData.getEventCreate().setGUID("ee493abb-5a86-4c1b-9eae-201336c3a283");
-
+        userData.setUserID("ee493abb-5a86-4c1b-9eae-201336c3a283");
 
         tabLayout = findViewById(R.id.tabLayout);
 
@@ -57,6 +63,8 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
 
         pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount(),eventCreate, this);
         viewPager.setAdapter(pageAdapter);
+
+        getGroupImageUpdate();
 
         //We want to add this detail to the firebase data base
         //Add to firebase
@@ -180,6 +188,35 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
 
             }
         });
+    }
+
+    public ImageView getDisplayPhoto() {
+        return displayPhoto;
+    }
+
+    public void setDisplayPhoto(ImageView displayPhoto) {
+        this.displayPhoto = displayPhoto;
+    }
+    public void setDisplayPhoto_Bitmap(Bitmap photo){
+        this.displayPhoto.setImageBitmap(photo);
+    }
+
+    public void getGroupImageUpdate() {
+        StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://newcomer-c8b19.appspot.com/");
+        //This function will download the user's image
+        String path = "/Group Image/" + eventCreate.getGUID() + "/groupphoto.jpg";
+        final long ONE_MEGABYTE = 10*1024 * 1024;
+
+        ///Group Image/ee493abb-5a86-4c1b-9eae-201336c3a283
+        reference.child(path).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                eventCreate.setPhoto(bitmap);
+                setDisplayPhoto_Bitmap(bitmap);
+            }
+        });
+
     }
 
 }

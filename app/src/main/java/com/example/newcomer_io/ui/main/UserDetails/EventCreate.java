@@ -1,10 +1,9 @@
 package com.example.newcomer_io.ui.main.UserDetails;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.location.Location;
-import android.util.Log;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,16 +14,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.newcomer_io.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
-import com.google.gson.JsonObject;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import java.io.IOError;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -270,6 +267,7 @@ public class EventCreate {
         this.eventlocation = eventlocation;
     }
 
+
     public interface OnGroupUpdate {
         //This function represents the ongroup update that occurs after the firebase database is updated
         void sendGroupUpdate(int maxAge, int minAge, String event_name, LatLng latLng, String location_name, int groupSize,
@@ -444,9 +442,9 @@ public class EventCreate {
             constraintLayout.setId(postId);
             user_row.setId(postId); //set the unique ID to be different so that it doens't get mixed up with other stuff
 
-            this.postText_Txt = user_row.findViewById(R.id.location);
+            this.postText_Txt = user_row.findViewById(R.id.message);
             this.personName_Txt = user_row.findViewById(R.id.name);
-            this.postDate_Txt = user_row.findViewById(R.id.textView16);
+            this.postDate_Txt = user_row.findViewById(R.id.postDate);
             this.likes_Txt = user_row.findViewById(R.id.textView19);
             this.comments_Txt = user_row.findViewById(R.id.textView18);
 
@@ -559,9 +557,9 @@ public class EventCreate {
             this.postDate = postDate;
             user_row.setId(postId); //set the unique ID to be different so that it doens't get mixed up with other stuff
 
-            this.postText_Txt = user_row.findViewById(R.id.location);
+            this.postText_Txt = user_row.findViewById(R.id.message);
             this.personName_Txt = user_row.findViewById(R.id.name);
-            this.postDate_Txt = user_row.findViewById(R.id.textView16);
+            this.postDate_Txt = user_row.findViewById(R.id.postDate);
             this.likes_Txt = user_row.findViewById(R.id.textView19);
             this.comments_Txt = user_row.findViewById(R.id.textView18);
 
@@ -591,6 +589,10 @@ public class EventCreate {
         public ImageView getCommentButton() {
             return this.user_row.findViewById(R.id.comment);
         }
+
+        public int getPostId() {
+            return this.postId;
+        }
     }
     public class JoinedUsers{
 
@@ -614,7 +616,7 @@ public class EventCreate {
             this.userName = user_overviewer.findViewById(R.id.name);
             this.events_attended = user_overviewer.findViewById(R.id.eventsAttended);
             this.postNumber = user_overviewer.findViewById(R.id.eventsAttended);
-            this.location = user_overviewer.findViewById(R.id.location);
+            this.location = user_overviewer.findViewById(R.id.message);
 
             this.userName.setText(userName);
             this.events_attended.setText(String.valueOf(eventsAttended));
