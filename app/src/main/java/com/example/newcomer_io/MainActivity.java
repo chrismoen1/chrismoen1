@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.example.newcomer_io.ui.main.GroupTiming.CreateGroup;
+import com.example.newcomer_io.ui.main.JoinGroup.JoinGroup;
 import com.example.newcomer_io.ui.main.MainFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -30,10 +31,18 @@ public class MainActivity extends AppCompatActivity {
                         //userData.updateUserData();
                         Intent intent = new Intent(MainActivity.this, CreateGroup.class);
                         startActivity(intent);
+                        return true;
+                    case R.id.merge:
+                        Intent intent1 = new Intent(MainActivity.this, JoinGroup.class);
+                        startActivity(intent1);
+                        return true;
+
                 }
                 return false;
             }
         });
 
     }
+
+
 }

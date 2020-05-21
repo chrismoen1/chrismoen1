@@ -15,6 +15,7 @@ import com.example.newcomer_io.*;
 import com.example.newcomer_io.ui.main.EventDetails.GroupConfirmation;
 import com.example.newcomer_io.ui.main.LocationSettings.LocationType;
 import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
+import com.example.newcomer_io.ui.main.LocationSettings.TrendingDisplay;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.google.android.gms.common.api.Status;
@@ -88,7 +89,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     //We also want to fill all of the values
                     setValues();
-                    Intent intent = new Intent(v.getContext(), LocationType.class);
+                    Intent intent = new Intent(v.getContext(), TrendingDisplay.class);
                     startActivity(intent);
 
                 }

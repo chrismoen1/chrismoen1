@@ -3,7 +3,7 @@
     <item
             android:id="@+id/group_add"
             android:icon="@drawable/groupsymbol"
-            android:title="Create Group"
+            android:title="Create A Group"
     />
     <item
         android:id="@+id/merge"

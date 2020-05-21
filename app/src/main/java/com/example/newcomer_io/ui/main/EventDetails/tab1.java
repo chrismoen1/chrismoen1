@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,9 +17,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.example.newcomer_io.ui.main.UserDetails.EventCreate;
@@ -142,6 +139,13 @@ public class tab1 extends Fragment {
 
             }
             this.scrollView.addView(addPost);
+            this.addPost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Then we will place the add comments section
+
+                }
+            });
 
 
         }
@@ -257,9 +261,36 @@ public class tab1 extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1){
-            //then we get the adata
+        if (requestCode == 1 && data != null){
+            //then we get the data and pass it to the current UI
+            int comments = data.getIntExtra("Comment Number", -1);
+            int likes = data.getIntExtra("Likes Number", -1);
+            boolean isLiked = data.getBooleanExtra("Already Liked", false);
+            int postId = data.getIntExtra("Post Number", -1);
+
+            EventCreate.Posts posts = eventCreate.getPostsArrayList().get(postId - 1);
+            TextView likeText = posts.getLikeText();
+
+            setClicked_like(isLiked);
+            likeText.setText(String.valueOf(likes));
+            posts.getComments_Txt().setText(String.valueOf(comments));
+
+            ImageView likeButton = posts.getLikeButton();
+            if (isLiked) {
+
+                //Then if we get the onclick listener
+                likeButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_thumb_up_alt_24_bluepx));
+                int num_likes = Integer.parseInt(likeText.getText().toString());
+                likeText.setText(String.valueOf(num_likes));
+            } else {
+                //Then if we get the onclick listener
+                likeButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_thumb_up_alt_24px));
+                int num_likes = Integer.parseInt(likeText.getText().toString());
+                likeText.setText(String.valueOf(num_likes));
+            }
+
 
         }
     }
+
 }

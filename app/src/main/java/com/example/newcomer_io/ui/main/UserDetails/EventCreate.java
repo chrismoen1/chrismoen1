@@ -323,7 +323,7 @@ public class EventCreate {
             TextView eventTimeDetails_Txt = this.activity_group.findViewById(R.id.eventTimeDetails_Txt);
             ImageView displayPhoto_image = this.activity_group.findViewById(R.id.displayPhoto);
 
-            String timeStampe_EventStart_EventStop = getTimeStamp_Start_Stop(endTime,startTime);
+            String timeStampe_EventStart_EventStop = getTimeStamp_Start_Stop(endTime,endTime_Day,startTime,startTime_Day);
 
             eventLocationDetails.setText(this.locationName);
             eventTimeDetails_Txt.setText(timeStampe_EventStart_EventStop);
@@ -333,24 +333,32 @@ public class EventCreate {
 
         }
 
-        private String getTimeStamp_Start_Stop(Date endTime, Date startTime) {
-            int endTime_Day = endTime.getDay();
-            int startTime_Day = startTime.getDay();
+        private String getTimeStamp_Start_Stop(Date endTime, Date endTime_Day, Date startTime, Date startTime_Day) {
+            int endTime_Day_num = endTime_Day.getDay();
+            int startTime_Day_num = startTime_Day.getDay();
             long time_diff = (endTime.getTime() - startTime.getTime());
             int diff_hours = (int) convertMilli_Hours(time_diff);
 
-            if (startTime_Day == endTime_Day) {
+            if (endTime_Day_num == startTime_Day_num) {
                 //Then we only need to show the hour
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a");
-                String startTime_str = simpleDateFormat.format(startTime);
-                String endTime_str = simpleDateFormat.format(endTime);
-                return startTime_str + " to " + endTime_str;
-            } else {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, MMMM dd ");
-                String startTime_str = simpleDateFormat.format(startTime);
-                String endTime_str = simpleDateFormat.format(endTime);
+                SimpleDateFormat simpleDateFormat_Days = new SimpleDateFormat("E, MMMM dd ");
+                SimpleDateFormat simpleDateFormat_Hours = new SimpleDateFormat("hh:mm a");
 
-                return startTime_str + " to " + endTime_str;
+                String time_Days = simpleDateFormat_Days.format(startTime_Day);
+                String startTime_str = simpleDateFormat_Hours.format(startTime);
+                String endTime_str = simpleDateFormat_Hours.format(endTime);
+                return time_Days +  " " + startTime_str + " to " + endTime_str;
+            } else {
+                SimpleDateFormat simpleDateFormat_Days = new SimpleDateFormat("E, MMMM dd ");
+                SimpleDateFormat simpleDateFormat_Time = new SimpleDateFormat("hh:mm a");
+
+                String startTime_str_Days = simpleDateFormat_Days.format(startTime_Day);
+                String endTime_str_Days = simpleDateFormat_Days.format(endTime_Day);
+
+                String startTime_str_Time = simpleDateFormat_Time.format(startTime);
+                String endTime_str_Time = simpleDateFormat_Time.format(endTime);
+
+                return startTime_str_Days + " at " +startTime_str_Time + ", to " + endTime_str_Days + " at " + endTime_str_Time;
             }
         }
 
@@ -574,6 +582,7 @@ public class EventCreate {
         public ImageView getLikeButton() {
             return this.user_row.findViewById(R.id.likes);
         }
+        public TextView getComments_Txt(){return this.comments_Txt; }
 
         public TextView getLikeText() {
             return this.likes_Txt;

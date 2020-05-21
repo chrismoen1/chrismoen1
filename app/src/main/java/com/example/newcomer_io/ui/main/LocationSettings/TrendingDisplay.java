@@ -1,15 +1,20 @@
 package com.example.newcomer_io.ui.main.LocationSettings;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.location.LocationManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,7 +25,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.GroupTiming.CreateGroup;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,8 +43,14 @@ public class TrendingDisplay extends AppCompatActivity {
     private String googleBrowserKEY = "AIzaSyAjGcF4XC-OEVJHKPmPefDUxGjxiSCbFK8";
     private int num_pressed;
     private ImageButton up;
+
+    private static final int MY_PERMISSION_REQUEST_FINE_LOCATION = 101 ;
+    private static final int MY_PERMISSION_REQUEST_COARSE_LOCATION= 102;
+
+    private static final int REQUEST_CODE_ASK_PERMISSIONS = 1001 ;
+    private static final int PROXIMITY_RADIUS = 25;
+
     private LinearLayout scrollView;
-    private FilterResults filterResults;
     private String pageToken;
     private FloatingActionButton chooseLocation;
 
@@ -45,6 +61,9 @@ public class TrendingDisplay extends AppCompatActivity {
     private ArrayList<ContentNode> viewList;
     private UserData userData;
     private ArrayList<TrendingContent> trendingContentArray_Initial;
+    private PlacesClient placesClient;
+    private Location currLocation;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,105 +73,52 @@ public class TrendingDisplay extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollLayout);
         userData = (UserData) getApplicationContext();
 
-        nightClubs = findViewById(R.id.nightclubs);
-        restaurants = findViewById(R.id.restaurants);
-
-        bars = findViewById(R.id.bars);
-
+        getUserCurrentLocation();
+        Places.initialize(getApplicationContext(), googleBrowserKEY);
+        placesClient = Places.createClient(getApplicationContext());
         pageToken = ""; //Set the global variable for the page token response .
-
-        filterResults = new FilterResults(this);
-        filterResults.setApplyChangesBackground(false);
 
         final UserData userData= (UserData) getApplicationContext();
         trendingContentArray_Initial = userData.getTrendingContentArray();
         viewList = new ArrayList<ContentNode>();
 
-        LinearLayout holder = findViewById(R.id.linL);
-
-        displayTrendingContent(trendingContentArray_Initial, viewList);
-
-        filterResults.getRange().setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                //Then we update the locatiion paramater
-                filterResults.setDistance(progress);
-                filterResults.setApplyChangesBackground(true);
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        nightClubs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurants.setChecked(false);
-                bars.setChecked(false);
-                filterResults.setApplyChangesBackground(true);
-
-            }
-        });
-        restaurants.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nightClubs.setChecked(false);
-                bars.setChecked(false);
-                filterResults.setApplyChangesBackground(true);
-            }
-        });
-        bars.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurants.setChecked(false);
-                nightClubs.setChecked(false);
-                filterResults.setApplyChangesBackground(true);
-            }
-        });
+        //displayTrendingContent(trendingContentArray_Initial, viewList);
 
         //We set the checkbox listeners so that if there is a change to one of them then we will go toward
-        filterResults.getApplyChanges().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                int range = filterResults.getRange().getProgress();
-                filterResults.setApplyChangesBackground(false);
-                removeTrendingContent(viewList);
-                requestTrendingLocations(userData.getLocation(),range, getCurrentKeyWords(),"");
-
-                //Apply the changes by making the call to the API
-            }
-        });
 
     }
+    private void getUserCurrentLocation() {
+        LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean permissionAccessCoarseLocationApproved = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        if (permissionAccessCoarseLocationApproved == true) {
+            //boolean backgroundLocationPermissionApproved = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED;
+            //Access the location
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        //Keep the location
+                        setCurrLocation(location);
+                        userData.setLocation(location);
+
+                        //userData.setLocation(currLocation);
+                        //Get trending locations
+
+                        requestTrendingLocations(getCurrLocation(),PROXIMITY_RADIUS,"night_club","");
+                        //set the location
+                    }
+                }
+            });
+
+        }
+        else{
+            ActivityCompat.requestPermissions(this,new String[]{
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION},REQUEST_CODE_ASK_PERMISSIONS);
+        }
 
 
-    private String getCurrentKeyWords(){
-        //Now if there is a change then we will apply a google reques
-        //Call the response
-        boolean nightclubs = filterResults.getNightClubs().isChecked();
-        boolean restaurants = filterResults.getRestaurants().isChecked();
-        boolean bars = filterResults.getBars().isChecked();
-
-        String keyWords = "";
-        if (nightclubs == true){
-            keyWords = "night_club";
-        }
-        else if (restaurants == true){
-            keyWords = "restaurant";
-        }
-        else if (bars == true){
-            keyWords = "bar";
-        }
-        return keyWords;
     }
     private void displayTrendingContent(final ArrayList<TrendingContent> trendingContentArray, final ArrayList<ContentNode> viewList){
 
@@ -193,6 +159,7 @@ public class TrendingDisplay extends AppCompatActivity {
                         userData.getEventCreate().setLocationName(trendingContent1.getPlaceName());
                         userData.getEventCreate().setPhoto(trendingContent1.getPhoto());
                         userData.getEventCreate().setEventlocation(trendingContent1.getLocation());
+
                         Intent intent = new Intent(TrendingDisplay.this, CreateGroup.class);
                         startActivity(intent);
                         //chooseLocation.color
@@ -235,7 +202,7 @@ public class TrendingDisplay extends AppCompatActivity {
         }
     }
 
-    private void requestTrendingLocations(Location currLocation, int PROXIMITY_RADIUS,  String keyword,String skipToken) {
+    public void requestTrendingLocations(Location currLocation, int PROXIMITY_RADIUS,  String keyword,String skipToken) {
 
         //This function will get all of the list of trending locations based on the API call
         int PLACE_PICKER_REQUEST = 1;
@@ -371,6 +338,17 @@ public class TrendingDisplay extends AppCompatActivity {
         requestQueue.add(ir);
 
     }
+
+    public PlacesClient getPlacesClient() {
+        return placesClient;
+    }
+
+    public void setPlacesClient(PlacesClient placesClient) {
+        this.placesClient = placesClient;
+    }
+    private void setCurrLocation(Location currLocation){this.currLocation = currLocation;}
+    private Location getCurrLocation(){return this.currLocation; }
+
     public class ContentNode{
 
         //This content node represents each card view that is displayed to the user and acts as the container to hold all of the data
@@ -433,83 +411,5 @@ public class TrendingDisplay extends AppCompatActivity {
         public void setImage(Bitmap image) {
             this.image.setImageBitmap(image);
         }
-    }
-    public class FilterResults extends Activity {
-        private CheckBox nightClubs;
-        private CheckBox restaurants;
-        private CheckBox bars;
-
-        private Button applyChanges;
-        private SeekBar range;
-        private TextView distanceParam;
-
-
-        public FilterResults(Activity activity){
-
-            this.nightClubs = activity.findViewById(R.id.nightclubs);
-            this.restaurants = activity.findViewById(R.id.restaurants);
-            this.bars = activity.findViewById(R.id.bars);
-            this.applyChanges = activity.findViewById(R.id.applyChanges);
-            this.range = activity.findViewById(R.id.range);
-            this.distanceParam = activity.findViewById(R.id.distance);
-
-            range.setProgress(5);
-            setDistance(5);
-
-            //Hard set values for min/max values of the distance range
-            this.range.setMin(1);
-            this.range.setMax(25);
-        }
-
-        public void setApplyChangesBackground(boolean toUpdate){
-            if (toUpdate == true){
-                this.applyChanges.setEnabled(toUpdate);
-                //this.applyChanges.setBackgroundColor(applyChanges.getContext().getResources().getColor(R.color.DeepSkyBlue));
-            }
-            else{
-                this.applyChanges.setEnabled(toUpdate);
-                //this.applyChanges.setBackgroundColor(applyChanges.getContext().getResources().getColor(R.color.LightGrey));
-            }
-        }
-        public SeekBar getRange(){return this.range;}
-
-        public Button getApplyChanges(){return this.applyChanges;}
-
-        public CheckBox getNightClubs() {
-            return nightClubs;
-        }
-
-        public void setNightClubs(CheckBox nightClubs) {
-            this.nightClubs = nightClubs;
-        }
-
-        public CheckBox getRestaurants() {
-            return restaurants;
-        }
-
-        public void setRestaurants(CheckBox restaurants) {
-            this.restaurants = restaurants;
-        }
-
-        public CheckBox getBars() {
-            return bars;
-        }
-
-        public void setBars(CheckBox bars) {
-            this.bars = bars;
-        }
-
-        public TextView getDistanceParam() {
-            return distanceParam;
-        }
-
-        public void setDistanceParam(TextView distanceParam) {
-            this.distanceParam = distanceParam;
-        }
-
-        public void setDistance(int distance){
-            this.distanceParam.setText(String.valueOf(distance) + " km");
-        }
-
     }
 }

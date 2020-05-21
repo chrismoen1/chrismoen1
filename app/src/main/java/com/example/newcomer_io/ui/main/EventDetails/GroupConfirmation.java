@@ -3,6 +3,7 @@ package com.example.newcomer_io.ui.main.EventDetails;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +19,11 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.*;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.BreakIterator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,10 +45,15 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         setContentView(R.layout.activity_group_confirmation);
         //EventCreate eventCreate = new EventCreate("The attack of the titans");
 
-        EventCreate eventCreate = new EventCreate(this);
+        String guid = getIntent().getStringExtra("GUID");
+
+        eventCreate = new EventCreate(this);
+        this.displayPhoto = findViewById(R.id.displayPhoto);
+
+        setEventCreate(eventCreate);
         userData = (UserData) getApplicationContext();
         userData.setEventCreate(eventCreate);
-        userData.getEventCreate().setGUID("ee493abb-5a86-4c1b-9eae-201336c3a283");
+        userData.getEventCreate().setGUID(guid);
         userData.setUserID("ee493abb-5a86-4c1b-9eae-201336c3a283");
 
         tabLayout = findViewById(R.id.tabLayout);
@@ -64,7 +74,11 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount(),eventCreate, this);
         viewPager.setAdapter(pageAdapter);
 
-        getGroupImageUpdate();
+        try {
+            getGroupImageUpdate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //We want to add this detail to the firebase data base
         //Add to firebase
@@ -201,22 +215,37 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         this.displayPhoto.setImageBitmap(photo);
     }
 
-    public void getGroupImageUpdate() {
-        StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://newcomer-c8b19.appspot.com/");
-        //This function will download the user's image
-        String path = "/Group Image/" + eventCreate.getGUID() + "/groupphoto.jpg";
-        final long ONE_MEGABYTE = 10*1024 * 1024;
+    public void getGroupImageUpdate() throws IOException {
 
-        ///Group Image/ee493abb-5a86-4c1b-9eae-201336c3a283
-        reference.child(path).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                eventCreate.setPhoto(bitmap);
-                setDisplayPhoto_Bitmap(bitmap);
-            }
-        });
+        String path = "/Group Image/" + getEventCreate().getGUID() + "/groupphoto.jpg";
 
+            StorageReference reference = FirebaseStorage.getInstance().getReference();
+            //This function will download the user's image
+            final long ONE_MEGABYTE = 1024 * 1024;
+
+            reference.child(path).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Picasso.get().load(uri).into(getDisplayPhoto());
+
+                }
+            });
+
+            ///Group Image/ee493abb-5a86-4c1b-9eae-201336c3a283
+            reference.child(path).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                    getEventCreate().setPhoto(bitmap);
+                    setDisplayPhoto_Bitmap(bitmap);
+
+                }
+            });
     }
 
+    public void setEventCreate(EventCreate eventCreate) {
+        this.eventCreate = eventCreate;
+    }
+    public EventCreate getEventCreate(){return this.eventCreate; }
 }

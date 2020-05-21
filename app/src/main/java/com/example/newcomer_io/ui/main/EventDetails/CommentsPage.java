@@ -19,11 +19,11 @@ import com.google.firebase.database.*;
 import org.w3c.dom.Text;
 
 public class CommentsPage extends AppCompatActivity {
-    private int postNumber;
     private String GUID;
     private String message;
     private ImageView likeButton;
     private boolean alreadyLiked;
+    private int postNumber;
     private Button addPost;
     private FloatingActionButton backReply;
 
@@ -37,9 +37,9 @@ public class CommentsPage extends AppCompatActivity {
         //onReturn = (OnReturn) this;
 
         backReply = findViewById(R.id.backGutton);
-        int postNumber = intent.getIntExtra("Post Number", -1);
+        postNumber = intent.getIntExtra("Post Number", -1);
         int likes = intent.getIntExtra("Like Number",-1);
-        int comments = intent.getIntExtra("Comment Number", -1);
+        final int comments = intent.getIntExtra("Comment Number", -1);
         String message = intent.getStringExtra("Message");
         String postDate = intent.getStringExtra("Post Date");
         String postName = intent.getStringExtra("Post Name");
@@ -50,7 +50,7 @@ public class CommentsPage extends AppCompatActivity {
         TextView postMessage = findViewById(R.id.postMessage);
         TextView postDay = findViewById(R.id.date);
         final TextView likeNum = findViewById(R.id.likeNumber);
-        TextView commentNum = findViewById(R.id.commentNumber);
+        final TextView commentNum = findViewById(R.id.commentNumber);
 
         posterName.setText(postName);
         likeNum.setText(String.valueOf(likes));
@@ -101,6 +101,13 @@ public class CommentsPage extends AppCompatActivity {
                 //Then we go back
                 //At the same time we will send the like information back to the page
                 Intent intent1 = new Intent(CommentsPage.this, PageAdapter.class);
+
+                //Comments,likes
+                //Post updat to the database
+                intent1.putExtra("Comment Number", Integer.parseInt(commentNum.getText().toString()));
+                intent1.putExtra("Likes Number", Integer.parseInt(likeNum.getText().toString()));
+                intent1.putExtra("Already Liked", isAlreadyLiked());
+                intent1.putExtra("Post Number", getPostNumber());
                 setResult(1,intent1);
                 finish();
             }
@@ -207,6 +214,7 @@ public class CommentsPage extends AppCompatActivity {
 
         View individualComments = inflater.inflate(R.layout.add_comment,null);
         return individualComments;
+
     }
 
 
@@ -249,13 +257,13 @@ public class CommentsPage extends AppCompatActivity {
         addPost.setPadding(paddingPixel,0,paddingPixel,0);
         addPost.setBackgroundResource(R.drawable.rounded_border);
     }
+
     private Button getCurrButton(){return this.addPost; }
     private  int getPaddingPixel(int paddingDp){
         float density = getApplicationContext().getResources().getDisplayMetrics().density;
         int paddingPixel = (int)(paddingDp * density);
         return paddingPixel;
     }
-
 
     public FloatingActionButton getBackReply() {
         return backReply;

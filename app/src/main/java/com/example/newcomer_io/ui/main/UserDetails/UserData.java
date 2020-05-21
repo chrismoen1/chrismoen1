@@ -121,7 +121,7 @@ public class UserData extends Application {
         }
     }
 
-    private void setUUID(){
+    public void setUUID(){
         mFunctions.getHttpsCallable("getUserGUID")
                 .call().continueWith(new Continuation<HttpsCallableResult, String>() {
             @Override

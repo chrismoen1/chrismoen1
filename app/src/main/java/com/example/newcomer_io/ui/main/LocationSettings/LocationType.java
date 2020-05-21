@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -49,8 +50,6 @@ public class LocationType extends AppCompatActivity {
     private String googleBrowserKEY = "AIzaSyAjGcF4XC-OEVJHKPmPefDUxGjxiSCbFK8";
     private UserData userData;
 
-
-
     private FusedLocationProviderClient fusedLocationClient;
 
     int AUTOCOMPLETE_REQUEST_CODE = 1;
@@ -60,6 +59,8 @@ public class LocationType extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_type);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         scrollHorizontal = findViewById(R.id.scrollHorizontal);
         userData = (UserData) getApplicationContext();
 
@@ -89,18 +90,18 @@ public class LocationType extends AppCompatActivity {
         pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getCurrentLocation();
+                getUserCurrentLocation();
             }
         });
         description.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getCurrentLocation();
+                getUserCurrentLocation();
             }
         });
     }
 
-    private void getCurrentLocation() {
+    private void getUserCurrentLocation() {
         LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean permissionAccessCoarseLocationApproved = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         if (permissionAccessCoarseLocationApproved == true) {
@@ -112,7 +113,7 @@ public class LocationType extends AppCompatActivity {
                     public void onSuccess(Location location) {
                         if (location != null) {
                             //Keep the location
-                            currLocation = location;
+                            setCurrLocation(location);
                             userData.setLocation(location);
 
                             //userData.setLocation(currLocation);
@@ -246,7 +247,8 @@ public class LocationType extends AppCompatActivity {
         queue.add(objectRequest);
 
     }
-
+    private void setCurrLocation(Location currLocation){this.currLocation = currLocation;}
+    private Location getCurrLocation(){return this.currLocation; }
     private boolean existsArray(JSONArray types1, String type) {
         for (int i =0; i < types1.length();i++){
             try {
