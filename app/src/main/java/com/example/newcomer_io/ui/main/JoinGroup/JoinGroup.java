@@ -54,7 +54,7 @@ public class JoinGroup extends AppCompatActivity {
 
         //userData.setUUID();setAvailableGroups(availableGroups);
 
-        getAvailbleGroups(45.3873,-75.7346);
+        //getAvailbleGroups(45.3873,-75.7346);
 
     }
 
