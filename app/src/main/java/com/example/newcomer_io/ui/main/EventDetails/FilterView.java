@@ -2,10 +2,7 @@ package com.example.newcomer_io.ui.main.EventDetails;
 
 import android.os.CountDownTimer;
 import android.text.InputType;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +11,7 @@ import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.example.newcomer_io.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -23,6 +21,13 @@ public class FilterView extends AppCompatActivity {
     private EditText future;
     final private int CUSTOM_AGE = 69; //lol
 
+    //Variables that we will pass back to the prior page that we called from
+    private int timeFrameVal;
+    private int minAgeVal;
+    private int maxAgeVal;
+    private int searchDistanceVal;
+    private int groupSizeVal;
+
     //This part of the filter represents the min/max distance
     private CrystalRangeSeekbar ageRange;
     private TextView minAge;
@@ -30,7 +35,7 @@ public class FilterView extends AppCompatActivity {
     private EditText customAge;
     private CrystalSeekbar  searchDistance;
     private TextView distance;
-
+    private FloatingActionButton floatingActionButton;
     private TextView timeFrame;
     private CrystalSeekbar timeFrameSeekbar;
 
@@ -45,7 +50,7 @@ public class FilterView extends AppCompatActivity {
 
         groupSizeLayout = findViewById(R.id.groupSizeLayout);
         timeFrameSeekbar = findViewById(R.id.timeFrameSeekbar);
-
+        floatingActionButton = findViewById(R.id.backGutton2);
         ageRange = findViewById(R.id.rangeSeekbar5);
 
         minAge = findViewById(R.id.minAge);
@@ -65,6 +70,8 @@ public class FilterView extends AppCompatActivity {
             public void valueChanged(Number minValue, Number maxValue) {
                 getMinAge().setText(minValue.toString());
                 getMaxAge().setText(maxValue.toString());
+                setMaxAgeVal(maxValue.intValue());
+                setMinAgeVal(minValue.intValue());
             }
         });
 
@@ -94,13 +101,13 @@ public class FilterView extends AppCompatActivity {
                 LinearLayout groupSizeLayout = getGroupSizeLayout();
                 int progress = minValue.intValue();
                 if (progress != 20){
-                    //
                     if (getCustomAge() != null){
                         groupSizeLayout.removeView(getCustomAge());
                         setCustomAge(null);
                         groupSizeLayout.addView(getSize());
                     }
                     getSize().setText("up to " + String.valueOf(progress) + " people");
+                    setGroupSizeVal(progress);
                 }
                 else{
                     if (getCustomAge() == null){
@@ -111,6 +118,14 @@ public class FilterView extends AppCompatActivity {
                     }
 
                 }
+            }
+        });
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Then we go back to the previous page
+
             }
         });
 
@@ -131,7 +146,13 @@ public class FilterView extends AppCompatActivity {
                 }
             }
         }.start();
-
+        customAge.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                setGroupSizeVal(Integer.parseInt(v.getText().toString()));
+                return false;
+            }
+        });
         customAge.setId(CUSTOM_AGE);
         customAge.setInputType(InputType.TYPE_CLASS_NUMBER |
                 InputType.TYPE_NUMBER_FLAG_DECIMAL |
@@ -239,5 +260,53 @@ public class FilterView extends AppCompatActivity {
 
     public void setTimeFrameSeekbar(CrystalSeekbar timeFrameSeekbar) {
         this.timeFrameSeekbar = timeFrameSeekbar;
+    }
+
+    public FloatingActionButton getFloatingActionButton() {
+        return floatingActionButton;
+    }
+
+    public void setFloatingActionButton(FloatingActionButton floatingActionButton) {
+        this.floatingActionButton = floatingActionButton;
+    }
+
+    public int getTimeFrameVal() {
+        return timeFrameVal;
+    }
+
+    public void setTimeFrameVal(int timeFrameVal) {
+        this.timeFrameVal = timeFrameVal;
+    }
+
+    public int getMinAgeVal() {
+        return minAgeVal;
+    }
+
+    public void setMinAgeVal(int minAgeVal) {
+        this.minAgeVal = minAgeVal;
+    }
+
+    public int getSearchDistanceVal() {
+        return searchDistanceVal;
+    }
+
+    public void setSearchDistanceVal(int searchDistanceVal) {
+        this.searchDistanceVal = searchDistanceVal;
+    }
+
+    public int getGroupSizeVal() {
+        return groupSizeVal;
+    }
+
+    public void setGroupSizeVal(int groupSizeVal) {
+        this.groupSizeVal = groupSizeVal;
+    }
+
+    public int getMaxAgeVal() {
+        return maxAgeVal;
+    }
+
+    public void setMaxAgeVal(int maxAgeVal) {
+        this.maxAgeVal = maxAgeVal;
     }
 }

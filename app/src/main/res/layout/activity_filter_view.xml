@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/White "
+        android:background="@color/White"
         android:orientation="vertical"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,18 +17,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView11"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="4dp"
-            android:fontFamily="@font/open_sans"
-            android:gravity="center"
-            android:text="Filters"
-            android:textColor="#000000"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/backGutton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                app:backgroundTint="#E3E3E3"
+                app:borderWidth="1dp"
+                app:maxImageSize="32dp"
+                app:srcCompat="@android:drawable/ic_menu_revert" />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/open_sans"
+                android:gravity="center"
+                android:text="Filters"
+                android:textColor="#000000"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <View
             android:id="@+id/divider7"
