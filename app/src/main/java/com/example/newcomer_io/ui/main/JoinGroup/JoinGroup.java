@@ -1,7 +1,9 @@
 package com.example.newcomer_io.ui.main.JoinGroup;
 
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.*;
 import android.widget.*;
@@ -47,14 +49,18 @@ public class JoinGroup extends AppCompatActivity {
         // 1. Call the cloud
         userData = (UserData) getApplicationContext();
         arrayList = new ArrayList<>();
+
         nestedScrollLayout = findViewById(R.id.nestedScrollLayout);
+
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Join a Group");
+
         setSupportActionBar(toolbar);
 
-        //userData.setUUID();setAvailableGroups(availableGroups);
+        userData.setUUID();
+        setAvailableGroups(availableGroups);
 
-        //getAvailbleGroups(45.3873,-75.7346);
+        getAvailbleGroups(45.3873,-75.7346);
 
     }
 
@@ -105,7 +111,14 @@ public class JoinGroup extends AppCompatActivity {
             LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(getApplicationContext().LAYOUT_INFLATER_SERVICE);
             final View group_join = inflater.inflate(R.layout.group_join, null);
 
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
+            int height = displayMetrics.heightPixels;
+            int width = displayMetrics.widthPixels;
+
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams((width/2) - 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+            group_join.setLayoutParams(layoutParams);
             group_join.setId(i);
 
             final TextView eventName = group_join.findViewById(R.id.eventName);
@@ -165,14 +178,14 @@ public class JoinGroup extends AppCompatActivity {
         if (getRowHolder().getChildCount() != 0){
             //Then we add to the view and then create a new one
             getRowHolder().addView(view);
-            getRowHolder().addView(createSpacer());
+            //getRowHolder().addView(createSpacer());
             creatLayoutCard();
             getNestedScrollLayout().addView(getRowHolder());
 
         }else{
-            getRowHolder().addView(createSpacer());
+            //getRowHolder().addView(createSpacer());
             getRowHolder().addView(view);
-            getRowHolder().addView(createSpacer());
+            //getRowHolder().addView(createSpacer());
         }
 
     }
@@ -189,14 +202,17 @@ public class JoinGroup extends AppCompatActivity {
     private Space createSpacer(){
         Space space = new Space(getApplicationContext());
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
                 1.0f
         );
         space.setLayoutParams(param);
         return space;
     }
-
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
     public ArrayList<Pair> getArrayList() {
         return arrayList;
     }

@@ -58,12 +58,17 @@ public class FilterView extends AppCompatActivity {
         groupSize = findViewById(R.id.seekBar);
         groupSize.setMinStartValue(2);
         groupSize.setMaxValue(20);
+
+
+
         size = findViewById(R.id.size);
 
         timeFrame = findViewById(R.id.timeFrame);
 
         ageRange.setMinValue(18);
         ageRange.setMaxValue(100);
+        ageRange.setLeft(18);
+
 
         ageRange.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
             @Override
@@ -76,13 +81,17 @@ public class FilterView extends AppCompatActivity {
         });
 
         searchDistance = (CrystalSeekbar)findViewById(R.id.seekBar1);
+        searchDistance.setLeft(20);
         distance= findViewById(R.id.distance);
+        distance.setLeft(25);
         timeFrameSeekbar.setMinValue(1);
         timeFrameSeekbar.setMaxValue(14);
+        groupSize.setMinStartValue(6);
 
         searchDistance.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
             @Override
             public void valueChanged(Number minValue) {
+                setSearchDistanceVal(minValue.intValue());
                 getDistance().setText("Up to " + minValue.toString() + " km");
             }
         });
@@ -90,6 +99,7 @@ public class FilterView extends AppCompatActivity {
         timeFrameSeekbar.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
             @Override
             public void valueChanged(Number value) {
+                setTimeFrameVal(value.intValue());
                 getTimeFrame().setText("Up to " + value.toString() + " days from now");
             }
         });
@@ -132,7 +142,6 @@ public class FilterView extends AppCompatActivity {
     }
     public EditText createCustomAge(){
         customAge = new EditText(this);
-
         customAge.setHint("Enter a custom group size");
 
         new CountDownTimer(3000, 1000) {
