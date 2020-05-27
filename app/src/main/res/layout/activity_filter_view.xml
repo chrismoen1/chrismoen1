@@ -25,6 +25,7 @@
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/backGutton2"
                 android:layout_width="wrap_content"
+                android:backgroundTint="@color/wizeblue"
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:elevation="2dp"
@@ -58,10 +59,150 @@
             android:background="@color/DarkGray" />
 
         <LinearLayout
+            android:id="@+id/studyGroupType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/border"
+            android:elevation="2dp"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:id="@+id/subjectType"
+                android:layout_width="match_parent"
+                android:buttonTint="@color/wizeblue"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/open_sans"
+                android:gravity="center"
+                android:text="Study Theme"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/finalExam"
+                    style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+                    android:buttonTint="@color/wizeblue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="Final Exam"
+                    android:textSize="16sp" />
+
+                <CheckBox
+                    android:id="@+id/problemSets"
+                    style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+                    android:buttonTint="@color/wizeblue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Problem Sets"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/midterm"
+                    style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+                    android:buttonTint="@color/wizeblue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="Mid Terms"
+                    android:textSize="16sp" />
+
+                <CheckBox
+                    android:id="@+id/finalExam2"
+                    style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+                    android:buttonTint="@color/wizeblue"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_height="wrap_content"
+                    android:text="Quizzes"
+                    android:textSize="16sp" />
+
+                <CheckBox
+                    android:id="@+id/other"
+                    style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+                    android:buttonTint="@color/wizeblue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Other"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="4dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:background="@drawable/border"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="By Subject"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+
+            <com.plumillonforge.android.chipview.ChipView
+                android:id="@+id/chipview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+
+            </com.plumillonforge.android.chipview.ChipView>
+
+            <EditText
+                android:id="@+id/bySubject"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:ems="10"
+                android:gravity="start|top"
+                android:hint="Chemistry, Biology"
+                android:inputType="textMultiLine" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/linearLayout1"
             android:elevation="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
             android:paddingLeft="10dp"
@@ -77,9 +218,8 @@
                 android:id="@+id/textView20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="Time Frame"
+                android:text="Study Groups"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:textColor="#000000"
                 android:textSize="18sp" />
@@ -94,7 +234,7 @@
                 android:max="14"
                 android:min="1"
                 app:bar_color="@color/DarkGray"
-                app:left_thumb_color="@color/DarkCyan"
+                app:left_thumb_color="@color/wizeblue"
                 android:progressTint="@color/DarkGray"
                 android:thumb="@drawable/thumb" />
 
@@ -107,146 +247,10 @@
                 android:paddingTop="4dp"
                 android:paddingRight="4dp"
                 android:paddingBottom="4dp"
-                android:text="4 days"
+                android:text="4 days from now"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textSize="16sp" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ageRange"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="2dp"
-
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/border"
-            android:orientation="vertical"
-
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1">
-
-            <TextView
-                android:id="@+id/textView13"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/open_sans"
-                android:gravity="center"
-                android:text="Age"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:textColor="#000000"
-                android:textSize="18sp" />
-
-            <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
-                android:id="@+id/rangeSeekbar5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:progressDrawable="@drawable/seekbar"
-                app:gap="5"
-                app:corner_radius="10"
-                app:data_type="_integer"
-                app:bar_color="@color/DarkGray"
-                app:left_thumb_color="@color/DarkCyan"
-                app:max_value="100"
-                app:min_value="18"
-                app:right_thumb_color="@color/DarkCyan" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp">
-
-                <TextView
-                    android:id="@+id/minAge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="4dp"
-                    android:paddingTop="4dp"
-                    android:paddingRight="4dp"
-                    android:paddingBottom="4dp"
-                    android:text="18"
-
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textSize="16sp" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/maxAge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="4dp"
-                    android:paddingTop="4dp"
-                    android:paddingRight="4dp"
-                    android:paddingBottom="4dp"
-                    android:text="18"
-
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:background="@drawable/border"
-            android:elevation="2dp"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="10dp">
-
-            <TextView
-                android:id="@+id/searchDistance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/open_sans"
-                android:gravity="center"
-                android:text="Search Distance"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:textColor="#000000"
-                android:textSize="18sp" />
-
-            <com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar
-                android:id="@+id/seekBar1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                app:bar_color="@color/DarkGray"
-                app:left_thumb_color="@color/DarkCyan"
-                android:progressTint="@color/DarkGray"
-                android:layout_alignParentBottom="true"
-                android:thumb="@drawable/thumb" />
-
-            <TextView
-                android:id="@+id/distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingLeft="4dp"
-                android:paddingTop="4dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="4dp"
-
-                android:text="15 km"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -254,7 +258,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="4dp"
             android:elevation="2dp"
             android:background="@drawable/border"
@@ -270,7 +274,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/open_sans"
                 android:gravity="center"
-                android:text="Group Size"
+                android:text="Study Group Size"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:textColor="#000000"
                 android:textSize="18sp" />
@@ -281,7 +285,7 @@
                 android:progressTint="@color/DarkGray"
                 android:theme="@style/mScrollBar"
                 app:bar_color="@color/DarkGray"
-                app:left_thumb_color="@color/DarkCyan"
+                app:left_thumb_color="@color/wizeblue"
                 android:layout_height="wrap_content"
                 android:thumb="@drawable/thumb" />
 

@@ -8,7 +8,7 @@
         tools:context=".MainActivity"
 >
     <include
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar1"
         layout="@layout/toolbar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,7 +23,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar1"
         app:layout_constraintVertical_bias="1.0">
 
         <ImageView
@@ -61,71 +61,20 @@
                         android:fontFamily="@font/open_sans"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:text="Chris Moen, 23"
+                        android:text="Chris Moen"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                         android:textColor="#000000"
                         android:textSize="22sp" />
 
-                    <View
-                        android:id="@+id/divider10"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@color/LightGrey" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/textView26"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
-                        android:orientation="horizontal">
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <TextView
-                            android:id="@+id/textView26"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="76 Groups Joined"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <View
-                            android:id="@+id/divider9"
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/LightGrey" />
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <TextView
-                            android:id="@+id/textView25"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="From Ottawa, Ontario"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-                    </LinearLayout>
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="University of Toronto"
+                        android:textColor="#000000"
+                        android:textSize="15sp" />
 
                     <View
                         android:id="@+id/divider21"
@@ -175,30 +124,6 @@
                     android:padding="10dp"
                     android:selectAllOnFocus="false" />
 
-                <TextView
-                    android:id="@+id/textView27"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="10dp"
-                    android:fontFamily="@font/open_sans"
-                    android:text="Interests"
-                    android:textSize="16sp" />
-
-                <EditText
-                    android:id="@+id/editText5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/border"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:hint="What are your interests?"
-                    android:inputType="textMultiLine"
-                    android:padding="10dp" />
-
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -227,8 +152,8 @@
 
                     <ImageView
                         android:id="@+id/imageView30"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         app:srcCompat="@android:drawable/ic_menu_preferences" />
 
                     <TextView
@@ -265,19 +190,19 @@
                     android:padding="5dp">
 
                     <ImageView
-                        android:id="@+id/imageView16"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@android:drawable/ic_menu_mapmode" />
+                        android:id="@+id/imageView19"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        app:srcCompat="@drawable/ic_school_logo" />
 
                     <TextView
-                        android:id="@+id/textView19"
+                        android:id="@+id/textView20"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:layout_marginLeft="5dp"
                         android:gravity="center"
-                        android:text="Set Current Location" />
+                        android:text="Set Current School" />
 
                     <Space
                         android:layout_width="wrap_content"
@@ -285,7 +210,7 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:id="@+id/imageView18"
+                        android:id="@+id/imageView21"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:rotation="180"
@@ -306,7 +231,7 @@
         android:id="@+id/bottomNavigationView"
         app:itemIconTint="@color/white"
         android:layout_width="0dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/wizeblue"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

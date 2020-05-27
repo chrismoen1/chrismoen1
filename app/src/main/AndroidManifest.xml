@@ -14,10 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".ui.main.GroupTypes">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.main.EventDetails.FilterView" />
         <activity android:name=".ui.main.JoinGroup.JoinGroup" />
@@ -27,6 +23,10 @@
         <activity android:name=".ui.main.LocationSettings.LocationType" />
         <activity android:name=".ui.main.GroupTiming.CreateGroup" />
         <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <meta-data

@@ -3,12 +3,12 @@
     <item
             android:id="@+id/group_add"
             android:icon="@drawable/groupsymbol"
-            android:title="Create A Group"
+            android:title="Create A Study Group"
     />
     <item
         android:id="@+id/merge"
         android:icon="@drawable/ic_merge_type_24px"
-        android:title="Join A Group"
+        android:title="Join A Study Group"
         />
 
 </menu>

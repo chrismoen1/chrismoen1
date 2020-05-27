@@ -52,7 +52,7 @@ public class JoinGroup extends AppCompatActivity {
 
         nestedScrollLayout = findViewById(R.id.nestedScrollLayout);
 
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar1);
         toolbar.setTitle("Join a Group");
 
         setSupportActionBar(toolbar);

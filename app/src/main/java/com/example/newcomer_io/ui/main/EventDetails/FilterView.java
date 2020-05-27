@@ -12,15 +12,18 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.example.newcomer_io.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.plumillonforge.android.chipview.Chip;
+import com.plumillonforge.android.chipview.ChipView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FilterView extends AppCompatActivity {
     //This class will incorporate the current filter for holding all of the values related to the filtering view
 
     private EditText future;
     final private int CUSTOM_AGE = 69; //lol
-
+    private CheckBox other;
     //Variables that we will pass back to the prior page that we called from
     private int timeFrameVal;
     private int minAgeVal;
@@ -30,18 +33,18 @@ public class FilterView extends AppCompatActivity {
 
     //This part of the filter represents the min/max distance
     private CrystalRangeSeekbar ageRange;
-    private TextView minAge;
-    private TextView maxAge;
-    private EditText customAge;
     private CrystalSeekbar  searchDistance;
     private TextView distance;
     private FloatingActionButton floatingActionButton;
     private TextView timeFrame;
     private CrystalSeekbar timeFrameSeekbar;
 
+    private EditText subjectType;
+
     private CrystalSeekbar groupSize;
     private TextView size;
     private LinearLayout groupSizeLayout;
+    private EditText studyGroupType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,49 +55,31 @@ public class FilterView extends AppCompatActivity {
         timeFrameSeekbar = findViewById(R.id.timeFrameSeekbar);
         floatingActionButton = findViewById(R.id.backGutton2);
         ageRange = findViewById(R.id.rangeSeekbar5);
+        other = findViewById(R.id.other);
+        studyGroupType= findViewById(R.id.bySubject);
 
-        minAge = findViewById(R.id.minAge);
-        maxAge = findViewById(R.id.maxAge);
+        List<Chip> chipList = new ArrayList<>();
+        chipList.add(new Tag("Lorem"));
+        chipList.add(new Tag("Ipsum dolor"));
+        chipList.add(new Tag("Sit amet"));
+        chipList.add(new Tag("Consectetur"));
+        chipList.add(new Tag("adipiscing elit"));
+        ChipView chipDefault = (ChipView) findViewById(R.id.chipview);
+
+        chipDefault.setChipList(chipList);
+
+
         groupSize = findViewById(R.id.seekBar);
         groupSize.setMinStartValue(2);
-        groupSize.setMaxValue(20);
-
-
+        groupSize.setMaxValue(15);
 
         size = findViewById(R.id.size);
 
         timeFrame = findViewById(R.id.timeFrame);
 
-        ageRange.setMinValue(18);
-        ageRange.setMaxValue(100);
-        ageRange.setLeft(18);
-
-
-        ageRange.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
-            @Override
-            public void valueChanged(Number minValue, Number maxValue) {
-                getMinAge().setText(minValue.toString());
-                getMaxAge().setText(maxValue.toString());
-                setMaxAgeVal(maxValue.intValue());
-                setMinAgeVal(minValue.intValue());
-            }
-        });
-
-        searchDistance = (CrystalSeekbar)findViewById(R.id.seekBar1);
-        searchDistance.setLeft(20);
-        distance= findViewById(R.id.distance);
-        distance.setLeft(25);
         timeFrameSeekbar.setMinValue(1);
         timeFrameSeekbar.setMaxValue(14);
         groupSize.setMinStartValue(6);
-
-        searchDistance.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
-            @Override
-            public void valueChanged(Number minValue) {
-                setSearchDistanceVal(minValue.intValue());
-                getDistance().setText("Up to " + minValue.toString() + " km");
-            }
-        });
 
         timeFrameSeekbar.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
             @Override
@@ -110,24 +95,10 @@ public class FilterView extends AppCompatActivity {
             public void valueChanged(Number minValue) {
                 LinearLayout groupSizeLayout = getGroupSizeLayout();
                 int progress = minValue.intValue();
-                if (progress != 20){
-                    if (getCustomAge() != null){
-                        groupSizeLayout.removeView(getCustomAge());
-                        setCustomAge(null);
-                        groupSizeLayout.addView(getSize());
-                    }
-                    getSize().setText("up to " + String.valueOf(progress) + " people");
-                    setGroupSizeVal(progress);
-                }
-                else{
-                    if (getCustomAge() == null){
-                        //Then we dispaly an Edit Text that tells the user to add to their values
-                        groupSizeLayout.removeView(getSize());
-                        groupSizeLayout.addView(createCustomAge());
 
-                    }
+                getSize().setText("up to " + String.valueOf(progress) + " people");
+                setGroupSizeVal(progress);
 
-                }
             }
         });
 
@@ -139,44 +110,43 @@ public class FilterView extends AppCompatActivity {
             }
         });
 
-    }
-    public EditText createCustomAge(){
-        customAge = new EditText(this);
-        customAge.setHint("Enter a custom group size");
+        other.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                LinearLayout studyGroupTheme = findViewById(R.id.studyGroupType);
+                if (isChecked){
 
-        new CountDownTimer(3000, 1000) {
-            public void onTick(long millisUntilFinished) {
-            }
+                    EditText editText = new EditText(getApplicationContext());
+                    setStudyGroupType(editText);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.gravity = Gravity.CENTER;
 
-            public void onFinish() {
-                if (customAge != null){
-                    customAge.requestFocus();
-                    customAge.setHint("");
+                    editText.setHint("Theme");
+                    editText.setLayoutParams(layoutParams);
+
+                    studyGroupTheme.addView(editText);
+                }else{
+                    studyGroupTheme.removeView(getStudyGroupType());
                 }
+
             }
-        }.start();
-        customAge.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        });
+
+        subjectType.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                setGroupSizeVal(Integer.parseInt(v.getText().toString()));
+                String s = v.getText().toString();
+                if (s.endsWith(",") == true){
+                    //then we add that string to the chip view
+                    m
+                }
+
                 return false;
             }
         });
-        customAge.setId(CUSTOM_AGE);
-        customAge.setInputType(InputType.TYPE_CLASS_NUMBER |
-                InputType.TYPE_NUMBER_FLAG_DECIMAL |
-                InputType.TYPE_NUMBER_FLAG_SIGNED);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.gravity = Gravity.CENTER;
-        customAge.setLayoutParams(layoutParams);
-        return customAge;
+
     }
-    public EditText getCustomAge(){
-        return customAge;
-    }
-    public void setCustomAge(EditText customAge){
-        this.customAge = null;
-    }
+
 
     public CrystalRangeSeekbar getSeekbar() {
         return ageRange;
@@ -209,22 +179,6 @@ public class FilterView extends AppCompatActivity {
 
     public void setGroupSize(CrystalSeekbar groupSize) {
         this.groupSize = groupSize;
-    }
-
-    public TextView getMinAge() {
-        return minAge;
-    }
-
-    public void setMinAge(TextView minAge) {
-        this.minAge = minAge;
-    }
-
-    public TextView getMaxAge() {
-        return maxAge;
-    }
-
-    public void setMaxAge(TextView maxAge) {
-        this.maxAge = maxAge;
     }
 
     public TextView getDistance() {
@@ -317,5 +271,29 @@ public class FilterView extends AppCompatActivity {
 
     public void setMaxAgeVal(int maxAgeVal) {
         this.maxAgeVal = maxAgeVal;
+    }
+
+    public CheckBox getOther() {
+        return other;
+    }
+
+    public void setOther(CheckBox other) {
+        this.other = other;
+    }
+
+    public EditText getStudyGroupType() {
+        return studyGroupType;
+    }
+
+    public void setStudyGroupType(EditText studyGroupType) {
+        this.studyGroupType = studyGroupType;
+    }
+
+    public EditText getSubjectType() {
+        return subjectType;
+    }
+
+    public void setSubjectType(EditText subjectType) {
+        this.subjectType = subjectType;
     }
 }

@@ -59,7 +59,7 @@ public class LocationType extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_type);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1);
         setSupportActionBar(toolbar);
         scrollHorizontal = findViewById(R.id.scrollHorizontal);
         userData = (UserData) getApplicationContext();
