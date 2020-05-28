@@ -1,8 +1,13 @@
 package com.example.newcomer_io.ui.main.EventDetails;
 
+import android.graphics.Typeface;
 import android.os.CountDownTimer;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.Layout;
+import android.text.TextWatcher;
 import android.view.*;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +19,7 @@ import com.example.newcomer_io.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.plumillonforge.android.chipview.Chip;
 import com.plumillonforge.android.chipview.ChipView;
+import com.plumillonforge.android.chipview.OnChipClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +44,16 @@ public class FilterView extends AppCompatActivity {
     private FloatingActionButton floatingActionButton;
     private TextView timeFrame;
     private CrystalSeekbar timeFrameSeekbar;
+    private List<Chip> chipList;
 
     private EditText subjectType;
-
+    private TextView tagCompleteSuggestion;
+    private ChipView chipDefault;
     private CrystalSeekbar groupSize;
     private TextView size;
     private LinearLayout groupSizeLayout;
     private EditText studyGroupType;
+    private boolean added;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,17 +66,19 @@ public class FilterView extends AppCompatActivity {
         ageRange = findViewById(R.id.rangeSeekbar5);
         other = findViewById(R.id.other);
         studyGroupType= findViewById(R.id.bySubject);
+        chipList = new ArrayList<Chip>();
+        //chipList.add(new Tag("Lorem"));
+        //chipList.add(new Tag("Ipsum dolor"));
+        //chipList.add(new Tag("Sit amet"));
+        //chipList.add(new Tag("Consectetur"));
+        //chipList.add(new Tag("adipiscing elit"));
+        chipDefault = (ChipView) findViewById(R.id.chipview);
+        chipDefault.setChipLayoutRes(R.layout.chip_close);
+        chipDefault.setChipBackgroundColor(getResources().getColor(R.color.transparent));
 
-        List<Chip> chipList = new ArrayList<>();
-        chipList.add(new Tag("Lorem"));
-        chipList.add(new Tag("Ipsum dolor"));
-        chipList.add(new Tag("Sit amet"));
-        chipList.add(new Tag("Consectetur"));
-        chipList.add(new Tag("adipiscing elit"));
-        ChipView chipDefault = (ChipView) findViewById(R.id.chipview);
-
-        chipDefault.setChipList(chipList);
-
+        //chipDefault.setChipBackgroundColor(R.color.wizeblue);
+        //chipDefault.setChipList(chipList);
+        this.added = false;
 
         groupSize = findViewById(R.id.seekBar);
         groupSize.setMinStartValue(2);
@@ -113,10 +124,12 @@ public class FilterView extends AppCompatActivity {
         other.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                LinearLayout studyGroupTheme = findViewById(R.id.studyGroupType);
+                final LinearLayout studyGroupTheme = findViewById(R.id.studyGroupType);
                 if (isChecked){
 
-                    EditText editText = new EditText(getApplicationContext());
+                    final EditText editText = new EditText(getApplicationContext());
+                    editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                    editText.setSingleLine(true);
                     setStudyGroupType(editText);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     layoutParams.gravity = Gravity.CENTER;
@@ -125,23 +138,106 @@ public class FilterView extends AppCompatActivity {
                     editText.setLayoutParams(layoutParams);
 
                     studyGroupTheme.addView(editText);
+                    editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            other.setText(editText.getText().toString());
+                            editText.clearFocus();
+
+                            return false;
+                        }
+                    });
+
                 }else{
+                    other.setText("Other");
                     studyGroupTheme.removeView(getStudyGroupType());
                 }
 
             }
         });
 
-        subjectType.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        studyGroupType.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 String s = v.getText().toString();
                 if (s.endsWith(",") == true){
-                    //then we add that string to the chip view
-                    m
+                    chipList.add(new Tag(s.split(",")[0]));
+                    //chipDefault.set
+                    v.setText("");
                 }
 
                 return false;
+            }
+        });
+        studyGroupType.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if (isAdded() == false){
+                    setAdded(true);
+                    final TextView textView = new TextView(getApplicationContext());
+                    textView.setText("Comma Separated");
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.gravity = Gravity.CENTER;
+                    textView.setLayoutParams(layoutParams);
+                    Typeface typeface =Typeface.create("open-sans", Typeface.ITALIC);
+                    textView.setTextSize(10);
+                    textView.setTypeface(typeface);
+                    final LinearLayout bySubjectLayout = findViewById(R.id.bySubjectLayout);
+                    bySubjectLayout.addView(textView);
+
+                    new CountDownTimer(3000, 1000) {
+
+                        public void onTick(long millisUntilFinished) {
+                        }
+
+                        public void onFinish() {
+                            bySubjectLayout.removeView(textView);
+                        }
+                    }.start();
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String s1 = s.toString();
+                //String word = s1.split(",")[0];
+
+                if (s1.endsWith(",") == true && s1.length() != 1){
+                    String[] split = s1.split(",");
+                    String s2 = split[0].toUpperCase().trim();
+
+                    if (s2.equals("") == false){
+                        getStudyGroupType().setText("");
+
+                        chipList.add(new Tag(s2));
+
+
+                        getChipDefault().setChipList(chipList);
+                        getChipDefault().setOnChipClickListener(new OnChipClickListener() {
+                            @Override
+                            public void onChipClick(Chip chip) {
+                                //Then we remove it
+                                List<Chip> chipList = getChipList();
+                                chipList.remove(chip);
+                                getChipDefault().setChipList(chipList);
+                            }
+                        });
+                    }else{
+                        getStudyGroupType().setText("");
+                    }
+                }else if(s1.endsWith(",") == true && s1.length() == 1){
+                    //Then we can just reset it
+                    getStudyGroupType().setText("");
+                }
             }
         });
 
@@ -296,4 +392,29 @@ public class FilterView extends AppCompatActivity {
     public void setSubjectType(EditText subjectType) {
         this.subjectType = subjectType;
     }
+
+    public TextView getTagCompleteSuggestion() {
+        return tagCompleteSuggestion;
+    }
+
+    public void setTagCompleteSuggestion(TextView tagCompleteSuggestion) {
+        this.tagCompleteSuggestion = tagCompleteSuggestion;
+    }
+
+    public boolean isAdded() {
+        return added;
+    }
+
+    public void setAdded(boolean added) {
+        this.added = added;
+    }
+
+    public ChipView getChipDefault() {
+        return chipDefault;
+    }
+
+    public void setChipDefault(ChipView chipDefault) {
+        this.chipDefault = chipDefault;
+    }
+    public List<Chip> getChipList(){return this.chipList; }
 }
