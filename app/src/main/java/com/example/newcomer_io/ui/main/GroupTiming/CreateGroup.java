@@ -136,8 +136,6 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
         EditText customAge = locationLogistics.getAgeCustom();
         Spinner groupSpinner = locationLogistics.getGroupSpinner();
-        EditText ageMax = locationLogistics.getAgeMax();
-        EditText ageMin = locationLogistics.getAgeMin();
         int MAXSPINNERSIZE = locationLogistics.getMaxSpinnerSize();
         EditText locationVal = locationLogistics.getLocationVal();
         EditText eventNotes = locationLogistics.getEventNotes();
@@ -145,12 +143,6 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         EditText eventTitle = groupLogistics.getEventTitle();
         Switch aSwitch = groupLogistics.getSwitch();
 
-        if (ageMin.length() != 0){
-            eventCreate.setAgeMin(ageMin.getText().toString());
-        }
-        if (ageMax.length() != 0){
-            eventCreate.setAgeMax(ageMax.getText().toString());
-        }
         if (eventNotes.length() != 0){
             eventCreate.setEventNotes(eventNotes.getText().toString());
         }
@@ -197,8 +189,6 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
 
         EditText eventNotes = locationLogistics.getEventNotes();
         EditText locationName = locationLogistics.locationName();
-        EditText ageMin = locationLogistics.getAgeMin();
-        EditText ageMax = locationLogistics.getAgeMax();
         EditText ageCustom = locationLogistics.getAgeCustom();
         ArrayAdapter<String> arrayAdapter = locationLogistics.getArrayAdapter();
 
@@ -216,8 +206,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
             locationName.setText(eventLocation);
         }
         eventNotes.setText(EventNotes);
-        ageMin.setText(ageMin1);
-        ageMax.setText(ageMax1);
+
         eventTitle.setText(eventName);
 
         if (endTime_txt.equals("Click to set") == false){
@@ -250,42 +239,10 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
         EditText maxAge;
 
         getLocation = locationLogistics.getLocationVal();
-        minAge = locationLogistics.getAgeMin();
-        maxAge = locationLogistics.getAgeMax();
         EditText title = groupLogistics.getEventTitle();
 
         int minimumAge = 0;
         int maximumAge = 0;
-        if (minAge.getText().toString().length() != 0){
-            minimumAge = Integer.parseInt(minAge.getText().toString());
-
-        }
-        if (maxAge.getText().toString().length() != 0){
-            maximumAge = Integer.parseInt((maxAge.getText().toString()));
-        }
-
-        //We want to check that the user did initiate a minimum age that is greater than the maximum age \s
-        if (minimumAge > maximumAge){
-            //set the error
-            minAge.setError("Please enter a minimum age smaller than the maximum age");
-            minAge.setText("");
-            maxAge.setText("");
-            minAge.requestFocus();
-            returnFlag = true;
-
-        }
-
-        //Set the paramaters to hte length of the appropriate values for hte length if it is zero than we want ot
-        if (minAge.getText().toString().length() == 0){
-            minAge.setError("Please enter a minimum age");
-            returnFlag = true;
-
-        }
-         if (maxAge.getText().toString().length() == 0) {
-             maxAge.setError("Please enter a maximum age");
-             returnFlag = true;
-
-         }
 
         if (title.getText().toString().length() == 0) {
             title.setError("Please enter an event title");

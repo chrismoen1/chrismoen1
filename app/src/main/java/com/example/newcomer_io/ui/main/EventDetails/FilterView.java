@@ -16,7 +16,6 @@ import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.example.newcomer_io.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.plumillonforge.android.chipview.Chip;
 import com.plumillonforge.android.chipview.ChipView;
 import com.plumillonforge.android.chipview.OnChipClickListener;
@@ -41,7 +40,6 @@ public class FilterView extends AppCompatActivity {
     private CrystalRangeSeekbar ageRange;
     private CrystalSeekbar  searchDistance;
     private TextView distance;
-    private FloatingActionButton floatingActionButton;
     private TextView timeFrame;
     private CrystalSeekbar timeFrameSeekbar;
     private List<Chip> chipList;
@@ -62,7 +60,6 @@ public class FilterView extends AppCompatActivity {
 
         groupSizeLayout = findViewById(R.id.groupSizeLayout);
         timeFrameSeekbar = findViewById(R.id.timeFrameSeekbar);
-        floatingActionButton = findViewById(R.id.backGutton2);
         ageRange = findViewById(R.id.rangeSeekbar5);
         other = findViewById(R.id.other);
         studyGroupType= findViewById(R.id.bySubject);
@@ -113,13 +110,6 @@ public class FilterView extends AppCompatActivity {
             }
         });
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Then we go back to the previous page
-
-            }
-        });
 
         other.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -321,13 +311,6 @@ public class FilterView extends AppCompatActivity {
         this.timeFrameSeekbar = timeFrameSeekbar;
     }
 
-    public FloatingActionButton getFloatingActionButton() {
-        return floatingActionButton;
-    }
-
-    public void setFloatingActionButton(FloatingActionButton floatingActionButton) {
-        this.floatingActionButton = floatingActionButton;
-    }
 
     public int getTimeFrameVal() {
         return timeFrameVal;

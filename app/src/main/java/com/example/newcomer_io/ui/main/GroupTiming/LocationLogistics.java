@@ -51,10 +51,8 @@ public class LocationLogistics extends CreateGroup {
         fragment_groupLocation = inflater.inflate(R.layout.fragment_location_logistics,scroll,true);
         checked = false;
         //Initialize all of the places
-        locationName = fragment_groupLocation.findViewById(R.id.editText4);
+        locationName = fragment_groupLocation.findViewById(R.id.editText);
 
-        minAge = fragment_groupLocation.findViewById(R.id.minAge);
-        maxAge = fragment_groupLocation.findViewById(R.id.maxAge);
 
         groupNumber = fragment_groupLocation.findViewById(R.id.spinner);
         floatingActionButton = fragment_groupLocation.findViewById(R.id.floatingActionButton);
@@ -133,13 +131,6 @@ public class LocationLogistics extends CreateGroup {
     }
     public void setChecked(boolean value){
         this.checked = value;
-    }
-
-    public EditText getAgeMin() {
-        return minAge;
-    }
-    public EditText getAgeMax(){
-        return maxAge;
     }
 
     public int getMaxSpinnerSize() {
