@@ -60,7 +60,7 @@ public class GroupLogistics extends Fragment {
         View inflate = inflater.inflate(R.layout.fragment_group_logistics, container, false);
         startTime = inflate.findViewById(R.id.startTime);
         endTime = inflate.findViewById(R.id.endTime);
-        title = inflate.findViewById(R.id.editText);
+        title = inflate.findViewById(R.id.groupTitle);
         //Edit text paramaters
         title.setHint("Event Title");
 
@@ -180,7 +180,7 @@ public class GroupLogistics extends Fragment {
         public Switch(View v){
 
             time_dallDay = v.findViewById(R.id.switchf);
-            display = v.findViewById(R.id.textView);
+            display = v.findViewById(R.id.timing);
             display.setText("Time");
             time_dallDay.setChecked(true);
 

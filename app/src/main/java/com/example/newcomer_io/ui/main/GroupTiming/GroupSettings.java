@@ -49,7 +49,7 @@ public class GroupSettings{
         startTime_Horizontal = fragment_groupLogistics.findViewById(R.id.startTime_Horiziontal);
         endTime_Horizontal = fragment_groupLogistics.findViewById(R.id.endTime_Horizontal);
 
-        eventTitle = fragment_groupLogistics.findViewById(R.id.editText);
+        eventTitle = fragment_groupLogistics.findViewById(R.id.groupTitle);
 
         startTime = fragment_groupLogistics.findViewById(R.id.startTime);
         endTime = fragment_groupLogistics.findViewById(R.id.endTime);
@@ -59,7 +59,7 @@ public class GroupSettings{
         time_dallDay = fragment_groupLogistics.findViewById(R.id.switchf);
         time_dallDay.setChecked(true);
 
-        display = fragment_groupLogistics.findViewById(R.id.textView);
+        display = fragment_groupLogistics.findViewById(R.id.timing);
         display.setText("All Day");
 
         startTimeListener();
@@ -181,7 +181,7 @@ public class GroupSettings{
     private void displayCalendarDialog(String TIME) {
         boolean switchf = time_dallDay.isChecked();
 
-        DialogFragment newFragment = new CalendarDialogFragment(TIME,startDate,endDate,switchf);
+        DialogFragment newFragment = new CalendarDialogFragment(STARTTIME);
         newFragment.show(((AppCompatActivity) mMainActivity).getSupportFragmentManager(), "datepicker");
 
     }

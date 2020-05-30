@@ -269,7 +269,7 @@ public class CreateGroup extends AppCompatActivity implements GroupLogistics.OnC
     private void displayCalendarDialog(String TIME) {
         boolean switchf = groupLogistics.getTimeSwitch_Checked();
 
-        DialogFragment newFragment = new CalendarDialogFragment(TIME,startDate,endDate,switchf);
+        DialogFragment newFragment = new CalendarDialogFragment(STARTTIME);
 
         newFragment.show(getSupportFragmentManager(), "datepicker");
 

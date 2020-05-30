@@ -19,23 +19,12 @@ public class CalendarDialogFragment extends DialogFragment {
 
     private CalendarView calendarView;
     private long HOUR = 3600;
-    private TextView okay;
     OnClickDate mListener;
     private String action_type;
 
-    private static String STARTTIME = "Start Time";
-    private static String ENDTIME = "End Time";
 
-    private Date startDate;
-    private Date endDate;
-    private boolean checked;
-
-    public CalendarDialogFragment(String type,Date startDate, Date endDate, boolean checked){ //if checked is set to false then that corresponds to all day, otherwise it set to a specific time fram e
-        //This is
-        action_type = type;
-        this.checked = checked;
-        this.startDate = startDate;
-        this.endDate = endDate;
+    public CalendarDialogFragment(String starttime) {
+    this.action_type = starttime;
     }
 
     @Override

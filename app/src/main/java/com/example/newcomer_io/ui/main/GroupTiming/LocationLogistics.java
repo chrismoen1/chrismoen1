@@ -51,12 +51,11 @@ public class LocationLogistics extends CreateGroup {
         fragment_groupLocation = inflater.inflate(R.layout.fragment_location_logistics,scroll,true);
         checked = false;
         //Initialize all of the places
-        locationName = fragment_groupLocation.findViewById(R.id.editText);
+        locationName = fragment_groupLocation.findViewById(R.id.location);
 
-
-        groupNumber = fragment_groupLocation.findViewById(R.id.spinner);
+        groupNumber = fragment_groupLocation.findViewById(R.id.eventSize);
         floatingActionButton = fragment_groupLocation.findViewById(R.id.floatingActionButton);
-        eventNotes = fragment_groupLocation.findViewById(R.id.editText2);
+        eventNotes = fragment_groupLocation.findViewById(R.id.meetingNotes);
         ageCustom = fragment_groupLocation.findViewById(R.id.ageCustom);
 
         ageCustom.setVisibility(View.INVISIBLE);
