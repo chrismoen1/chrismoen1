@@ -184,11 +184,7 @@ public class FilterView extends AppCompatActivity {
                             bySubjectLayout.removeView(textView);
                         }
                     }.start();
-
                 }
-
-
-
             }
 
             @Override

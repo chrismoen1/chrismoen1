@@ -1,5 +1,3 @@
-package com.example.newcomer_io.ui.main.GroupTiming;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -32,7 +30,6 @@ public class LocationLogistics extends CreateGroup {
     private EditText ageCustom;
     private LatLng place;
 
-    private Spinner groupNumber;
 
     private EditText minAge;
     private EditText maxAge;
@@ -53,7 +50,7 @@ public class LocationLogistics extends CreateGroup {
         //Initialize all of the places
         locationName = fragment_groupLocation.findViewById(R.id.location);
 
-        groupNumber = fragment_groupLocation.findViewById(R.id.eventSize);
+        groupNumber = fragment_groupLocation.findViewById(R.id.groupSize);
         floatingActionButton = fragment_groupLocation.findViewById(R.id.floatingActionButton);
         eventNotes = fragment_groupLocation.findViewById(R.id.meetingNotes);
         ageCustom = fragment_groupLocation.findViewById(R.id.ageCustom);

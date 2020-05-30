@@ -131,6 +131,7 @@
                 <EditText
                     android:id="@+id/subject"
                     android:layout_width="wrap_content"
+                    android:backgroundTint="@color/wizeblue"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:ems="10"

@@ -1,22 +1,42 @@
 package com.example.newcomer_io.ui.main.GroupTiming;
 
 import android.content.DialogInterface;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
+import com.crystal.crystalrangeseekbar.interfaces.OnSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar;
 import com.example.newcomer_io.R;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class CreateStudyGroup extends AppCompatActivity implements CalendarDialogFragment.OnClickDate, TimePickerFragment.OnInputListener {
 
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 1;
+    private static final int TYPE_FILTER_ESTABLISHMENT = 34;
     private View GroupTiming;
     private View LocationLogistics;
     private View SubjectLogistics;
@@ -76,8 +96,153 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
         groupTiming_Border.setBackground(getResources().getDrawable(R.drawable.rounded_border));
 
         activitateGroupTiming(GroupTiming);
+        activitateLocationLogistics(LocationLogistics);
+        activateSubjectLogistics(SubjectLogistics);
 
     }
+
+    private void activateSubjectLogistics(View subjectLogistics) {
+        CheckBox other = subjectLogistics.findViewById(R.id.other);
+        final LinearLayout studyGroupType = subjectLogistics.findViewById(R.id.studyGroupType );
+        final int otherID = 10;
+
+        other.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+
+                    //Then we create the other field
+                    TextView theme = new TextView(getApplicationContext());
+
+                    theme.setHint("Enter A Theme");
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.gravity = Gravity.CENTER;
+                    theme.setLayoutParams(layoutParams);
+                    theme.setId(otherID);
+                    studyGroupType.addView(theme);
+
+                }else{
+
+                    try{
+                        TextView theme = studyGroupType.findViewById(otherID);
+
+                        if (theme != null){
+                            studyGroupType.removeView(theme);
+                        }
+
+                    } catch (Exception e) {
+                         e.printStackTrace();
+
+                    }
+
+                }
+            }
+        });
+    }
+
+    private void activitateLocationLogistics(View locationLogistics) {
+        EditText locationName = locationLogistics.findViewById(R.id.location);
+        EditText meetingDetails = locationLogistics.findViewById(R.id.meetingNotes);
+        final TextView groupSizeNum = locationLogistics.findViewById(R.id.groupSizeNum);
+
+        meetingDetails.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        CrystalSeekbar groupSize = locationLogistics.findViewById(R.id.groupSize);
+
+        groupSize.setMinValue(3);
+        groupSize.setMinStartValue(6);
+        groupSize.setMaxValue(15);
+        groupSize.apply();
+
+        locationName.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                
+                //then we will activiate the google places to get the name fo the location that the event will take place
+                if (event.getAction() == MotionEvent.ACTION_DOWN){
+
+                    callPlacesIntent();
+                    if (getStageConfirmation(2)){
+                        setStage_Highlight(3);
+                    }
+                }
+                return false;
+            }
+        });
+        groupSize.setOnSeekbarChangeListener(new OnSeekbarChangeListener() {
+            @Override
+            public void valueChanged(Number value) {
+                //Then we update the text view of the number being displayed on the seekbar
+                int progress= value.intValue();
+                groupSizeNum.setText("Up to " + String.valueOf(progress) + " people");
+                if (getStageConfirmation(2)){
+                    setStage_Highlight(3);
+                }
+            }
+        });
+        meetingDetails.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (getStageConfirmation(2)){
+                    setStage_Highlight(3);
+                }
+                return false;
+            }
+        });
+        
+    }
+    private void callPlacesIntent() {
+        //Set the paramaters as needed
+        Places.initialize(this.getApplicationContext(), "AIzaSyAjGcF4XC-OEVJHKPmPefDUxGjxiSCbFK8");
+        PlacesClient placesClient = Places.createClient(this.getApplicationContext());
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG);
+// autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG));
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.FULLSCREEN, fields)
+                .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                .build(this);
+        this.startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+/*        // Initialize the AutocompleteSupportFragment.
+        this.autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete1);
+        this.autocompleteFragment.getView().setVisibility(View.INVISIBLE);*/
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place asd = Autocomplete.getPlaceFromIntent(data);
+                LatLng location = asd.getLatLng();
+                
+                String name = asd.getName();
+                
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                List<Address> addresses = null;
+
+                try {
+                    addresses = geocoder.getFromLocation(location.latitude,location.longitude, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String cityName = addresses.get(0).getAddressLine(0);
+                View locationLogistics = getLocationLogistics();
+                EditText locationName = locationLogistics.findViewById(R.id.location);
+                locationName.setText(name);
+                //locationLogistics.setLocationName(cityName);
+                //locationLogistics.setChecked(false);
+
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+
+            }
+        }
+    }//onActivityResult
+
     private void setStage_Highlight(int stageNum){
         LinearLayout groupTiming_Border = getGroupTiming().findViewById(R.id.timing_Layout);
         LinearLayout locationLogistics_Border =getLocationLogistics().findViewById(R.id.location_Layout);
@@ -115,13 +280,17 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
                 return false;
             }
 
-        }else if(stageNum == 1){
+        }else if(stageNum == 2){
         //Otherwise if all of hte values on stage 2 are correct then we can proceed
             View locationLogistics = getLocationLogistics();
             EditText location = locationLogistics.findViewById(R.id.location);
             EditText meetingNotes = locationLogistics.findViewById(R.id.meetingNotes);
-            return true;
 
+            if (location.getText().toString().equals("") == false && meetingNotes.getText().toString().equals("") == false){
+                return true;
+            }else{
+                return false;
+            }
         }
         else{
             //stage 3
@@ -153,7 +322,7 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
                     setStage_Highlight(2);
                 }
 
-                return false;
+            return false;
             }
         });
 

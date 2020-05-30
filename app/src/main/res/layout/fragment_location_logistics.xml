@@ -58,14 +58,16 @@
 
                 <EditText
                     android:id="@+id/location"
-                    android:layout_width="270dp"
+                    android:backgroundTint="@color/wizeblue"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="0"
                     android:ems="10"
                     android:gravity="center"
-                    android:hint="Location"
-                    android:inputType="textPersonName" />
+                    android:hint="Location of study group?"
+                    android:inputType="textPersonName"
+                    android:singleLine="false" />
             </LinearLayout>
 
             <LinearLayout
@@ -89,54 +91,66 @@
 
                 <EditText
                     android:id="@+id/meetingNotes"
-                    android:layout_width="265dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="0"
-
+                    android:backgroundTint="@color/wizeblue"
                     android:ems="10"
                     android:gravity="center"
-                    android:hint="Where to meet?"
+                    android:hint="Where to meet? eg floor, room #?"
                     android:inputType="textPersonName" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/numberGroupMembers"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/sizeOfGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
+                    android:text="Group Size"
+                    android:textSize="15sp" />
 
-                <ImageView
-                    android:id="@+id/imageView5"
-                    android:layout_width="32dp"
-                    android:layout_height="41dp"
-                    android:layout_weight="0"
-                    android:src="@drawable/groupsymbol" />
+                <LinearLayout
+                    android:id="@+id/numberGroupMembers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
 
-                <Space
+                    android:orientation="horizontal">
+
+                    <com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar
+                        android:id="@+id/groupSize"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:max="14"
+                        android:min="1"
+                        android:progressTint="@color/DarkGray"
+                        android:thumb="@drawable/thumb"
+                        app:bar_color="@color/DarkGray"
+                        app:left_thumb_color="@color/wizeblue" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/groupSizeNum"
+                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0" />
+                    android:fontFamily="@font/open_sans"
+                    android:text="Up to 6 people"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="16sp" />
 
-                <Spinner
-                    android:id="@+id/eventSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="0" />
-
-                <EditText
-                    android:id="@+id/ageCustom"
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:hint="9"
-                    android:inputType="number" />
             </LinearLayout>
 
         </LinearLayout>

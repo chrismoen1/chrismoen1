@@ -21,7 +21,6 @@
         <activity android:name=".ui.main.EventDetails.GroupConfirmation" />
         <activity android:name=".ui.main.LocationSettings.TrendingDisplay" />
         <activity android:name=".ui.main.LocationSettings.LocationType" />
-        <activity android:name=".ui.main.GroupTiming.CreateGroup" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

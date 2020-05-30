@@ -55,6 +55,7 @@
 
                 <EditText
                     android:id="@+id/groupTitle"
+                    android:backgroundTint="@color/wizeblue"
                     android:layout_width="246dp"
                     android:layout_height="wrap_content"
                     android:ems="10"

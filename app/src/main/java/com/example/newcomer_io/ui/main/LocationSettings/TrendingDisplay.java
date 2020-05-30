@@ -1,7 +1,6 @@
 package com.example.newcomer_io.ui.main.LocationSettings;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,7 +22,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.newcomer_io.R;
-import com.example.newcomer_io.ui.main.GroupTiming.CreateGroup;
+import com.example.newcomer_io.ui.main.GroupTiming.CreateStudyGroup;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -160,7 +159,7 @@ public class TrendingDisplay extends AppCompatActivity {
                         userData.getEventCreate().setPhoto(trendingContent1.getPhoto());
                         userData.getEventCreate().setEventlocation(trendingContent1.getLocation());
 
-                        Intent intent = new Intent(TrendingDisplay.this, CreateGroup.class);
+                        Intent intent = new Intent(TrendingDisplay.this, CreateStudyGroup.class);
                         startActivity(intent);
                         //chooseLocation.color
 

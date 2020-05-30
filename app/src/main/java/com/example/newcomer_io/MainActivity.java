@@ -1,14 +1,11 @@
 package com.example.newcomer_io;
 
 import android.content.Intent;
-import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
-import com.example.newcomer_io.ui.main.EventDetails.FilterView;
-import com.example.newcomer_io.ui.main.GroupTiming.CreateGroup;
 import com.example.newcomer_io.ui.main.GroupTiming.CreateStudyGroup;
 import com.example.newcomer_io.ui.main.JoinGroup.JoinGroup;
 import com.example.newcomer_io.ui.main.MainFragment;
