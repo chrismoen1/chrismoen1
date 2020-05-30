@@ -135,6 +135,12 @@ public class JoinGroup extends AppCompatActivity {
                     if (dataSnapshot.getValue() != null) {
                         try {
                             String eventName_Str = dataSnapshot.child("Event Details").child("Event Name").getValue().toString();
+                            String subjectType = dataSnapshot.child("Subject").getValue().toString();
+
+                            LinearLayout groupTags = findViewById(R.id.groupTags);
+                            TextView subjectType_Txt = createSubjectTypeView(subjectType);
+                            groupTags.addView(subjectType_Txt); 
+
                             int groupSize = Integer.parseInt(dataSnapshot.child("Event Details").child("Group Size").getValue().toString());
                             int joined = (int) dataSnapshot.child("Joined").getChildrenCount();
                             String location_Str = dataSnapshot.child("Event Details").child("Location").child("Name").getValue().toString();
@@ -173,6 +179,23 @@ public class JoinGroup extends AppCompatActivity {
         }
 
     }
+
+    private TextView createSubjectTypeView(String subjectType) {
+        int tagNum = 60;
+        TextView textView = new TextView(getApplicationContext());
+        textView.setText(subjectType);
+        textView.setId(tagNum);
+        textView.setBackgroundResource(R.drawable.rounded_border);
+
+        LinearLayout.LayoutParams layoutParams= new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        textView.setLayoutParams(layoutParams);
+        int i = dip2px(this, 2f);
+        textView.setPadding(1,1,1,1);
+
+
+        return textView;
+    }
+
     public void addView(View view, int position){
         //Then we will go through and set the view based on positions
         if (getRowHolder().getChildCount() != 0){

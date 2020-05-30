@@ -25,6 +25,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -102,9 +103,21 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
     }
 
     private void activateSubjectLogistics(View subjectLogistics) {
-        CheckBox other = subjectLogistics.findViewById(R.id.other);
+        final CheckBox other = subjectLogistics.findViewById(R.id.other);
         final LinearLayout studyGroupType = subjectLogistics.findViewById(R.id.studyGroupType );
         final int otherID = 10;
+        FloatingActionButton floatingActionButton = subjectLogistics.findViewById(R.id.floatingActionButton);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Check all params
+                if (getStageConfirmation(1) && getStageConfirmation(2) && getStageConfirmation(3)){
+                    //Then we go forth with creating the group
+
+                }
+            }
+        });
 
         other.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -112,7 +125,7 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
                 if (isChecked){
 
                     //Then we create the other field
-                    TextView theme = new TextView(getApplicationContext());
+                    final EditText theme = new EditText(getApplicationContext());
 
                     theme.setHint("Enter A Theme");
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -121,10 +134,21 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
                     theme.setId(otherID);
                     studyGroupType.addView(theme);
 
+                    theme.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+                    theme.setSingleLine(true);
+                    theme.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            other.setText(theme.getText().toString());
+                            studyGroupType.removeView(theme);
+                            return false;
+                        }
+                    });
                 }else{
 
                     try{
-                        TextView theme = studyGroupType.findViewById(otherID);
+                        EditText theme = studyGroupType.findViewById(otherID);
 
                         if (theme != null){
                             studyGroupType.removeView(theme);
@@ -146,6 +170,8 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
         final TextView groupSizeNum = locationLogistics.findViewById(R.id.groupSizeNum);
 
         meetingDetails.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        meetingDetails.setSingleLine(false);
+
         CrystalSeekbar groupSize = locationLogistics.findViewById(R.id.groupSize);
 
         groupSize.setMinValue(3);
@@ -156,7 +182,7 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
         locationName.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                
+
                 //then we will activiate the google places to get the name fo the location that the event will take place
                 if (event.getAction() == MotionEvent.ACTION_DOWN){
 
@@ -238,7 +264,6 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
-
             }
         }
     }//onActivityResult
@@ -293,8 +318,21 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
             }
         }
         else{
-            //stage 3
-            return true;
+            View subjectLogistics = getSubjectLogistics();
+            CheckBox finalExam = subjectLogistics.findViewById(R.id.finalExam);
+            CheckBox problemSets = subjectLogistics.findViewById(R.id.problemSets);
+            CheckBox midTerm = subjectLogistics.findViewById(R.id.midterm);
+            CheckBox quizzes = subjectLogistics.findViewById(R.id.quizzes);
+
+            EditText subject = subjectLogistics.findViewById(R.id.subject);
+            if ((finalExam.isChecked() || problemSets.isChecked() || midTerm.isChecked() || quizzes.isChecked()) && subject.getText().toString().equals("") == false){
+                //Then we will navigate to the next screen
+                return true;
+            }
+            else{
+                return false;
+            }
+
         }
     }
 
@@ -526,6 +564,8 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
         alertDialog.show();
 
     }
+
+
 
     public Date getEndTime_Date() {
         return endTime_Date;
