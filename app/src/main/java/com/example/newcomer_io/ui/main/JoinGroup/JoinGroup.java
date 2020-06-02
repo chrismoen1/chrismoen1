@@ -3,6 +3,7 @@ package com.example.newcomer_io.ui.main.JoinGroup;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.*;
@@ -10,6 +11,8 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.EventDetails.FilterView;
@@ -25,6 +28,7 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -36,9 +40,12 @@ public class JoinGroup extends AppCompatActivity {
 
     private UserData userData;
     private Object availableGroups;
+    private LinearLayout layoutRow;
+    private LinearLayout layoutContainer;
+
     private ArrayList<Pair> arrayList;
+    private ArrayList<String> tags;
     private LinearLayout rowHolder;
-    private LinearLayout nestedScrollLayout;
     private ImageView refresh;
     private androidx.appcompat.widget.Toolbar toolbar;
 
@@ -50,16 +57,17 @@ public class JoinGroup extends AppCompatActivity {
         userData = (UserData) getApplicationContext();
         arrayList = new ArrayList<>();
 
-        nestedScrollLayout = findViewById(R.id.nestedScrollLayout);
+        layoutContainer = findViewById(R.id.layoutContainer);
+        tags = new ArrayList<String>();
 
         toolbar = findViewById(R.id.toolbar1);
         toolbar.setTitle("Join a Group");
 
         setSupportActionBar(toolbar);
 
-        userData.setUUID();
-        setAvailableGroups(availableGroups);
+        //userData.setUUID();
 
+        setAvailableGroups(availableGroups);
         getAvailbleGroups(45.3873,-75.7346);
 
     }
@@ -76,6 +84,7 @@ public class JoinGroup extends AppCompatActivity {
         FirebaseFunctions instance = FirebaseFunctions.getInstance();
         // Create the arguments to the callable function.
         final Map<String, Object> data = new HashMap<>();
+
         data.put("lat", lat);
         data.put("lon", lon);
 
@@ -88,8 +97,6 @@ public class JoinGroup extends AppCompatActivity {
                 String replace2 = replace1.replace(" ", "");
                 String[] split = replace2.split(",");
                 updateGroupsView(split);
-
-
             }
         });
 
@@ -100,13 +107,13 @@ public class JoinGroup extends AppCompatActivity {
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         creatLayoutCard();
-        getNestedScrollLayout().addView(getRowHolder());
+        //getNestedScrollLayout().addView(getRowHolder());
 
         int orientation = 1;
+
         for (int i=0; i < data1.length;i++){
 
             final String GUID = data1[i];
-            final int position = i;
 
             LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(getApplicationContext().LAYOUT_INFLATER_SERVICE);
             final View group_join = inflater.inflate(R.layout.group_join, null);
@@ -114,42 +121,63 @@ public class JoinGroup extends AppCompatActivity {
             DisplayMetrics displayMetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-            int height = displayMetrics.heightPixels;
             int width = displayMetrics.widthPixels;
 
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams((width/2) - 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+
             group_join.setLayoutParams(layoutParams);
             group_join.setId(i);
 
             final TextView eventName = group_join.findViewById(R.id.eventName);
+            final TextView eventNotes = group_join.findViewById(R.id.eventNotes);
             final TextView eventLocation = group_join.findViewById(R.id.eventLocationDetails_Txt);
             final TextView eventSize = group_join.findViewById(R.id.eventNoteDetails_Txt);
+            final TextView subjectName = group_join.findViewById(R.id.eventNoteDetails_Txt2);
 
             Button joinGroup = group_join.findViewById(R.id.joinGroup2);
 
             mDatabase.child("Groups/"+GUID).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    //LinearLayout layoutContainer = getLayoutContainer();
+                    /*if (layoutContainer.getChildCount() ==  0){
+                        //remove all of the layout containers
+                        layoutContainer.removeAllViews();
+                    }*/
                     //Then we use the datasnapshot to implement the UI changs
                     addElement(GUID,dataSnapshot);
                     if (dataSnapshot.getValue() != null) {
                         try {
                             String eventName_Str = dataSnapshot.child("Event Details").child("Event Name").getValue().toString();
-                            String subjectType = dataSnapshot.child("Subject").getValue().toString();
+                            String subjectType_Str = dataSnapshot.child("Event Details").child("Subject").getValue().toString();
+                            String eventNotes_Str = dataSnapshot.child("Event Details").child("Event Notes").getValue().toString();
 
-                            LinearLayout groupTags = findViewById(R.id.groupTags);
-                            TextView subjectType_Txt = createSubjectTypeView(subjectType);
-                            groupTags.addView(subjectType_Txt); 
+                            getTags().add(subjectType_Str);
+                            LinearLayout groupTags = group_join.findViewById(R.id.groupTags);
+                            //TextView subjectType_Txt = createSubjectTypeView(subjectType);
+
+                            LinearLayout groupTagsLayout = createGroupTagsLayout(dataSnapshot.child("Event Details").child("Type").getChildren());
+
+                            //groupTags.addView(subjectType_Txt);
+                            groupTags.addView(createSpacer("HORIZONTAL"));
+                            groupTags.addView(groupTagsLayout);
+                            subjectName.setText(subjectType_Str);
+
+                            //groupTags.addView(createCheckMarksLayout("Test"));
 
                             int groupSize = Integer.parseInt(dataSnapshot.child("Event Details").child("Group Size").getValue().toString());
                             int joined = (int) dataSnapshot.child("Joined").getChildrenCount();
                             String location_Str = dataSnapshot.child("Event Details").child("Location").child("Name").getValue().toString();
 
+                            //Setting the pararamaters in the text field to indicate the values for various fields
                             eventName.setText(eventName_Str);
                             eventLocation.setText(location_Str);
                             eventSize.setText(String.valueOf(joined) + "/" + String.valueOf(groupSize) + " have joined");
+                            eventNotes.setText(eventNotes_Str);
 
-                            addView(group_join, position);
+                            addLayoutView(group_join);
+
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
@@ -167,41 +195,122 @@ public class JoinGroup extends AppCompatActivity {
                 public void onClick(View v) {
 
                     //Then we will go to the group confirmation page
+
+                    //Considering all of the information that we need
+                    //1.
+
+
                     Intent intent = new Intent(getApplicationContext(), GroupConfirmation.class);
+                    intent.putStringArrayListExtra("Subject Tags", getTags());
                     intent.putExtra("GUID", GUID);
+                    intent.putExtra("Event Location", eventLocation.getText().toString());
+                    intent.putExtra("Event Name", eventName.getText().toString());
+                    intent.putExtra("Event Notes",eventNotes.getText().toString());
+                    intent.putExtra("Subject", subjectName.getText().toString());
+
                     startActivity(intent);
 
                 }
             });
-
-
-
         }
+    }
+/*
+
+    private CardView createCardLayout(){
+        //This will create the card layout view used to display the current group tot he user
+        CardView cardView = new CardView(this);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        int width = displayMetrics.widthPixels;
+
+        CardView.LayoutParams layoutParams = new ViewGroup.LayoutParams((width/2) - dip2px(this,5),
+                CardView.LayoutParams.WRAP_CONTENT);
+        cardView.setLayoutParams(layoutParams);
+
+
+    }
+*/
+
+    private void addLayoutView(View group_join) {
+        LinearLayout layoutContainer = getLayoutContainer();
+
+            //Then we create the row and add it the table layout
+         layoutContainer.addView(group_join);
 
     }
 
+    private LinearLayout createGroupTagsLayout(Iterable<DataSnapshot> children) {
+        LinearLayout viewHolder = new LinearLayout(this);
+        viewHolder.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        for (DataSnapshot childs : children){
+
+            //Then we iterate and get each tag
+            String typeName = childs.getValue().toString();
+
+            LinearLayout checkMarksLayout = createCheckMarksLayout(typeName);
+            viewHolder.addView(checkMarksLayout);
+
+        }
+        return viewHolder;
+    }
+
+    private LinearLayout createCheckMarksLayout(String typeName){
+
+        LinearLayout container = new LinearLayout(this);
+        LinearLayout.LayoutParams container_Parms = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        container.setOrientation(LinearLayout.HORIZONTAL);
+        container.setLayoutParams(container_Parms);
+
+        int x = dip2px(this, 10);
+        int y = dip2px(this, 10);
+
+        LinearLayout.LayoutParams checkMarkBoxes_Parms = new LinearLayout.LayoutParams(x,y);
+        //Create the checkbox which will go beside the text
+        ImageView checkBox = new ImageView(this);
+        checkBox.setBackgroundResource(R.drawable.checkicon);
+        checkBox.setLayoutParams(checkMarkBoxes_Parms);
+
+        TextView typeName_Txt = new TextView(this);
+        typeName_Txt.setMaxLines(3);
+        typeName_Txt.setTextSize(10f); 
+        LinearLayout.LayoutParams textDisplay_Parms = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        textDisplay_Parms.setMargins(dip2px(this,2),0,0,0);
+        typeName_Txt.setText(typeName);
+        typeName_Txt.setLayoutParams(textDisplay_Parms);
+
+        //Add it to the views
+        container.addView(checkBox);
+        container.addView(typeName_Txt);
+
+        return container;
+    }
+/*
     private TextView createSubjectTypeView(String subjectType) {
         int tagNum = 60;
         TextView textView = new TextView(getApplicationContext());
         textView.setText(subjectType);
         textView.setId(tagNum);
-        textView.setBackgroundResource(R.drawable.rounded_border);
+
 
         LinearLayout.LayoutParams layoutParams= new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.CENTER;
         textView.setLayoutParams(layoutParams);
-        int i = dip2px(this, 2f);
-        textView.setPadding(1,1,1,1);
-
+        int i = dip2px(this, 4f);
+        layoutParams.setMargins(0,i,0,0);
+        textView.setPadding(i,i,i,i);
 
         return textView;
-    }
+    }*/
 
-    public void addView(View view, int position){
+/*    public void addView(View view, int position){
         //Then we will go through and set the view based on positions
         if (getRowHolder().getChildCount() != 0){
             //Then we add to the view and then create a new one
             getRowHolder().addView(view);
-            //getRowHolder().addView(createSpacer());
+            //getRowHolder().addView(createSpacer("HORIZONTAL"));
             creatLayoutCard();
             getNestedScrollLayout().addView(getRowHolder());
 
@@ -211,7 +320,7 @@ public class JoinGroup extends AppCompatActivity {
             //getRowHolder().addView(createSpacer());
         }
 
-    }
+    }*/
 
     private void creatLayoutCard() {
         //Holder for the row cards
@@ -222,15 +331,27 @@ public class JoinGroup extends AppCompatActivity {
         setRowHolder(linearLayout);
     }
 
-    private Space createSpacer(){
-        Space space = new Space(getApplicationContext());
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                1.0f
-        );
-        space.setLayoutParams(param);
-        return space;
+    private Space createSpacer(String orientation){
+        if (orientation.equals("HORIZONTAL") == true){
+            Space space = new Space(getApplicationContext());
+            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1.0f
+            );
+            space.setLayoutParams(param);
+            return space;
+
+        }else{
+            Space space = new Space(getApplicationContext());
+            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1.0f
+            );
+            space.setLayoutParams(param);
+            return space;
+        }
     }
     public static int dip2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -254,14 +375,6 @@ public class JoinGroup extends AppCompatActivity {
 
     public void setRowHolder(LinearLayout rowHolder) {
         this.rowHolder = rowHolder;
-    }
-
-    public LinearLayout getNestedScrollLayout() {
-        return nestedScrollLayout;
-    }
-
-    public void setNestedScrollLayout(LinearLayout nestedScrollLayout) {
-        this.nestedScrollLayout = nestedScrollLayout;
     }
 
     public ImageView getRefresh() {
@@ -305,4 +418,27 @@ public class JoinGroup extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public LinearLayout getLayoutContainer() {
+        return layoutContainer;
+    }
+
+    public void setLayoutContainer(LinearLayout layoutContainer) {
+        this.layoutContainer = layoutContainer;
+    }
+
+    public LinearLayout getLayoutRow() {
+        return layoutRow;
+    }
+
+    public void setLayoutRow(LinearLayout layoutRow) {
+        this.layoutRow = layoutRow;
+    }
+
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
+    }
 }

@@ -114,7 +114,6 @@ public class CreateStudyGroup extends AppCompatActivity implements CalendarDialo
                 //Check all params
                 if (getStageConfirmation(1) && getStageConfirmation(2) && getStageConfirmation(3)){
                     //Then we go forth with creating the group
-
                 }
             }
         });

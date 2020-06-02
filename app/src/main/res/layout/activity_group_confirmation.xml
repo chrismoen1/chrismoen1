@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.EventDetails.GroupConfirmation">
 
+    <include
+        android:id="@+id/toolbar1"
+        layout="@layout/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/section"
         android:layout_width="0dp"
@@ -67,21 +75,20 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/pictureLayout"
         android:layout_width="0dp"
-        android:layout_height="320dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginLeft="2dp"
-        android:layout_marginTop="2dp"
         android:layout_marginEnd="2dp"
         android:layout_marginRight="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar1"
         app:layout_constraintVertical_bias="0.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/eventTitle"
@@ -96,28 +103,19 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/displayPhoto"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toTopOf="@+id/eventTitle"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/nightlife" />
+                app:layout_constraintVertical_bias="0.0" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/eventTitle">
+                app:layout_constraintTop_toBottomOf="@+id/eventTitle"
+                app:layout_constraintVertical_bias="0.0">
 
 
                 <View
@@ -229,6 +227,31 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:background="@color/LightGrey" />
+
+                <LinearLayout
+                    android:id="@+id/tagHolder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <Button
+                    android:id="@+id/joinGroup"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="0"
+                    android:background="@drawable/rounded_fill"
+                    android:fontFamily="@font/open_sans"
+                    android:padding="7dp"
+                    android:text="Join Group"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp" />
 
             </LinearLayout>
 

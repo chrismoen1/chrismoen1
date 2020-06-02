@@ -24,55 +24,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar1">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/serachBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="2dp">
-
-            <SearchView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:queryHint="Search for nearby events">
-
-            </SearchView>
-        </androidx.cardview.widget.CardView>
-
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="vertical">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-            <TextView
-                android:id="@+id/textView14"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-               android:gravity="center"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="2dp"
-                android:fontFamily="@font/open_sans"
-                android:text="Popular Near You"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:textColor="#000000"
-                android:textSize="25sp" />
-
-        </LinearLayout>
-
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fillViewport="true">
 
             <LinearLayout
-                android:id="@+id/nestedScrollLayout"
+                android:id="@+id/layoutContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />

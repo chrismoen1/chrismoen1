@@ -321,13 +321,13 @@ public class EventCreate {
             TextView eventNotes = this.activity_group.findViewById(R.id.eventNoteDetails_Txt);
             TextView eventLocationDetails = this.activity_group.findViewById(R.id.eventLocationDetails_Txt);
             TextView eventTimeDetails_Txt = this.activity_group.findViewById(R.id.eventTimeDetails_Txt);
-            ImageView displayPhoto_image = this.activity_group.findViewById(R.id.displayPhoto);
+            //ImageView displayPhoto_image = this.activity_group.findViewById(R.id.displayPhoto);
 
             String timeStampe_EventStart_EventStop = getTimeStamp_Start_Stop(endTime,endTime_Day,startTime,startTime_Day);
 
             eventLocationDetails.setText(this.locationName);
             eventTimeDetails_Txt.setText(timeStampe_EventStart_EventStop);
-            displayPhoto_image.setImageBitmap(this.displayPhoto);
+            //displayPhoto_image.setImageBitmap(this.displayPhoto);
             eventTitle.setText(this.eventName);
             eventNotes.setText(this.eventNotes);
 

@@ -1,6 +1,7 @@
 package com.example.newcomer_io.ui.main.EventDetails;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import java.net.URLConnection;
 import java.text.BreakIterator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class GroupConfirmation extends AppCompatActivity implements EventCreate.OnGroupUpdate {
@@ -39,21 +41,35 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
     private ImageView displayPhoto; 
     private UserData userData;
 
+    private String subject;
+    private String eventLocation;
+    private ArrayList<String> subjectTags;
+    private String eventName;
+    private String eventGuid;
+    private String eventNotes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_confirmation);
         //EventCreate eventCreate = new EventCreate("The attack of the titans");
 
-        String guid = getIntent().getStringExtra("GUID");
+        //First lets get the paramateres from the prior activity
+        Intent intent = getIntent();
+
+        eventGuid = intent.getStringExtra("GUID");
+        eventNotes = intent.getStringExtra("Event Notes");
+        eventName = intent.getStringExtra("Event Name");
+        subject = intent.getStringExtra("Subject");
+        eventLocation = intent.getStringExtra("Event Name");
+        subjectTags = intent.getStringArrayListExtra("Subject Tags");
 
         eventCreate = new EventCreate(this);
-        this.displayPhoto = findViewById(R.id.displayPhoto);
+        //this.displayPhoto = findViewById(R.id.displayPhoto);
 
         setEventCreate(eventCreate);
         userData = (UserData) getApplicationContext();
         userData.setEventCreate(eventCreate);
-        userData.getEventCreate().setGUID(guid);
+        userData.getEventCreate().setGUID(eventGuid);
         userData.setUserID("ee493abb-5a86-4c1b-9eae-201336c3a283");
 
         tabLayout = findViewById(R.id.tabLayout);
@@ -62,7 +78,7 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         tab1 = (TabItem) findViewById(R.id.tab1);
         tab2 = (TabItem) findViewById(R.id.tab2);
         viewPager = findViewById(R.id.viewPager);
-        updateEventContent(eventCreate);
+        //updateEventContent(eventCreate);
 
         Date startTime = new Date(120,11, 12);
         Date endTime = new Date(120,11, 13);
@@ -248,4 +264,52 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         this.eventCreate = eventCreate;
     }
     public EventCreate getEventCreate(){return this.eventCreate; }
+
+    public String getEventGuid() {
+        return eventGuid;
+    }
+
+    public void setEventGuid(String eventGuid) {
+        this.eventGuid = eventGuid;
+    }
+
+    public String getEventNotes() {
+        return eventNotes;
+    }
+
+    public void setEventNotes(String eventNotes) {
+        this.eventNotes = eventNotes;
+    }
+
+    public ArrayList<String> getSubjectTags() {
+        return subjectTags;
+    }
+
+    public void setSubjectTags(ArrayList<String> subjectTags) {
+        this.subjectTags = subjectTags;
+    }
+
+    public String getEventLocation() {
+        return eventLocation;
+    }
+
+    public void setEventLocation(String eventLocation) {
+        this.eventLocation = eventLocation;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
 }
