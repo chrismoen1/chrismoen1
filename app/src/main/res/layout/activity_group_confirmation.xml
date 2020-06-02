@@ -203,9 +203,9 @@
 
                     <ImageView
                         android:id="@+id/eventTimeDetails_icon"
-
                         android:layout_width="28dp"
                         android:layout_height="27dp"
+                        android:foregroundTint="@color/black"
                         app:srcCompat="@android:drawable/ic_menu_my_calendar" />
 
                     <TextView

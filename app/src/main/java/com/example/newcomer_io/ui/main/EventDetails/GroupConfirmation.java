@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -47,6 +50,11 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
     private String eventName;
     private String eventGuid;
     private String eventNotes;
+    private String eventTiming;
+
+    private TextView eventTiming_Txt;
+    private TextView eventNotes_Txt;
+    private TextView eventLocation_Txt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,15 +70,26 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         subject = intent.getStringExtra("Subject");
         eventLocation = intent.getStringExtra("Event Name");
         subjectTags = intent.getStringArrayListExtra("Subject Tags");
+        eventTiming = intent.getStringExtra("Event Time");
 
         eventCreate = new EventCreate(this);
         //this.displayPhoto = findViewById(R.id.displayPhoto);
+
+        LinearLayout tagHolder = findViewById(R.id.tagHolder);
+
 
         setEventCreate(eventCreate);
         userData = (UserData) getApplicationContext();
         userData.setEventCreate(eventCreate);
         userData.getEventCreate().setGUID(eventGuid);
         userData.setUserID("ee493abb-5a86-4c1b-9eae-201336c3a283");
+
+        eventNotes_Txt = findViewById(R.id.eventNoteDetails_Txt);
+        eventLocation_Txt = findViewById(R.id.eventLocationDetails_Txt);
+        eventTiming_Txt = findViewById(R.id.eventTimeDetails_Txt);
+        eventNotes_Txt.setText(eventNotes);
+        eventLocation_Txt.setText(eventLocation);
+        eventTiming_Txt.setText(eventTiming);
 
         tabLayout = findViewById(R.id.tabLayout);
 
@@ -90,12 +109,12 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount(),eventCreate, this);
         viewPager.setAdapter(pageAdapter);
 
-        try {
+        /*try {
             getGroupImageUpdate();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+*/
         //We want to add this detail to the firebase data base
         //Add to firebase
 
@@ -117,7 +136,52 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         });
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
+    public LinearLayout createGroupTagsLayout(Iterable<DataSnapshot> children) {
+        LinearLayout viewHolder = new LinearLayout(this);
+        viewHolder.setOrientation(LinearLayout.VERTICAL);
 
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        for (DataSnapshot childs : children){
+
+            //Then we iterate and get each tag
+            String typeName = childs.getValue().toString();
+
+            LinearLayout checkMarksLayout = createCheckMarksLayout(typeName);
+            viewHolder.addView(checkMarksLayout);
+
+        }
+        return viewHolder;
+    }
+    public LinearLayout createCheckMarksLayout(String typeName){
+
+        LinearLayout container = new LinearLayout(this);
+        LinearLayout.LayoutParams container_Parms = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        container.setOrientation(LinearLayout.HORIZONTAL);
+        container.setLayoutParams(container_Parms);
+
+        int x = dip2px(this, 10);
+        int y = dip2px(this, 10);
+
+        LinearLayout.LayoutParams checkMarkBoxes_Parms = new LinearLayout.LayoutParams(x,y);
+        //Create the checkbox which will go beside the text
+        ImageView checkBox = new ImageView(this);
+        checkBox.setBackgroundResource(R.drawable.checkicon);
+        checkBox.setLayoutParams(checkMarkBoxes_Parms);
+
+        TextView typeName_Txt = new TextView(this);
+        typeName_Txt.setMaxLines(3);
+        typeName_Txt.setTextSize(10f);
+        LinearLayout.LayoutParams textDisplay_Parms = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        textDisplay_Parms.setMargins(dip2px(this,2),0,0,0);
+        typeName_Txt.setText(typeName);
+        typeName_Txt.setLayoutParams(textDisplay_Parms);
+
+        //Add it to the views
+        container.addView(checkBox);
+        container.addView(typeName_Txt);
+
+        return container;
+    }
     public void sendGroupUpdate(int maxAge, int minAge, String event_name, LatLng latLng, String location_name, int groupSize, Date startTime_Days_DT, Date startTime_Time_DT, Date endTime_Days_DT, Date endTime_Time_DT, String startDate_Txt, String endDate_Txt, String eventNotes) {
         // Set the event create data
         EventCreate eventCreate = userData.getEventCreate();
@@ -311,5 +375,37 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
+    }
+
+    public TextView getEventNotes_Txt() {
+        return eventNotes_Txt;
+    }
+
+    public void setEventNotes_Txt(TextView eventNotes_Txt) {
+        this.eventNotes_Txt = eventNotes_Txt;
+    }
+
+    public TextView getEventLocation_Txt() {
+        return eventLocation_Txt;
+    }
+
+    public void setEventLoation_Txt(TextView eventLoation_Txt) {
+        this.eventLocation_Txt = eventLoation_Txt;
+    }
+
+    public String getEventTiming() {
+        return eventTiming;
+    }
+
+    public void setEventTiming(String eventTiming) {
+        this.eventTiming = eventTiming;
+    }
+
+    public TextView getEventTiming_Txt() {
+        return eventTiming_Txt;
+    }
+
+    public void setEventTiming_Txt(TextView eventTiming_Txt) {
+        this.eventTiming_Txt = eventTiming_Txt;
     }
 }

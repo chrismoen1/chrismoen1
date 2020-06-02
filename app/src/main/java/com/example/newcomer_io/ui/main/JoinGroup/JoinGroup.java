@@ -32,7 +32,10 @@ import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -134,6 +137,8 @@ public class JoinGroup extends AppCompatActivity {
             final TextView eventLocation = group_join.findViewById(R.id.eventLocationDetails_Txt);
             final TextView eventSize = group_join.findViewById(R.id.eventNoteDetails_Txt);
             final TextView subjectName = group_join.findViewById(R.id.eventNoteDetails_Txt2);
+            final LinearLayout groupTags = group_join.findViewById(R.id.groupTags);
+            final TextView eventTiming = group_join.findViewById(R.id.eventTiming_Txt);
 
             Button joinGroup = group_join.findViewById(R.id.joinGroup2);
 
@@ -153,15 +158,29 @@ public class JoinGroup extends AppCompatActivity {
                             String subjectType_Str = dataSnapshot.child("Event Details").child("Subject").getValue().toString();
                             String eventNotes_Str = dataSnapshot.child("Event Details").child("Event Notes").getValue().toString();
 
-                            getTags().add(subjectType_Str);
-                            LinearLayout groupTags = group_join.findViewById(R.id.groupTags);
+                            boolean allDay = convert_AllDay(dataSnapshot.child("Event Details").child("Timing").child("All Day").getValue().toString());
+                            String startTime_Str = dataSnapshot.child("Event Details").child("Timing").child("Start Time").getValue().toString();
+                            String endTime_Str = dataSnapshot.child("Event Details").child("Timing").child("End Time").getValue().toString();
+                            String displayTime = getDisplayTime(startTime_Str,endTime_Str,allDay);
+                            eventTiming.setText(displayTime);
+                            ArrayList<String> tags = getTags();
+
+                            tags.add(subjectType_Str);
+
                             //TextView subjectType_Txt = createSubjectTypeView(subjectType);
 
                             LinearLayout groupTagsLayout = createGroupTagsLayout(dataSnapshot.child("Event Details").child("Type").getChildren());
 
                             //groupTags.addView(subjectType_Txt);
-                            groupTags.addView(createSpacer("HORIZONTAL"));
-                            groupTags.addView(groupTagsLayout);
+                            if (groupTags.getChildCount() == 0){
+                                groupTags.addView(createSpacer("HORIZONTAL"));
+                                groupTags.addView(groupTagsLayout);
+                            }else{
+                                groupTags.removeAllViews();
+                                groupTags.addView(createSpacer("HORIZONTAL"));
+                                groupTags.addView(groupTagsLayout);
+                            }
+
                             subjectName.setText(subjectType_Str);
 
                             //groupTags.addView(createCheckMarksLayout("Test"));
@@ -176,7 +195,6 @@ public class JoinGroup extends AppCompatActivity {
                             eventSize.setText(String.valueOf(joined) + "/" + String.valueOf(groupSize) + " have joined");
                             eventNotes.setText(eventNotes_Str);
 
-                            addLayoutView(group_join);
 
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
@@ -199,7 +217,6 @@ public class JoinGroup extends AppCompatActivity {
                     //Considering all of the information that we need
                     //1.
 
-
                     Intent intent = new Intent(getApplicationContext(), GroupConfirmation.class);
                     intent.putStringArrayListExtra("Subject Tags", getTags());
                     intent.putExtra("GUID", GUID);
@@ -207,12 +224,57 @@ public class JoinGroup extends AppCompatActivity {
                     intent.putExtra("Event Name", eventName.getText().toString());
                     intent.putExtra("Event Notes",eventNotes.getText().toString());
                     intent.putExtra("Subject", subjectName.getText().toString());
+                    intent.putExtra("Event Time",eventTiming.getText().toString());
 
                     startActivity(intent);
 
                 }
             });
+            addLayoutView(group_join);
+
         }
+    }
+
+    private boolean convert_AllDay(String toString) {
+        if (toString.equals("True")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private String getDisplayTime(String startTime_str, String endTime_str, boolean allDay) {
+        //Then we will go through and make sure that the strign is configured as correctly to display in a date format
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat clock_format_Time = new SimpleDateFormat("hh:mm a");
+        SimpleDateFormat clock_format_Days = new SimpleDateFormat("E, MMMM dd");
+
+        try{
+            Date parse_Start = simpleDateFormat.parse(startTime_str);
+            Date parse_End = simpleDateFormat.parse(endTime_str);
+
+            String startTime_Timing = clock_format_Time.format(parse_Start); 
+            String endTime_Timing = clock_format_Time.format(parse_End);
+            
+            String startTime_Days = clock_format_Days.format(parse_Start); 
+            String endTime_Days = clock_format_Days.format(parse_End); 
+
+            if (allDay){
+                return startTime_Days  + " (All day)";
+            }
+            else if (startTime_Days.equals(endTime_Days) == true){
+                //Then we just display the 
+                String ret = startTime_Days + ":\n " + startTime_Timing + " to " + endTime_Timing;
+                return ret; 
+            }else {
+                String ret = startTime_Days + " to " + endTime_Days + ":\n " + startTime_Timing + " to " + endTime_Timing;
+                return ret; 
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //Then we will display that the timing to the user
+        return "";
     }
 /*
 
