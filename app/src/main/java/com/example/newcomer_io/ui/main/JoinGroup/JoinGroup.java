@@ -132,6 +132,7 @@ public class JoinGroup extends AppCompatActivity {
             group_join.setLayoutParams(layoutParams);
             group_join.setId(i);
 
+            final ArrayList<String> tags = new ArrayList<String>();
             final TextView eventName = group_join.findViewById(R.id.eventName);
             final TextView eventNotes = group_join.findViewById(R.id.eventNotes);
             final TextView eventLocation = group_join.findViewById(R.id.eventLocationDetails_Txt);
@@ -163,13 +164,9 @@ public class JoinGroup extends AppCompatActivity {
                             String endTime_Str = dataSnapshot.child("Event Details").child("Timing").child("End Time").getValue().toString();
                             String displayTime = getDisplayTime(startTime_Str,endTime_Str,allDay);
                             eventTiming.setText(displayTime);
-                            ArrayList<String> tags = getTags();
-
-                            tags.add(subjectType_Str);
-
                             //TextView subjectType_Txt = createSubjectTypeView(subjectType);
 
-                            LinearLayout groupTagsLayout = createGroupTagsLayout(dataSnapshot.child("Event Details").child("Type").getChildren());
+                            LinearLayout groupTagsLayout = createGroupTagsLayout(dataSnapshot.child("Event Details").child("Type").getChildren(),tags);
 
                             //groupTags.addView(subjectType_Txt);
                             if (groupTags.getChildCount() == 0){
@@ -218,7 +215,7 @@ public class JoinGroup extends AppCompatActivity {
                     //1.
 
                     Intent intent = new Intent(getApplicationContext(), GroupConfirmation.class);
-                    intent.putStringArrayListExtra("Subject Tags", getTags());
+                    intent.putStringArrayListExtra("Subject Tags", tags);
                     intent.putExtra("GUID", GUID);
                     intent.putExtra("Event Location", eventLocation.getText().toString());
                     intent.putExtra("Event Name", eventName.getText().toString());
@@ -302,7 +299,7 @@ public class JoinGroup extends AppCompatActivity {
 
     }
 
-    private LinearLayout createGroupTagsLayout(Iterable<DataSnapshot> children) {
+    private LinearLayout createGroupTagsLayout(Iterable<DataSnapshot> children, ArrayList<String> tags) {
         LinearLayout viewHolder = new LinearLayout(this);
         viewHolder.setOrientation(LinearLayout.VERTICAL);
 
@@ -311,7 +308,7 @@ public class JoinGroup extends AppCompatActivity {
 
             //Then we iterate and get each tag
             String typeName = childs.getValue().toString();
-
+            tags.add(typeName);
             LinearLayout checkMarksLayout = createCheckMarksLayout(typeName);
             viewHolder.addView(checkMarksLayout);
 

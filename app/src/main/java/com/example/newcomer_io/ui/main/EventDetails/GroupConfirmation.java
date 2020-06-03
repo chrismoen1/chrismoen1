@@ -1,6 +1,7 @@
 package com.example.newcomer_io.ui.main.EventDetails;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -52,6 +53,8 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
     private String eventNotes;
     private String eventTiming;
 
+    private boolean isJoined;
+
     private TextView eventTiming_Txt;
     private TextView eventNotes_Txt;
     private TextView eventLocation_Txt;
@@ -76,13 +79,15 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         //this.displayPhoto = findViewById(R.id.displayPhoto);
 
         LinearLayout tagHolder = findViewById(R.id.tagHolder);
-
+        tagHolder.addView(createGroupTagsLayout(subjectTags));
 
         setEventCreate(eventCreate);
         userData = (UserData) getApplicationContext();
         userData.setEventCreate(eventCreate);
         userData.getEventCreate().setGUID(eventGuid);
         userData.setUserID("ee493abb-5a86-4c1b-9eae-201336c3a283");
+
+        isJoined = false;
 
         eventNotes_Txt = findViewById(R.id.eventNoteDetails_Txt);
         eventLocation_Txt = findViewById(R.id.eventLocationDetails_Txt);
@@ -136,21 +141,24 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         });
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
-    public LinearLayout createGroupTagsLayout(Iterable<DataSnapshot> children) {
+    public LinearLayout createGroupTagsLayout(ArrayList<String> children) {
         LinearLayout viewHolder = new LinearLayout(this);
         viewHolder.setOrientation(LinearLayout.VERTICAL);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        for (DataSnapshot childs : children){
+        for(int i =0; i < children.size();i++){
 
             //Then we iterate and get each tag
-            String typeName = childs.getValue().toString();
-
+            String typeName = children.get(i);
             LinearLayout checkMarksLayout = createCheckMarksLayout(typeName);
             viewHolder.addView(checkMarksLayout);
 
         }
         return viewHolder;
+    }
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
     public LinearLayout createCheckMarksLayout(String typeName){
 
@@ -407,5 +415,13 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
 
     public void setEventTiming_Txt(TextView eventTiming_Txt) {
         this.eventTiming_Txt = eventTiming_Txt;
+    }
+
+    public boolean isJoined() {
+        return isJoined;
+    }
+
+    public void setJoined(boolean joined) {
+        isJoined = joined;
     }
 }

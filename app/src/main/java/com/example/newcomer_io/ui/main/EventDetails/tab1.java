@@ -262,6 +262,7 @@ public class tab1 extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && data != null){
+
             //then we get the data and pass it to the current UI
             int comments = data.getIntExtra("Comment Number", -1);
             int likes = data.getIntExtra("Likes Number", -1);

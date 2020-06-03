@@ -97,7 +97,7 @@
                 android:fontFamily="@font/open_sans"
                 android:gravity="center"
                 android:text="Night Out With Folks"
-                android:textColor="#000000"
+                android:textColor="#FFC107"
                 android:textSize="25sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -230,6 +230,9 @@
 
                 <LinearLayout
                     android:id="@+id/tagHolder"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginRight="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
