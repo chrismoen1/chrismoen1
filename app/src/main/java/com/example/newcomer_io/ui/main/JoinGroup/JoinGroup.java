@@ -132,7 +132,7 @@ public class JoinGroup extends AppCompatActivity {
             group_join.setLayoutParams(layoutParams);
             group_join.setId(i);
 
-            final ArrayList<String> tags = new ArrayList<String>();
+            final ArrayList<String> tags_List = new ArrayList<String>();
             final TextView eventName = group_join.findViewById(R.id.eventName);
             final TextView eventNotes = group_join.findViewById(R.id.eventNotes);
             final TextView eventLocation = group_join.findViewById(R.id.eventLocationDetails_Txt);
@@ -166,7 +166,7 @@ public class JoinGroup extends AppCompatActivity {
                             eventTiming.setText(displayTime);
                             //TextView subjectType_Txt = createSubjectTypeView(subjectType);
 
-                            LinearLayout groupTagsLayout = createGroupTagsLayout(dataSnapshot.child("Event Details").child("Type").getChildren(),tags);
+                            LinearLayout groupTagsLayout = createGroupTagsLayout(dataSnapshot.child("Event Details").child("Type").getChildren(),tags_List);
 
                             //groupTags.addView(subjectType_Txt);
                             if (groupTags.getChildCount() == 0){
@@ -215,7 +215,7 @@ public class JoinGroup extends AppCompatActivity {
                     //1.
 
                     Intent intent = new Intent(getApplicationContext(), GroupConfirmation.class);
-                    intent.putStringArrayListExtra("Subject Tags", tags);
+                    intent.putStringArrayListExtra("Subject Tags", tags_List);
                     intent.putExtra("GUID", GUID);
                     intent.putExtra("Event Location", eventLocation.getText().toString());
                     intent.putExtra("Event Name", eventName.getText().toString());
@@ -308,7 +308,9 @@ public class JoinGroup extends AppCompatActivity {
 
             //Then we iterate and get each tag
             String typeName = childs.getValue().toString();
-            tags.add(typeName);
+            if (tags.contains(typeName) == false){
+                tags.add(typeName);
+            }
             LinearLayout checkMarksLayout = createCheckMarksLayout(typeName);
             viewHolder.addView(checkMarksLayout);
 

@@ -15,58 +15,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/addComment"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:backgroundTint="@color/wizeblue"
+                android:gravity="start|top"
+                android:hint="Add a comment"
+                android:inputType="textMultiLine" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/cancel"
+                android:layout_width="31dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
+                android:background ="@drawable/rounded_border"
+                android:padding="4dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="0"
+                android:layout_gravity="center"
+                android:elevation="4dp"
+                android:foregroundTint="@color/white"
+                android:src="@drawable/quantum_ic_clear_grey600_24" />
 
             <ImageView
                 android:id="@+id/send"
                 android:layout_width="31dp"
-                android:backgroundTint="@color/wizeblue"
                 android:layout_height="32dp"
                 android:layout_marginEnd="16dp"
+                android:layout_gravity="center"
                 android:layout_marginRight="16dp"
+                android:padding="4dp"
                 android:layout_weight="0"
-                android:background="@color/LightGrey"
-                android:src="@android:drawable/ic_menu_send"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/cancel"
-                android:backgroundTint="@color/wizeblue"
-                android:layout_width="31dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="0"
-                android:background="@color/LightGrey"
-                android:src="@drawable/quantum_ic_clear_grey600_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/send"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/addComment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:gravity="start|top"
-                android:hint="Add a comment"
-                android:inputType="textMultiLine"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cancel"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:background="@drawable/rounded_border"
+                android:elevation="4dp"
+                android:src="@android:drawable/ic_menu_send" />
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

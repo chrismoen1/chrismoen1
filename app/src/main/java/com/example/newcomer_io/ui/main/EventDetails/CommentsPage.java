@@ -27,10 +27,10 @@ public class CommentsPage extends AppCompatActivity {
     private ImageView likeButton;
     private boolean alreadyLiked;
     private int postNumber;
-
+    private int comments;
     private int num_posts;
     private int num_likes;
-
+    private int likes;
     private ArrayList<View> addedComments;
 
     private Button addPost;
@@ -50,8 +50,8 @@ public class CommentsPage extends AppCompatActivity {
 
         backReply = findViewById(R.id.backGutton);
         postNumber = intent.getIntExtra("Post Number", -1);
-        int likes = intent.getIntExtra("Like Number",-1);
-        final int comments = intent.getIntExtra("Comment Number", -1);
+        likes = intent.getIntExtra("Like Number",-1);
+        comments = intent.getIntExtra("Comment Number", -1); //Always take one off the end since it is the total number and that is what we are looking to query
         String message = intent.getStringExtra("Message");
         String postDate = intent.getStringExtra("Post Date");
         String postName = intent.getStringExtra("Post Name");
@@ -98,6 +98,8 @@ public class CommentsPage extends AppCompatActivity {
                     likeButton.setImageDrawable(ContextCompat.getDrawable(v.getContext(),R.drawable.ic_thumb_up_alt_24_bluepx));
                     int num_likes = Integer.parseInt(likeNum.getText().toString());
                     likeNum.setText(String.valueOf(num_likes + 1));
+                    setLikes(num_likes + 1);
+
                     setAlreadyLiked(true);
                 }
                 else{
@@ -105,6 +107,7 @@ public class CommentsPage extends AppCompatActivity {
                     likeButton.setImageDrawable(ContextCompat.getDrawable(v.getContext(),R.drawable.ic_thumb_up_alt_24px));
                     int num_likes = Integer.parseInt(likeNum.getText().toString());
                     likeNum.setText(String.valueOf(num_likes - 1));
+                    setLikes(num_likes - 1);
                     setAlreadyLiked(false);
                 }
             }
@@ -114,8 +117,9 @@ public class CommentsPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ArrayList<View> addedComments = getAddedComments();
-
-                uploadData(addedComments);
+                if (addedComments.size() != 0){
+                    uploadData(addedComments);
+                }
                 sendIntentInformation();
 
             }
@@ -127,6 +131,13 @@ public class CommentsPage extends AppCompatActivity {
         //this will upload date to the firebase reference
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
+        //Increment the database number with the number of comments that the user has inputted
+
+        int comments = getComments();
+        int likes = getNum_likes();
+        String i1 = String.valueOf(getPostNumber() - 1);
+        reference.child("Groups/" + getGUID() + "/Posts/" + i1+ "/Comments").setValue(comments + addedComments.size());
+        reference.child("Groups/" + getGUID() + "/Posts/" + i1+ "/Likes").setValue(likes);
 
         for (int i =0; i < addedComments.size();i++){
             View view = addedComments.get(i);
@@ -137,8 +148,10 @@ public class CommentsPage extends AppCompatActivity {
             String date_Str = date.getText().toString();
             String name_Str = name.getText().toString();
             String message_Str = message.getText().toString();
-            String postNum = String.valueOf(getPostNumber());
-            DatabaseReference child = reference.child("Groups" + getGUID() + "/" + postNum);
+            String postNum = String.valueOf(getPostNumber() -1);
+
+            //Upload the reply post to be consistent with what is currently added
+            DatabaseReference child = reference.child("Groups/" + getGUID() + "/Reply/" + postNum + "/");
 
             Map<String, String> children = new HashMap<String,String>();
             children.put("Date", date_Str);
@@ -146,6 +159,12 @@ public class CommentsPage extends AppCompatActivity {
             children.put("Reply Message",message_Str);
 
             Map<String, Object> mapaCompleto = new HashMap<>();
+            int currPostId = getNum_posts() + i ;
+            String curPostId_Str = String.valueOf(currPostId);
+            mapaCompleto.put(curPostId_Str,children);
+
+            child.updateChildren(mapaCompleto);
+
             //child.(children);
             //child.updateChildren()
 
@@ -174,7 +193,10 @@ public class CommentsPage extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // Write your code here
-
+        ArrayList<View> addedComments = getAddedComments();
+        if (addedComments.size() != 0){
+            uploadData(addedComments);
+        }
         sendIntentInformation();
         super.onBackPressed();
     }
@@ -185,7 +207,7 @@ public class CommentsPage extends AppCompatActivity {
 
     private void fillIndividualComments() {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference child = mDatabase.child("Groups/" + getGUID() + "/Reply/" + String.valueOf(getPostNumber()));
+        DatabaseReference child = mDatabase.child("Groups/" + getGUID() + "/Reply/" + String.valueOf(getPostNumber() - 1));
 
         child.addValueEventListener(new ValueEventListener() {
             @Override
@@ -199,6 +221,7 @@ public class CommentsPage extends AppCompatActivity {
                     scrollView.removeAllViews();
                 }
                 int i = 1;
+                //setNum_posts((int) dataSnapshot.getChildrenCount());
                 for (DataSnapshot childNode : dataSnapshot.getChildren()){
                     String date = childNode.child("Date").getValue().toString();
                     String name = childNode.child("Name").getValue().toString();
@@ -250,10 +273,11 @@ public class CommentsPage extends AppCompatActivity {
                                 Date time = Calendar.getInstance().getTime();
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm");
                                 String format = simpleDateFormat.format(time);
-                                date.setText(format);
 
                                 //date.setText();
                                 View individualComments = inflater.inflate(R.layout.individual_comment,null);
+                                TextView postDate= individualComments.findViewById(R.id.postDate);
+                                postDate.setText(format);
                                 TextView theMessage = individualComments.findViewById(R.id.message);
                                 theMessage.setText(messs);
 
@@ -263,7 +287,7 @@ public class CommentsPage extends AppCompatActivity {
                                 int currVal = Integer.parseInt(commentNum.getText().toString());
                                 commentNum.setText(String.valueOf(currVal + 1));
 
-                                getAddedComments().add(commentNum);
+                                getAddedComments().add(individualComments);
 
                                 scrollView.removeView(addComment_View);
                                 scrollView.addView(individualComments);
@@ -381,4 +405,15 @@ public class CommentsPage extends AppCompatActivity {
     public void setAddedComments(ArrayList<View> addedComments) {
         this.addedComments = addedComments;
     }
+
+    public int getComments() {
+        return comments;
+    }
+
+    public void setComments(int comments) {
+        this.comments = comments;
+    }
+    public int getLikes(){return this.likes;}
+    public void setLikes(int likes){this.likes = likes; }
+
 }

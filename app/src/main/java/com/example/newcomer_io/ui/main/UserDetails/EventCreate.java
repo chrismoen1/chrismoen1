@@ -59,6 +59,7 @@ public class EventCreate {
     private String GUID;
     private FirebaseFunctions mFunctions;
     private DatabaseReference mDatabase;
+    private boolean isJoined;
 
     public EventCreate(Activity activity){
 
@@ -107,6 +108,9 @@ public class EventCreate {
                 flag = true;
                 postId = i;
                 posts_Dup = this.postsArrayList.get(i);
+                posts_Dup.setComments(comments);
+                posts_Dup.setLikes(likes);
+                posts_Dup.setPostDate(postDate);
                 break;
             }
         }
@@ -265,6 +269,14 @@ public class EventCreate {
 
     public void setEventlocation(LatLng eventlocation) {
         this.eventlocation = eventlocation;
+    }
+
+    public boolean isJoined() {
+        return this.isJoined;
+    }
+
+    public void setJoined(boolean joined) {
+        isJoined = joined;
     }
 
 
@@ -454,6 +466,7 @@ public class EventCreate {
             this.personName_Txt = user_row.findViewById(R.id.name);
             this.postDate_Txt = user_row.findViewById(R.id.postDate);
             this.likes_Txt = user_row.findViewById(R.id.textView19);
+
             this.comments_Txt = user_row.findViewById(R.id.textView18);
 
             this.MAXPOSTNUMBER = 52;
@@ -601,6 +614,9 @@ public class EventCreate {
 
         public int getPostId() {
             return this.postId;
+        }
+        public void setPostId(int id){
+            this.postId = id;
         }
     }
     public class JoinedUsers{

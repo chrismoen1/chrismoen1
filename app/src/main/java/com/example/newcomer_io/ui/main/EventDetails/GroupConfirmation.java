@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,7 +44,7 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
 
     private EventCreate eventCreate;
     private PageAdapter pageAdapter;
-    private ImageView displayPhoto; 
+    private ImageView displayPhoto;
     private UserData userData;
 
     private String subject;
@@ -67,23 +69,41 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         //First lets get the paramateres from the prior activity
         Intent intent = getIntent();
 
+
+        //Button joinGroup
+
+
+
         eventGuid = intent.getStringExtra("GUID");
         eventNotes = intent.getStringExtra("Event Notes");
         eventName = intent.getStringExtra("Event Name");
         subject = intent.getStringExtra("Subject");
         eventLocation = intent.getStringExtra("Event Name");
+
         subjectTags = intent.getStringArrayListExtra("Subject Tags");
         eventTiming = intent.getStringExtra("Event Time");
 
-        eventCreate = new EventCreate(this);
+        userData = (UserData) getApplicationContext();
+
+        EventCreate eventCreate = userData.getEventCreate();
+        if (eventCreate == null){
+            this.eventCreate = new EventCreate(this);
+        }else{
+            setEventCreate(eventCreate);
+        }
         //this.displayPhoto = findViewById(R.id.displayPhoto);
 
         LinearLayout tagHolder = findViewById(R.id.tagHolder);
-        tagHolder.addView(createGroupTagsLayout(subjectTags));
+        if (tagHolder != null){
+            tagHolder.removeAllViews();
+            tagHolder.addView(createGroupTagsLayout(subjectTags));
 
-        setEventCreate(eventCreate);
-        userData = (UserData) getApplicationContext();
-        userData.setEventCreate(eventCreate);
+        }else{
+            tagHolder.addView(createGroupTagsLayout(subjectTags));
+        }
+
+        setEventCreate(this.eventCreate);
+        userData.setEventCreate(this.eventCreate);
         userData.getEventCreate().setGUID(eventGuid);
         userData.setUserID("ee493abb-5a86-4c1b-9eae-201336c3a283");
 
@@ -111,7 +131,7 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         //String placeName = chosenContent.getPlaceName();
         //Bitmap photo = chosenContent.getPhoto();
 
-        pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount(),eventCreate, this);
+        pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount(), this.eventCreate, this);
         viewPager.setAdapter(pageAdapter);
 
         /*try {
@@ -178,7 +198,7 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
 
         TextView typeName_Txt = new TextView(this);
         typeName_Txt.setMaxLines(3);
-        typeName_Txt.setTextSize(10f);
+        typeName_Txt.setTextSize(15f);
         LinearLayout.LayoutParams textDisplay_Parms = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         textDisplay_Parms.setMargins(dip2px(this,2),0,0,0);
         typeName_Txt.setText(typeName);
@@ -292,6 +312,13 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+
+        super.onBackPressed();
+    }
+    
     public ImageView getDisplayPhoto() {
         return displayPhoto;
     }
