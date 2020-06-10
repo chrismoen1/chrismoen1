@@ -68,12 +68,7 @@ public class GroupConfirmation extends AppCompatActivity implements EventCreate.
 
         //First lets get the paramateres from the prior activity
         Intent intent = getIntent();
-
-
         //Button joinGroup
-
-
-
         eventGuid = intent.getStringExtra("GUID");
         eventNotes = intent.getStringExtra("Event Notes");
         eventName = intent.getStringExtra("Event Name");

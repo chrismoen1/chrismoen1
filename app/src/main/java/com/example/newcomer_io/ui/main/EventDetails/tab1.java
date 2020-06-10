@@ -167,7 +167,6 @@ public class tab1 extends Fragment {
             e.printStackTrace();
         }
 
-
         addPost.setBackgroundResource(R.drawable.rounded_border);
         return addPost;
     }
@@ -197,7 +196,6 @@ public class tab1 extends Fragment {
 
                     }else{
                         this.scrollView.addView(posts.getPostParamsView());
-
                     }
                     ImageView likeButton = postParamsView.findViewById(R.id.likes);
                     boolean alreadyLiked = posts.isAlreadyLiked();
@@ -266,6 +264,8 @@ public class tab1 extends Fragment {
                     EventCreate eventCreate = getEventCreate();
                     eventCreate.addPost(posterName.getText().toString(),messs,0,0,"",Calendar.getInstance().getTime());
 
+                    //setLikeListeners(currPost);
+                    //setCommentListeners(currPost,message, name, userId, postDate_Str,comments);
                 }
             }
         });

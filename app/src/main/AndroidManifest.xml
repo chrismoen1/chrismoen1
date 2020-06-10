@@ -13,21 +13,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".ui.main.GroupTiming.CreateStudyGroup"></activity>
-        <activity android:name=".ui.main.GroupTypes"></activity>
-        <activity android:name=".ui.main.EventDetails.FilterView" />
-        <activity android:name=".ui.main.JoinGroup.JoinGroup" />
-        <activity android:name=".ui.main.EventDetails.CommentsPage" />
-        <activity android:name=".ui.main.EventDetails.GroupConfirmation" />
-        <activity android:name=".ui.main.LocationSettings.TrendingDisplay" />
-        <activity android:name=".ui.main.LocationSettings.LocationType" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.main.Onboarding.ProfileInformation"></activity>
+        <activity android:name=".ui.main.Onboarding.OnboardingLogistics">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.main.Onboarding.Onboarding" />
+        <activity android:name=".ui.main.GroupTiming.CreateStudyGroup" />
+        <activity android:name=".ui.main.GroupTypes" />
+        <activity android:name=".ui.main.EventDetails.FilterView" />
+        <activity android:name=".ui.main.JoinGroup.JoinGroup" />
+        <activity android:name=".ui.main.EventDetails.CommentsPage" />
+        <activity android:name=".ui.main.EventDetails.GroupConfirmation" />
+        <activity android:name=".ui.main.LocationSettings.TrendingDisplay" />
+        <activity android:name=".ui.main.LocationSettings.LocationType" />
+        <activity android:name=".MainActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
