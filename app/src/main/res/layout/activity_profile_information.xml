@@ -124,12 +124,12 @@
                         <EditText
                             android:id="@+id/firstName"
                             android:layout_width="wrap_content"
+                            android:textCursorDrawable="@drawable/cursor_colour"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="@drawable/text_backdrop"
                             android:ems="10"
                             android:fontFamily="@font/open_sans"
-
                             android:gravity="center"
                             android:hint="John"
                             android:inputType="textPersonName"
@@ -177,6 +177,7 @@
                         <EditText
                             android:id="@+id/editText"
                             android:layout_width="wrap_content"
+                            android:textCursorDrawable="@drawable/cursor_colour"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="@drawable/text_backdrop"
@@ -233,6 +234,7 @@
                             android:layout_gravity="center"
                             android:background="@drawable/text_backdrop"
                             android:ems="10"
+                            android:textCursorDrawable="@drawable/cursor_colour"
                             android:fontFamily="@font/open_sans"
                             android:gravity="center"
                             android:hint="University Of Toronto"
@@ -292,9 +294,8 @@
                                     android:text="Psychology" />
 
                                 <CheckBox
-                                    android:id="@+id/statistics"                                    android:buttonTint="@color/wizeblue"
+                                    android:id="@+id/statistics"
                                     android:buttonTint="@color/wizeblue"
-
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Statistics" />
@@ -403,12 +404,6 @@
                                     android:layout_height="wrap_content"
                                     android:text="Engineering" />
 
-                                <CheckBox
-                                    android:id="@+id/physiology"
-                                    android:buttonTint="@color/wizeblue"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Physiology" />
                             </TableRow>
 
                         </TableLayout>
@@ -420,6 +415,15 @@
 
                     </LinearLayout>
 
+                    <View
+                        android:id="@+id/divider22"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/dotted_line" />
+
                     <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -429,65 +433,74 @@
                         android:id="@+id/layoutContainer1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginRight="10dp"
-                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:orientation="vertical"
                         android:padding="10dp">
 
-                        <Space
+                        <TextView
+                            android:id="@+id/textView29"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1" />
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/open_sans"
+                            android:text="Faculty"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            android:textStyle="italic" />
 
                         <LinearLayout
+                            android:id="@+id/facultyContainer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginBottom="10dp"
                             android:background="@drawable/text_backdrop"
                             android:orientation="horizontal"
                             android:padding="5dp">
-
-                            <TextView
-                                android:id="@+id/textView29"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/open_sans"
-                                android:text="Faculty"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                                android:textColor="#000000"
-                                android:textSize="15sp"
-                                android:textStyle="italic" />
 
                             <Spinner
-                                android:id="@+id/spinner2"
+                                android:id="@+id/faculty"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
+
                         </LinearLayout>
 
-                        <Space
+                        <View
+                            android:id="@+id/divider23"
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/dotted_line" />
+
+                        <TextView
+                            android:id="@+id/year"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1" />
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/open_sans"
+                            android:text="Year"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            android:textStyle="italic" />
 
                         <LinearLayout
+                            android:id="@+id/yearContainer"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_marginBottom="10dp"
                             android:background="@drawable/text_backdrop"
                             android:orientation="horizontal"
                             android:padding="5dp">
-
-                            <TextView
-                                android:id="@+id/year"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/open_sans"
-                                android:text="Year"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                                android:textColor="#000000"
-                                android:textSize="15sp"
-                                android:textStyle="italic" />
 
                             <Spinner
                                 android:id="@+id/year_Spinner"
@@ -495,15 +508,10 @@
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
 
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
                     </LinearLayout>
 
                     <Button
-                        android:id="@+id/button4"
+                        android:id="@+id/saveChanges"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

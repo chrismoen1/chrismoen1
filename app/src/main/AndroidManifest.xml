@@ -13,13 +13,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".ui.main.Onboarding.ProfileInformation"></activity>
-        <activity android:name=".ui.main.Onboarding.OnboardingLogistics">
+        <activity android:name=".ui.main.SignIn.SignIn">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".ui.main.Onboarding.ProfileInformation" />
+        <activity android:name=".ui.main.Onboarding.OnboardingLogistics">
         </activity>
         <activity android:name=".ui.main.Onboarding.Onboarding" />
         <activity android:name=".ui.main.GroupTiming.CreateStudyGroup" />

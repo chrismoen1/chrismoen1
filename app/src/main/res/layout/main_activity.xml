@@ -235,6 +235,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/signOutContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -249,7 +250,8 @@
                         android:id="@+id/imageView19"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        app:srcCompat="@drawable/ic_school_logo" />
+                        android:padding="4dp"
+                        app:srcCompat="@drawable/signout" />
 
                     <TextView
                         android:id="@+id/textView220"
@@ -258,7 +260,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="5dp"
                         android:gravity="center"
-                        android:text="Find Friends" />
+                        android:text="Sign out" />
 
                     <Space
                         android:layout_width="wrap_content"

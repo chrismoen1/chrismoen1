@@ -13,6 +13,7 @@ public class OnboardingLogistics extends AppCompatActivity implements Onboarding
     private OnboardingPagerAdapter pageAdapter;
     private ViewPager viewPager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +42,7 @@ public class OnboardingLogistics extends AppCompatActivity implements Onboarding
     @Override
     public void clickedButton_Welcome(String action_type) {
         if (action_type.equals("NEXT") == true){
+
             //THen we advance to thext screen
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
         }
