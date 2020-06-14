@@ -34,7 +34,7 @@ public class ProfileInformation extends AppCompatActivity {
         String[] year_Strs = {"1st Year","2nd Year", "3rd Year", "4th Year", "5th Year", "6th Year"};
         ArrayAdapter<String> faculty_Adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,faculty_Strs);
 
-        faculty.set
+        //faculty.set
 
         //String[] preferredSubjects = {""}
     }
