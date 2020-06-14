@@ -1,35 +1,59 @@
 package com.example.newcomer_io.ui.main.Onboarding;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.*;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.example.newcomer_io.R;
+import com.example.newcomer_io.ui.main.UserDetails.UserData;
+import com.firebase.ui.auth.data.model.User;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Request;
+import de.hdodenhof.circleimageview.CircleImageView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class ProfileInformation extends AppCompatActivity {
+
+    //Specifying the gallery photo picking
+    private static final int PICK_IMAGE = 2 ;
 
     private EditText firstName;
     private EditText lastName;
     private EditText schoolName;
     private ArrayList<CheckBox> checkBoxArrayList;
     private LinearLayout subjectName;
+    private ImageButton imageOptions;
     private Button saveChanges;
-
+    private CircleImageView profileImage;
     private LinearLayout faculty_Container;
     private LinearLayout year_Container;
 
     private Spinner faculty;
     private Spinner studyYear;
+    private UserData userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_information);
+
+
+        userData = (UserData) getApplicationContext();
         firstName = findViewById(R.id.firstName);
         lastName = findViewById(R.id.editText);
         schoolName = findViewById(R.id.schoolName);
@@ -41,6 +65,8 @@ public class ProfileInformation extends AppCompatActivity {
 
         faculty = findViewById(R.id.faculty);
         studyYear = findViewById(R.id.year_Spinner);
+
+        imageOptions = findViewById(R.id.imageButton2);
 
         checkBoxArrayList = new ArrayList<CheckBox>();
         checkBoxArrayList.add((CheckBox) findViewById(R.id.psychology));
@@ -64,6 +90,7 @@ public class ProfileInformation extends AppCompatActivity {
         setEditListener(lastName);
         setEditListener(schoolName);
 
+        setImageOptionsListener(imageOptions);
         setSaveButtonListener(saveChanges);
 
         //Set the adapters for the spinner drop downs that we will display on the profile information page
@@ -81,8 +108,52 @@ public class ProfileInformation extends AppCompatActivity {
 
         faculty_Container.setBackgroundResource(R.drawable.rounded_border_deselected);
         year_Container.setBackgroundResource(R.drawable.rounded_border_deselected);
+        profileImage = findViewById(R.id.userProfileImage);
+
+        fillUserData();
 
     }
+
+    private void setImageOptionsListener(ImageButton imageOptions) {
+        imageOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Then we set the onlick listener i
+                openGallery();
+            }
+        });
+    }
+
+    private void openGallery() {
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(gallery,PICK_IMAGE);
+    }
+
+
+    private void fillUserData() {
+        String name = userData.getDisplayName();
+        //String photoUrl = userData.getPhotoUrl();
+
+        //Picasso.get().load(photoUrl).into(profileImage);
+        //Bitmap bitmapFromURL = getBitmapFromURL(photoUrl);
+
+    }
+    public Bitmap getBitmapFromURL(String src) {
+        try {
+            java.net.URL url = new java.net.URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url
+                    .openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private void setSaveButtonListener(Button button){
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,22 +161,28 @@ public class ProfileInformation extends AppCompatActivity {
                 EditText firstName = getFirstName();
                 EditText lastName = getLastName();
                 EditText schoolName = getSchoolName();
+                boolean flag = false;
 
                 if (firstName.getText().toString().isEmpty()){
                     //Then we do not go to the next page and instead give a request focus and error on those names stating that they need to have
                     //values inputted into it
                     firstName.requestFocus();
                     firstName.setError("Please enter your first name");
+                    flag = true;
                 }
                 if (lastName.getText().toString().isEmpty()){
                     lastName.requestFocus();
                     lastName.setError("Please enter your last name");
+                    flag = true;
                 }
                 if (schoolName.getText().toString().isEmpty()){
                    schoolName.requestFocus();
                    schoolName.setError("Please enter a school name");
+                   flag = true;
                 }
-
+                if (!flag){
+                    //Then we go to the next screen
+                }
             }
         });
     }
@@ -142,10 +219,20 @@ public class ProfileInformation extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 if (s.toString().length() == 0){
                     text.setBackgroundResource(R.drawable.text_backdrop);
+
                 }
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && PICK_IMAGE == requestCode){
+            Uri imageUri= data.getData();
+            profileImage.setImageURI(imageUri);
+        }
     }
 
     public void setCheckBoxListener(CheckBox currCheckBox){
@@ -249,5 +336,29 @@ public class ProfileInformation extends AppCompatActivity {
 
     public void setSaveChanges(Button saveChanges) {
         this.saveChanges = saveChanges;
+    }
+
+    public UserData getUserData() {
+        return userData;
+    }
+
+    public void setUserData(UserData userData) {
+        this.userData = userData;
+    }
+
+    public CircleImageView getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(CircleImageView profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public ImageButton getImageOptions() {
+        return imageOptions;
+    }
+
+    public void setImageOptions(ImageButton imageOptions) {
+        this.imageOptions = imageOptions;
     }
 }

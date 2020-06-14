@@ -1,6 +1,7 @@
 package com.example.newcomer_io.ui.main.SignIn;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
@@ -100,6 +101,7 @@ public class SignIn extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("vsignInWithCredential", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            //Uri photoUrl = user.getPhotoUrl();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -148,7 +150,14 @@ public class SignIn extends AppCompatActivity {
 
     private void startActivityIntent(Type classT, FirebaseUser userData) {
         Intent intent = new Intent(SignIn.this, (Class<?>) classT);
-        intent.putExtra("User", userData);
+        String photoUrl = userData.getPhotoUrl().toString();
+        String name = userData.getDisplayName();
+        String uuid = userData.getUid();
+
+        intent.putExtra("Name", name);
+        intent.putExtra("Uuid",uuid);
+        intent.putExtra("PhotoUrl", photoUrl);
+        //intent.putExtra("User", userData);
         startActivity(intent);
     }
 

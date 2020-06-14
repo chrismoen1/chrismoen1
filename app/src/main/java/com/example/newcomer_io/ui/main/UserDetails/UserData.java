@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.location.Location;
+import android.net.Uri;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.example.newcomer_io.ui.main.LocationSettings.TrendingContent;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
@@ -26,7 +28,14 @@ import java.util.*;
 public class UserData extends Application {
     private Location location;
     private ArrayList<TrendingContent> trendingContentArray;
+
+    //Prevalent user information to their current state
     private String UserID;
+    private String email;
+    private String displayName;
+    private String phoneNumber;
+    private String photoUrl;
+
     private TrendingContent chosenContent;
     private EventCreate eventCreate;
     private DatabaseReference mDatabase;
@@ -183,5 +192,46 @@ public class UserData extends Application {
 
     public void setUserID(String userID) {
         UserID = userID;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public void setAuthenticationInformation(String name, String uuid, String photoUrl) {
+
+        setUserID(uuid);
+        setPhotoUrl(photoUrl);
+        setEmail(email);
+        setDisplayName(displayName);
+        setPhoneNumber(phoneNumber);
     }
 }
