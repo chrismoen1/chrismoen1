@@ -1,9 +1,14 @@
 package com.example.newcomer_io.ui.main.Onboarding;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -13,11 +18,14 @@ import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.firebase.ui.auth.data.model.User;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
+import com.theartofdev.edmodo.cropper.CropImageView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.io.IOException;
@@ -27,10 +35,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class ProfileInformation extends AppCompatActivity {
+///            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+public class ProfileInformation extends AppCompatActivity implements ImageSelection.OnImageEdit {
 
     //Specifying the gallery photo picking
     private static final int PICK_IMAGE = 2 ;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    private static final int PERMISSION_REQUEST_CODE = 200;
+    private static final int CROP_COMPLETED = 4;
 
     private EditText firstName;
     private EditText lastName;
@@ -119,7 +131,9 @@ public class ProfileInformation extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Then we set the onlick listener i
-                openGallery();
+                //openGallery();
+                DialogFragment dialogFragment = new ImageSelection();
+                dialogFragment.show(getSupportFragmentManager(),"Image Options");
             }
         });
     }
@@ -128,7 +142,6 @@ public class ProfileInformation extends AppCompatActivity {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery,PICK_IMAGE);
     }
-
 
     private void fillUserData() {
         String name = userData.getDisplayName();
@@ -226,14 +239,6 @@ public class ProfileInformation extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && PICK_IMAGE == requestCode){
-            Uri imageUri= data.getData();
-            profileImage.setImageURI(imageUri);
-        }
-    }
 
     public void setCheckBoxListener(CheckBox currCheckBox){
         currCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -361,4 +366,24 @@ public class ProfileInformation extends AppCompatActivity {
     public void setImageOptions(ImageButton imageOptions) {
         this.imageOptions = imageOptions;
     }
+
+    @Override
+    public void sendImageFileUri(Uri imageUri) {
+        profileImage.setImageURI(imageUri);
+    }
+
+    @Override
+    public void sendCameraImage(Bitmap photo) {
+
+        Intent intent = new Intent(ProfileInformation.this, CropImage.class);
+        intent.putExtra("BitmapImage",photo);
+        startActivityForResult(intent, CROP_COMPLETED);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CROP_COMPLETED){
+            //Then we can f
+        }
+    }
+
 }

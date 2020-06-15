@@ -2,8 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.newcomer_io">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".ui.main.UserDetails.UserData"
@@ -13,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".ui.main.Onboarding.CropImage"></activity>
         <activity android:name=".ui.main.SignIn.SignIn">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,8 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.main.Onboarding.ProfileInformation" />
-        <activity android:name=".ui.main.Onboarding.OnboardingLogistics">
-        </activity>
+        <activity android:name=".ui.main.Onboarding.OnboardingLogistics"></activity>
         <activity android:name=".ui.main.Onboarding.Onboarding" />
         <activity android:name=".ui.main.GroupTiming.CreateStudyGroup" />
         <activity android:name=".ui.main.GroupTypes" />
@@ -33,7 +36,9 @@
         <activity android:name=".ui.main.LocationSettings.TrendingDisplay" />
         <activity android:name=".ui.main.LocationSettings.LocationType" />
         <activity android:name=".MainActivity" />
-
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" /> <!-- optional (needed if default theme has no action bar) -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
