@@ -2,12 +2,15 @@ package com.example.newcomer_io.ui.main.Onboarding;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,6 +28,12 @@ import android.view.ViewGroup;
 
 import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.GroupTiming.TimePickerFragment;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static androidx.core.content.PermissionChecker.checkSelfPermission;
 
@@ -104,14 +114,23 @@ public class ImageSelection extends DialogFragment {
         }
         else if (permissionCheckStorage == PackageManager.PERMISSION_GRANTED)
         {
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+           // try{
+            OnImageEdit onImageEdit = getOnImageEdit();
+            onImageEdit.sendCameraIntent();
+
+            getDialog().dismiss();
+                //then we succesfully
+           // } catch (Exception e) {
+              //  e.printStackTrace();
+            //}
         }
             else
         {
-            Toast.makeText(getContext(), "camera permission denied", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Camera permission denied", Toast.LENGTH_LONG).show();
         }
     }
+
     private void requestPermission() {
 
         ActivityCompat.requestPermissions(getActivity(),
@@ -144,7 +163,8 @@ public class ImageSelection extends DialogFragment {
     }
 
     public interface OnImageEdit{
-            void sendImageFileUri(Uri imageUri);
-            void sendCameraImage(Bitmap photo);
+        void sendImageFileUri(Uri imageUri);
+        void sendCameraImage(Bitmap photo);
+        void sendCameraIntent();
     }
 }

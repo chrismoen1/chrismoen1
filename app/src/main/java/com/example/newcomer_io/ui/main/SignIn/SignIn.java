@@ -128,7 +128,7 @@ public class SignIn extends AppCompatActivity {
                         user_data.put("Name", user.getDisplayName());
                         containerf.put(user.getUid(),user_data);
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
-                        reference1.child("UserData").updateChildren(jsonToMap(containerf));
+                        //reference1.child("UserData").updateChildren(jsonToMap(containerf));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
