@@ -106,7 +106,7 @@ public class SignIn extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("signInWithCredential", "signInWithCredential:failure", task.getException());
-                           //updateUI(null);
+                           updateUI(null);
                         }
                         // ...
                     }
@@ -150,13 +150,13 @@ public class SignIn extends AppCompatActivity {
 
     private void startActivityIntent(Type classT, FirebaseUser userData) {
         Intent intent = new Intent(SignIn.this, (Class<?>) classT);
-        String photoUrl = userData.getPhotoUrl().toString();
+        //String photoUrl = userData.getPhotoUrl().toString();
         String name = userData.getDisplayName();
         String uuid = userData.getUid();
 
         intent.putExtra("Name", name);
         intent.putExtra("Uuid",uuid);
-        intent.putExtra("PhotoUrl", photoUrl);
+        //intent.putExtra("PhotoUrl", photoUrl);
         //intent.putExtra("User", userData);
         startActivity(intent);
     }

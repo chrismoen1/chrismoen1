@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -20,7 +21,9 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,9 +32,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import com.example.newcomer_io.BuildConfig;
+import com.example.newcomer_io.MainActivity;
 import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.firebase.ui.auth.data.model.User;
+import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -52,13 +57,10 @@ import java.util.Date;
 import java.util.List;
 
 ///            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-public class ProfileInformation extends AppCompatActivity implements ImageSelection.OnImageEdit {
+public class ProfileInformation extends AppCompatActivity implements ImageSelection. OnImageEdit {
 
     //Specifying the gallery photo picking
     private static final int PICK_IMAGE = 2 ;
-    private static final int MY_CAMERA_PERMISSION_CODE = 100;
-    private static final int PERMISSION_REQUEST_CODE = 200;
-    private static final int CROP_COMPLETED = 4;
     private static final int CAMERA_REQUEST = 16;
 
     private File outputFile;
@@ -70,7 +72,7 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
     private LinearLayout subjectName;
     private ImageButton imageOptions;
     private Button saveChanges;
-    private CircleImageView profileImage;
+    private ImageView profileImage;
     private LinearLayout faculty_Container;
     private LinearLayout year_Container;
 
@@ -78,11 +80,12 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
     private Spinner studyYear;
     private UserData userData;
 
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_information);
-
 
         userData = (UserData) getApplicationContext();
         firstName = findViewById(R.id.firstName);
@@ -157,11 +160,6 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
         });
     }
 
-    private void openGallery() {
-        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        startActivityForResult(gallery,PICK_IMAGE);
-    }
-
     private void fillUserData() {
         String name = userData.getDisplayName();
         //String photoUrl = userData.getPhotoUrl();
@@ -193,16 +191,23 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
                 EditText firstName = getFirstName();
                 EditText lastName = getLastName();
                 EditText schoolName = getSchoolName();
+                ImageView profileImage = getProfileImage();
+                Bitmap bitmap = ((BitmapDrawable)profileImage.getDrawable()).getBitmap();
+
                 boolean flag = false;
 
-                if (firstName.getText().toString().isEmpty()){
+                String firstName_Str = firstName.getText().toString();
+                String schoolName_Str = schoolName.getText().toString();
+                String lastName_Str = lastName.getText().toString();
+
+                if (firstName_Str.isEmpty()){
                     //Then we do not go to the next page and instead give a request focus and error on those names stating that they need to have
                     //values inputted into it
                     firstName.requestFocus();
                     firstName.setError("Please enter your first name");
                     flag = true;
                 }
-                if (lastName.getText().toString().isEmpty()){
+                if (lastName_Str.isEmpty()){
                     lastName.requestFocus();
                     lastName.setError("Please enter your last name");
                     flag = true;
@@ -214,9 +219,29 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
                 }
                 if (!flag){
                     //Then we go to the next screen
+                    Intent intent = new Intent(ProfileInformation.this, MainActivity.class);
+
+                    intent.putExtra("First Name", firstName_Str);
+                    intent.putExtra("Last Name", lastName_Str);
+                    intent.putExtra("School Name", schoolName_Str);
+
+                    //Convert to byte array
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+
+                    intent.putExtra("Profile Image",byteArray);
+                    upload_database(firstName_Str,lastName_Str,schoolName_Str,((BitmapDrawable) profileImage.getDrawable()).getBitmap());
+                    startActivity(intent);
                 }
             }
         });
+    }
+
+    private void upload_database(String firstName_str, String lastName_str, String schoolName_str, Bitmap image) {
+        storage.getReference().child("User Images").child("test");
+
     }
 
     private void setSpinnerListener(final Spinner faculty, final LinearLayout container) {
@@ -256,6 +281,21 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
 
             }
         });
+
+        text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
+                    //Then we make sure that each word is capitalized at the beginning
+                    String[] words= text.getText().toString().split(" ");
+                    for (int i =0; i < words.length;i++){
+
+                    }
+                }
+                return false;
+            }
+        });
+
     }
 
 
@@ -282,7 +322,10 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
             getSubjectName().setBackgroundResource(R.drawable.rounded_border_deselected);
         }
     }
-
+    private void openGallery() {
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(gallery,PICK_IMAGE);
+    }
     private void updateLayoutColor(LinearLayout linearLayout) {
         linearLayout.setBackgroundResource(R.drawable.rounded_border);
     }
@@ -370,11 +413,11 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
         this.userData = userData;
     }
 
-    public CircleImageView getProfileImage() {
+    public ImageView getProfileImage() {
         return profileImage;
     }
 
-    public void setProfileImage(CircleImageView profileImage) {
+    public void setProfileImage(ImageView profileImage) {
         this.profileImage = profileImage;
     }
 
@@ -413,33 +456,27 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
 
         }
 
+    @Override
+    public void sendGalleryIntent() {
+        openGallery();
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        CircleImageView profileImage = getProfileImage();
+        ImageView profileImage = getProfileImage();
         if (resultCode == -1 && requestCode == CAMERA_REQUEST){
             if (data != null)
             {
                 if (data.hasExtra("data")){
                     Bitmap thumbnail = data.getParcelableExtra("data");
                     profileImage.setImageBitmap(thumbnail);
-              /*      Intent intent = new Intent(ProfileInformation.this, CropImage.class);
-                    intent.putExtra("BitmapImage",thumbnail);
-                    startActivityForResult(intent, CROP_COMPLETED);*/
-                }
+              }
             }else{
-
-                //profileImage.setImageBitmap(bitmap);
-                //Intent intent = new Intent(ProfileInformation.this, CropImage.class);
                 Bitmap bitmapPhoto = getBitmapPhoto();
                 Bitmap bitmap = RotateBitmap( bitmapPhoto,90);
 
-                Intent intent = CropImage.activity(getImageUri(this,bitmap))
-                        .getIntent(getApplicationContext());
-                startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
-                //intent.putExtra("Output File Path",getOutputFile().getPath());
-                //startActivityForResult(intent, CROP_COMPLETED);
-
+                startCropActivity(getImageUri(this,bitmap));
 
             }
 
@@ -455,47 +492,71 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
+        }else if (requestCode == PICK_IMAGE  && data != null){
+            Uri bitmapResult = data.getData();
+            //Bitmap bbb = convert_bitmap(bitmapResult);
+            startCropActivity(bitmapResult);
         }
     }
 
-    private Bitmap scale_ImagePhoto(Bitmap bitmapResult, CircleImageView profileImage) {
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
+    private void startCropActivity(Uri imageUri) {
+        Intent intent = CropImage.activity(imageUri)
+                .getIntent(getApplicationContext());
+        startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+
+    private Bitmap scale_ImagePhoto(Bitmap bitmapResult, ImageView profileImage) {
 
         int profileHeight = profileImage.getHeight();
-        int width = size.x;
+        int width = profileImage.getWidth();
 
         int bitmapHeight = bitmapResult.getHeight();
         int bitmapWidth = bitmapResult.getWidth();
 
         if (bitmapHeight >= profileHeight || bitmapWidth >= width){
+
             //Then we scale down
-            int scaledFactor = Math.min(profileHeight / bitmapHeight, width / bitmapWidth);
-            return Bitmap.createScaledBitmap(bitmapResult, scaledFactor * bitmapWidth, scaledFactor * bitmapHeight, false);
+            float scaledFactor = Math.min((float)profileHeight / bitmapHeight, (float) width / bitmapWidth);
+            int new_height = (int) (scaledFactor * bitmapHeight);
+            int new_width = (int) (scaledFactor * bitmapWidth);
+            return Bitmap.createScaledBitmap(bitmapResult, new_width, new_height, false);
+
         }else{
-            int scaledFactor = (1 / Math.min(profileHeight / bitmapHeight, width / bitmapWidth));
-            return Bitmap.createScaledBitmap(bitmapResult, scaledFactor * bitmapWidth, scaledFactor * bitmapHeight, false);
+
+            float scaledFactor = Math.min((float)profileHeight / bitmapHeight, (float) width / bitmapWidth);
+            int new_height = (int) (scaledFactor * bitmapHeight);
+            int new_width = (int) (scaledFactor * bitmapWidth);
+            return Bitmap.createScaledBitmap(bitmapResult, new_width, new_height, false);
+
         }
     }
 
     private Bitmap convert_bitmap(Uri resultUri) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        return BitmapFactory.decodeFile(new File(resultUri.getPath()).getAbsolutePath(), options);
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),resultUri);
+            return bitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
 }
 
     public static Bitmap RotateBitmap(Bitmap source, float angle)
     {
+
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+
     }
     public Uri getImageUri(Context inContext, Bitmap inImage) {
+
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Profile Image", null);
         return Uri.parse(path);
+
     }
     public Bitmap getBitmapPhoto(){
 

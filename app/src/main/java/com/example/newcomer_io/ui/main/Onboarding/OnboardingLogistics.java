@@ -16,7 +16,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class OnboardingLogistics extends AppCompatActivity implements OnboardingWelcome.OnButtonAction_Welcome, OnboardingInformation.OnButtonAction_Information   {
     private OnboardingPagerAdapter pageAdapter;
     private ViewPager viewPager;
-
+    private String uuid;
+    private String name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,11 +26,11 @@ public class OnboardingLogistics extends AppCompatActivity implements Onboarding
         UserData userData = (UserData) getApplicationContext();
 
         Intent intent = getIntent();
-        String photoUrl = intent.getStringExtra("PhotoUrl");
-        String uuid = intent.getStringExtra("Uuid");
-        String name = intent.getStringExtra("Name");
+        //String photoUrl = intent.getStringExtra("PhotoUrl");
+        uuid = intent.getStringExtra("Uuid");
+        name = intent.getStringExtra("Name");
 
-        userData.setAuthenticationInformation(name, uuid, photoUrl);
+        userData.setAuthenticationInformation(name, uuid);
 
         viewPager = findViewById(R.id.viewPagerLogistics);
 
@@ -61,6 +62,10 @@ public class OnboardingLogistics extends AppCompatActivity implements Onboarding
         if (action_type.equals("NEXT") == true){
             //THen we advance to thext screen
             Intent intent = new Intent(this, ProfileInformation.class);
+
+            intent.putExtra("Name", getName());
+            intent.putExtra("Uuid",getUuid());
+
             startActivity(intent);
         }
         else{
@@ -68,4 +73,8 @@ public class OnboardingLogistics extends AppCompatActivity implements Onboarding
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
     }
+
+    private String getUuid(){return this.uuid;}
+    private String getName(){return this.name; }
+
 }

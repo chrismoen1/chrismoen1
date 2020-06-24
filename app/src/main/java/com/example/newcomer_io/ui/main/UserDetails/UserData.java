@@ -124,7 +124,9 @@ public class UserData extends Application {
             Log.d("JSONCreateGroupFailure", "Unable to create the JSON structure");
         }
         try {
+
             mDatabase.child("Groups").updateChildren(jsonToMap(eventDetails));
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -226,10 +228,9 @@ public class UserData extends Application {
         this.photoUrl = photoUrl;
     }
 
-    public void setAuthenticationInformation(String name, String uuid, String photoUrl) {
+    public void setAuthenticationInformation(String name, String uuid) {
 
         setUserID(uuid);
-        setPhotoUrl(photoUrl);
         setEmail(email);
         setDisplayName(displayName);
         setPhoneNumber(phoneNumber);

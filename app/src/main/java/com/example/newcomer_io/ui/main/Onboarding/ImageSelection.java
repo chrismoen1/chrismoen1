@@ -37,11 +37,6 @@ import java.util.Date;
 
 import static androidx.core.content.PermissionChecker.checkSelfPermission;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ImageSelection#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ImageSelection extends DialogFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -51,14 +46,6 @@ public class ImageSelection extends DialogFragment {
     private OnImageEdit onImageEdit;
     private static final int PERMISSION_REQUEST_CODE = 200;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ImageSelection.
-     */
     // TODO: Rename and change types and number of parameters
 
     @Override
@@ -84,7 +71,8 @@ public class ImageSelection extends DialogFragment {
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openGallery();
+                getOnImageEdit().sendGalleryIntent();
+                getDialog().dismiss();
             }
         });
         photo.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +139,9 @@ public class ImageSelection extends DialogFragment {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             onImageEdit.sendCameraImage(photo);
             getDialog().dismiss();
+        }else if (requestCode== PICK_IMAGE){
+            //Send the process back to the image file to be inputed
+            onImageEdit.sendImageFileUri(imageUri);
         }
     }
 
@@ -166,5 +157,6 @@ public class ImageSelection extends DialogFragment {
         void sendImageFileUri(Uri imageUri);
         void sendCameraImage(Bitmap photo);
         void sendCameraIntent();
+        void sendGalleryIntent();
     }
 }
