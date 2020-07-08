@@ -1,5 +1,6 @@
 package com.example.newcomer_io.ui.main.SignIn;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
@@ -20,11 +21,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.*;
 import com.google.firebase.database.*;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,7 +45,7 @@ public class SignIn extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
     private LinearLayout googleButton;
-
+    private FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,15 +133,49 @@ public class SignIn extends AppCompatActivity {
                         user_data.put("Name", user.getDisplayName());
                         containerf.put(user.getUid(),user_data);
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
-                        //reference1.child("UserData").updateChildren(jsonToMap(containerf));
+                        reference1.child("UserData").updateChildren(jsonToMap(containerf));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    startActivityIntent(OnboardingLogistics.class, user);
+
+                    Intent intent = new Intent(SignIn.this, OnboardingLogistics.class);
+                    //String photoUrl = userData.getPhotoUrl().toString();
+                    String name = user.getDisplayName();
+                    String uuid = user.getUid();
+
+                    intent.putExtra("Name", name);
+                    intent.putExtra("Uuid",uuid);
+
+                    startActivity(intent);
+
+                    //startActivityIntent(OnboardingLogistics.class, user);
                 }
                 else{
                     //Then we go to another part of the UI which is the default launch page
-                    startActivityIntent(MainActivity.class,user);
+                    //Then we pass in the image as well which will require calling the Firebase storage
+                    String first_name = dataSnapshot.child("First Name").getValue().toString();
+                    String last_name = dataSnapshot.child("Last Name").getValue().toString();
+                    String school_name = dataSnapshot.child("School Name").getValue().toString();
+                    String image_name = dataSnapshot.child("Image Name").getValue().toString();
+
+                    Intent intent = new Intent(SignIn.this, MainActivity.class);
+                    //String photoUrl = userData.getPhotoUrl().toString();
+                    String name = user.getDisplayName();
+                    String uuid = user.getUid();
+
+                    intent.putExtra("Name", name);
+                    intent.putExtra("Uuid",uuid);
+                    intent.putExtra("First Name",first_name);
+                    intent.putExtra("Last Name",last_name);
+                    intent.putExtra("School Name",school_name);
+                    intent.putExtra("Image Name",image_name);
+                    intent.putExtra("ACTIVITY_NAME", "SignIn");
+
+                    startActivity(intent);
+
+                    //startActivityIntent(MainActivity.class,user);
+
+
                 }
             }
 
@@ -156,6 +195,8 @@ public class SignIn extends AppCompatActivity {
 
         intent.putExtra("Name", name);
         intent.putExtra("Uuid",uuid);
+        //intent.putExtra
+        //intent.putExtra("Profile Image", (Parcelable) imageData);
         //intent.putExtra("PhotoUrl", photoUrl);
         //intent.putExtra("User", userData);
         startActivity(intent);
@@ -169,6 +210,10 @@ public class SignIn extends AppCompatActivity {
 
     public void setGoogleButton(LinearLayout googleButton) {
         this.googleButton = googleButton;
+    }
+
+    public FirebaseStorage getFirebaseStorage() {
+        return firebaseStorage;
     }
 }
 

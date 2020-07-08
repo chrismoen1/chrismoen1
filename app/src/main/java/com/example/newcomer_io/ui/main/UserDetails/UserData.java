@@ -43,7 +43,6 @@ public class UserData extends Application {
 
     public void setLocation(Location location){
         this.location = location;
-
     }
 
     @Override
@@ -179,7 +178,6 @@ public class UserData extends Application {
             if(value instanceof JSONArray) {
                 value = toList((JSONArray) value);
             }
-
             else if(value instanceof JSONObject) {
                 value = toMap((JSONObject) value);
             }

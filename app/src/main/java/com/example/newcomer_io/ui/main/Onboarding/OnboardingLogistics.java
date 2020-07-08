@@ -67,6 +67,7 @@ public class OnboardingLogistics extends AppCompatActivity implements Onboarding
             intent.putExtra("Uuid",getUuid());
 
             startActivity(intent);
+            finish();
         }
         else{
             //otherwise we go back one pag e

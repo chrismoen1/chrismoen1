@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,13 +37,22 @@ import com.example.newcomer_io.MainActivity;
 import com.example.newcomer_io.R;
 import com.example.newcomer_io.ui.main.UserDetails.UserData;
 import com.firebase.ui.auth.data.model.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageActivity;
 import com.theartofdev.edmodo.cropper.CropImageView;
 import de.hdodenhof.circleimageview.CircleImageView;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -55,6 +65,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.example.newcomer_io.ui.main.UserDetails.UserData.jsonToMap;
 
 ///            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
 public class ProfileInformation extends AppCompatActivity implements ImageSelection. OnImageEdit {
@@ -73,12 +85,18 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
     private ImageButton imageOptions;
     private Button saveChanges;
     private ImageView profileImage;
+    private String imageName;
     private LinearLayout faculty_Container;
     private LinearLayout year_Container;
 
     private Spinner faculty;
     private Spinner studyYear;
     private UserData userData;
+
+    private String uuid;
+    private String name;
+    
+    private Uri resultUri;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -92,6 +110,10 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
         lastName = findViewById(R.id.editText);
         schoolName = findViewById(R.id.schoolName);
         subjectName = findViewById(R.id.subjectName);
+
+        Intent intent = getIntent();
+        uuid = intent.getStringExtra("Uuid");
+        name = intent.getStringExtra("Name");
 
         faculty_Container = findViewById(R.id.facultyContainer);
         year_Container = findViewById(R.id.yearContainer);
@@ -145,7 +167,6 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
         profileImage = findViewById(R.id.userProfileImage);
 
         fillUserData();
-
     }
 
     private void setImageOptionsListener(ImageButton imageOptions) {
@@ -192,6 +213,7 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
                 EditText lastName = getLastName();
                 EditText schoolName = getSchoolName();
                 ImageView profileImage = getProfileImage();
+                ///((BitmapDrawable)profileImage.getDrawable()).get
                 Bitmap bitmap = ((BitmapDrawable)profileImage.getDrawable()).getBitmap();
 
                 boolean flag = false;
@@ -224,25 +246,69 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
                     intent.putExtra("First Name", firstName_Str);
                     intent.putExtra("Last Name", lastName_Str);
                     intent.putExtra("School Name", schoolName_Str);
-
+                    intent.putExtra("Uuid",getUuid());
+                    intent.putExtra("ACTIVITY_NAME", "ProfileInformation");
                     //Convert to byte array
 
+
+                    Uri resultUri = getResultUri();
+                    upload_database(firstName_Str,lastName_Str,schoolName_Str,getUuid(),bitmap);
+                    /*
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-
-                    intent.putExtra("Profile Image",byteArray);
-                    upload_database(firstName_Str,lastName_Str,schoolName_Str,((BitmapDrawable) profileImage.getDrawable()).getBitmap());
+                    byte[] byteArray = stream.toByteArray();*/
+                    intent.putExtra("Image Name",getImageName());
+                    intent.putExtra("Profile Image",resultUri.getPath());
                     startActivity(intent);
+                    finish(); 
                 }
             }
         });
     }
 
-    private void upload_database(String firstName_str, String lastName_str, String schoolName_str, Bitmap image) {
-        storage.getReference().child("User Images").child("test");
+    private void upload_database(String firstName_str, String lastName_str, String schoolName_str,String Uuid, Bitmap image) {
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd-hh-mm");
+        imageName = simpleDateFormat.format(date);
 
+        FirebaseDatabase instance = FirebaseDatabase.getInstance();
+        DatabaseReference reference = instance.getReference();
+        JSONObject dataContainer = new JSONObject();
+
+        try {
+            dataContainer.put("First Name",firstName_str);
+            dataContainer.put("Last Name",lastName_str);
+            dataContainer.put("School Name",schoolName_str);
+            dataContainer.put("Image Name",imageName);
+            reference.child("UserData/" + Uuid).updateChildren(jsonToMap(dataContainer));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //Now uploading the data related to the firebase storage to hold the image
+        StorageReference user_images = storage.getReference().child("User Images").child(getUuid()).child(imageName);
+
+        // Get the data from an ImageView as bytes
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = user_images.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+            }
+        });
     }
+
 
     private void setSpinnerListener(final Spinner faculty, final LinearLayout container) {
         faculty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -325,6 +391,7 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
     private void openGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery,PICK_IMAGE);
+        //finish();
     }
     private void updateLayoutColor(LinearLayout linearLayout) {
         linearLayout.setBackgroundResource(R.drawable.rounded_border);
@@ -473,10 +540,11 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
                     profileImage.setImageBitmap(thumbnail);
               }
             }else{
+
                 Bitmap bitmapPhoto = getBitmapPhoto();
                 Bitmap bitmap = RotateBitmap( bitmapPhoto,90);
-
-                startCropActivity(getImageUri(this,bitmap));
+                resultUri = getImageUri(this, bitmap);
+                startCropActivity(resultUri);
 
             }
 
@@ -485,7 +553,7 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                Uri resultUri = result.getUri();
+                resultUri = result.getUri();
                 Bitmap bitmapResult = convert_bitmap(resultUri);
                 Bitmap bitmap = scale_ImagePhoto(bitmapResult, getProfileImage());
                 profileImage.setImageBitmap(bitmap);
@@ -493,9 +561,9 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
                 Exception error = result.getError();
             }
         }else if (requestCode == PICK_IMAGE  && data != null){
-            Uri bitmapResult = data.getData();
+            resultUri = data.getData();
             //Bitmap bbb = convert_bitmap(bitmapResult);
-            startCropActivity(bitmapResult);
+            startCropActivity(resultUri);
         }
     }
 
@@ -581,4 +649,36 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
         this.outputFile = file;
     }
     public File getOutputFile(){return this.outputFile; }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Uri getResultUri() {
+        return resultUri;
+    }
+
+    public void setResultUri(Uri resultUri) {
+        this.resultUri = resultUri;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
 }
