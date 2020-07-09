@@ -35,7 +35,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.theartofdev.edmodo.cropper.CropImage;
+import com.yalantis.ucrop.UCrop;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,10 +43,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.example.newcomer_io.ui.main.Onboarding.ProfileInformation.RotateBitmap;
 import static com.example.newcomer_io.ui.main.UserDetails.UserData.toMap;
@@ -273,27 +270,33 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
         ImageView profileImage = getProfilePhoto();
         //StorageReference user_images = getFirebaseStorage().getReference("User Images").child(uuid);
 
-
+        Uri resultUri;
         if (resultCode == -1 && requestCode == CAMERA_REQUEST){
             if (data != null)
             {
                 if (data.hasExtra("data")){
                     Bitmap thumbnail = data.getParcelableExtra("data");
                     //reUpload(getUuid(),thumbnail);
+                    resultUri = getImageUri(this,thumbnail);
+                    startCropActivity(resultUri);
+
                     profileImage.setImageBitmap(thumbnail);
                 }
             }else{
 
                 Bitmap bitmapPhoto = getBitmapPhoto();
                 Bitmap bitmap = RotateBitmap( bitmapPhoto,90);
+                resultUri = getImageUri(this,bitmap);
+                startCropActivity(resultUri);
+
                 //reUpload(getUuid(),bitmap);
-                startCropActivity(getImageUri(this,bitmap));
+                //(getImageUri(this,bitmap));
 
             }
 
             //Then we can f
 
-        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+        } /*else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
@@ -310,22 +313,50 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
 
             //Bitmap bbb = convert_bitmap(bitmapResult);
             startCropActivity(bitmapResult);
+        }*/
+        else if (requestCode == UCrop.REQUEST_CROP && data != null) {
+            //CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            resultUri = UCrop.getOutput(data);
+            if (resultCode == RESULT_OK) {
+                ///Bitmap bitmapResult = convert_bitmap(resultUri);
+                //Bitmap bitmap = scale_ImagePhoto(bitmapResult, getProfileImage());
+                reUpload(getUuid(),convert_bitmap(resultUri));
+                profileImage.setImageURI(resultUri);
+            } else if (resultCode == UCrop.RESULT_ERROR) {
+                //Exception error = result.getError();
+            }
+        }else if (requestCode == PICK_IMAGE  && data != null){
+            resultUri = data.getData();
+            //reUpload(getUuid(),convert_bitmap(resultUri));
+            //Bitmap bbb = convert_bitmap(bitmapResult);
+            startCropActivity(resultUri);
         }
+    }
+    private void startCropActivity(Uri imageUri) {
+        String destinationFileName = UUID.randomUUID().toString() + ".jpg";
+
+        UCrop.of(imageUri, Uri.fromFile(new File(getCacheDir(),destinationFileName)))
+                .withAspectRatio(4, 3)
+                .withMaxResultSize(600, 600)
+                .start(this);
     }
 
     private void reUpload(String uuid, final Bitmap image) {
         // Get the data from an ImageView as bytes
 
         StorageReference user_images = getFirebaseStorage().getReference().child("User Images").child(uuid).child(getImageName());
-        Date date = new Date();
 
-        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd-hh-mm");
-        final String format = simpleDateFormat.format(date);
-        firebaseDatabase.getReference().child(uuid).child("Image Name").setValue(format);
         user_images.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                Date date = new Date();
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd-hh-mm");
+                String format = simpleDateFormat.format(date);
+
                 setImageName(format);
+
+                firebaseDatabase.getReference().child("UserData").child(getUuid()).child("Image Name").setValue(format);
                 StorageReference user_images = getFirebaseStorage().getReference().child("User Images").child(getUuid()).child(format);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -349,11 +380,11 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
         });
     }
 
-    private void startCropActivity(Uri imageUri) {
+/*    private void startCropActivity(Uri imageUri) {
         Intent intent = CropImage.activity(imageUri)
                 .getIntent(getApplicationContext());
         startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
-    }
+    }*/
 
     private Bitmap scale_ImagePhoto(Bitmap bitmapResult, ImageView profileImage) {
 

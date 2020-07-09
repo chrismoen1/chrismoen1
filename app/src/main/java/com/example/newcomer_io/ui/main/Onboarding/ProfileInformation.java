@@ -3,6 +3,7 @@ package com.example.newcomer_io.ui.main.Onboarding;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,9 +48,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageActivity;
-import com.theartofdev.edmodo.cropper.CropImageView;
+import com.yalantis.ucrop.UCrop;
 import de.hdodenhof.circleimageview.CircleImageView;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,6 +64,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.newcomer_io.ui.main.UserDetails.UserData.jsonToMap;
 
@@ -259,8 +259,9 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
                     byte[] byteArray = stream.toByteArray();*/
                     intent.putExtra("Image Name",getImageName());
                     intent.putExtra("Profile Image",resultUri.getPath());
+
                     startActivity(intent);
-                    finish(); 
+                    finish();
                 }
             }
         });
@@ -550,15 +551,15 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
 
             //Then we can f
 
-        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+        } else if (requestCode == UCrop.REQUEST_CROP && data != null) {
+            //CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            resultUri = UCrop.getOutput(data);
             if (resultCode == RESULT_OK) {
-                resultUri = result.getUri();
-                Bitmap bitmapResult = convert_bitmap(resultUri);
-                Bitmap bitmap = scale_ImagePhoto(bitmapResult, getProfileImage());
-                profileImage.setImageBitmap(bitmap);
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
+                ///Bitmap bitmapResult = convert_bitmap(resultUri);
+                //Bitmap bitmap = scale_ImagePhoto(bitmapResult, getProfileImage());
+                profileImage.setImageURI(resultUri);
+            } else if (resultCode == UCrop.RESULT_ERROR) {
+                //Exception error = result.getError();
             }
         }else if (requestCode == PICK_IMAGE  && data != null){
             resultUri = data.getData();
@@ -568,9 +569,12 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
     }
 
     private void startCropActivity(Uri imageUri) {
-        Intent intent = CropImage.activity(imageUri)
-                .getIntent(getApplicationContext());
-        startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+        String destinationFileName = UUID.randomUUID().toString() + ".jpg";
+
+        UCrop.of(imageUri, Uri.fromFile(new File(getCacheDir(),destinationFileName)))
+                .withAspectRatio(4, 3)
+                .withMaxResultSize(600, 600)
+                .start(this);
     }
 
     private Bitmap scale_ImagePhoto(Bitmap bitmapResult, ImageView profileImage) {
