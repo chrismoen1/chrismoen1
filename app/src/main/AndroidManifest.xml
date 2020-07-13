@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.newcomer_io">
@@ -15,22 +14,25 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".ui.main.FindFriends.FriendView"></activity>
+        <activity android:name=".ui.main.FindFriends.FindFriends">
+
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
-            tools:replace="android:authorities"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+
             <!-- ressource file to create -->
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths">
-            </meta-data>
+                android:resource="@xml/provider_paths" />
         </provider>
 
         <activity android:name=".ui.main.SignIn.SignIn">
@@ -40,9 +42,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.Onboarding.ProfileInformation"
-            />
-        <activity android:name=".ui.main.Onboarding.OnboardingLogistics"></activity>
+        <activity android:name=".ui.main.Onboarding.ProfileInformation" />
+        <activity android:name=".ui.main.Onboarding.OnboardingLogistics" />
         <activity android:name=".ui.main.Onboarding.Onboarding" />
         <activity android:name=".ui.main.GroupTiming.CreateStudyGroup" />
         <activity android:name=".ui.main.GroupTypes" />

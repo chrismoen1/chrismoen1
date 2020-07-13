@@ -64,11 +64,13 @@ public class FilterView extends AppCompatActivity {
         other = findViewById(R.id.other);
         studyGroupType= findViewById(R.id.bySubject);
         chipList = new ArrayList<Chip>();
+
         //chipList.add(new Tag("Lorem"));
         //chipList.add(new Tag("Ipsum dolor"));
         //chipList.add(new Tag("Sit amet"));
         //chipList.add(new Tag("Consectetur"));
         //chipList.add(new Tag("adipiscing elit"));
+
         chipDefault = (ChipView) findViewById(R.id.chipview);
         chipDefault.setChipLayoutRes(R.layout.chip_close);
         chipDefault.setChipBackgroundColor(getResources().getColor(R.color.transparent));

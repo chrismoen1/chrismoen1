@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity"
->
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    >
     <include
         android:id="@+id/toolbar1"
         layout="@layout/toolbar"
@@ -29,24 +29,6 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-
-            <ImageButton
-                android:id="@+id/editProfileImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:elevation="4dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:background="@drawable/rounded_border_deselected"
-                android:padding="4dp"
-                android:scaleType="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                app:srcCompat="@android:drawable/ic_menu_edit" />
 
             <ImageView
                 android:id="@+id/profilePhoto"
@@ -223,7 +205,7 @@
                             android:layout_gravity="center"
                             android:background="@drawable/rounded_border"
                             android:padding="10dp"
-                            android:text="Find Friends"
+                            android:text="Follow"
                             android:textSize="15sp" />
 
                         <Space
@@ -254,11 +236,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:orientation="vertical" >
 
                 <Space
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
                 <TextView
@@ -288,103 +271,30 @@
 
                 <Space
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
                 <TextView
-                    android:id="@+id/textView30"
-                    android:layout_width="match_parent"
+                    android:id="@+id/textView26"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/open_sans"
-                    android:text="Profile Settings"
+                    android:text="Study Interests"
                     android:textSize="16sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="3dp"
                     android:layout_marginRight="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/border"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-
-                    <ImageView
-                        android:id="@+id/imageView30"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        app:srcCompat="@drawable/ic_school_logo" />
-
-                    <TextView
-                        android:id="@+id/textView20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="5dp"
-                        android:gravity="center"
-                        android:text="Set Profile Settings" />
-
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <ImageView
-                        android:id="@+id/imageView21"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:rotation="180"
-                        app:srcCompat="?attr/homeAsUpIndicator" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/signOutContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/border"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-
-                    <ImageView
-                        android:id="@+id/imageView19"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:padding="4dp"
-                        app:srcCompat="@drawable/signout" />
-
-                    <TextView
-                        android:id="@+id/textView220"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="5dp"
-                        android:gravity="center"
-                        android:text="Sign out" />
-
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <ImageView
-                        android:id="@+id/imageView221"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:rotation="180"
-                        app:srcCompat="?attr/homeAsUpIndicator" />
-                </LinearLayout>
+                    android:orientation="vertical"></LinearLayout>
 
                 <Space
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
             </LinearLayout>

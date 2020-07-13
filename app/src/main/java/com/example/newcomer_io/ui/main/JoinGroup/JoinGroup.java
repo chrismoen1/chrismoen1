@@ -300,6 +300,7 @@ public class JoinGroup extends AppCompatActivity {
     }
 
     private LinearLayout createGroupTagsLayout(Iterable<DataSnapshot> children, ArrayList<String> tags) {
+
         LinearLayout viewHolder = new LinearLayout(this);
         viewHolder.setOrientation(LinearLayout.VERTICAL);
 

@@ -281,6 +281,8 @@ public class ProfileInformation extends AppCompatActivity implements ImageSelect
             dataContainer.put("Last Name",lastName_str);
             dataContainer.put("School Name",schoolName_str);
             dataContainer.put("Image Name",imageName);
+            dataContainer.put("Followers", 0); 
+            dataContainer.put("Following",0); 
             reference.child("UserData/" + Uuid).updateChildren(jsonToMap(dataContainer));
 
         } catch (JSONException e) {

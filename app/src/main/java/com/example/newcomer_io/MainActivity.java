@@ -89,14 +89,14 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
             //Then we want to gather all of the data that pertains to the uiser
             //Get all details from the prior intent
             //byte[] profile_image = intent.getByteArrayExtra("Profile Image");
-            String profile_image = intent.getStringExtra("Profile Image");
-            setImageName(intent.getStringExtra("Image Name"));
+            String profile_image = intent.getStringExtra("ProfileImage");
+            setImageName(intent.getStringExtra("ImageName"));
             Uri profile_image_uri = Uri.parse(profile_image);
             //Bitmap bmp = BitmapFactory.decodeByteArray(profile_image, 0, profile_image.length);
 
-            String first_name = intent.getStringExtra("First Name");
-            String last_name = intent.getStringExtra("Last Name");
-            String school_name = intent.getStringExtra("School Name");
+            String first_name = intent.getStringExtra("FirstName");
+            String last_name = intent.getStringExtra("LastName");
+            String school_name = intent.getStringExtra("SchoolName");
             setUuid(intent.getStringExtra("Uuid"));
             //String image_name = intent.getStringExtra("Image Name");
 
@@ -112,10 +112,10 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
          //Then we want to download the user profile based on their UUID
             setUuid(intent.getStringExtra("Uuid"));
             String name = intent.getStringExtra("Name");
-            String first_name = intent.getStringExtra("First Name");
-            String last_name = intent.getStringExtra("Last Name");
-            String school_name = intent.getStringExtra("School Name");
-            setImageName(intent.getStringExtra("Image Name"));
+            String first_name = intent.getStringExtra("FirstName");
+            String last_name = intent.getStringExtra("LastName");
+            String school_name = intent.getStringExtra("SchoolName");
+            setImageName(intent.getStringExtra("ImageName"));
 
             downloadImagePhoto(Uuid,getImageName());
 
@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
+
                     case R.id.group_add:
                         //userData.updateUserData();
                         Intent intent = new Intent(MainActivity.this, CreateStudyGroup.class);
@@ -356,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
 
                 setImageName(format);
 
-                firebaseDatabase.getReference().child("UserData").child(getUuid()).child("Image Name").setValue(format);
+                firebaseDatabase.getReference().child("UserData").child(getUuid()).child("ImageName").setValue(format);
                 StorageReference user_images = getFirebaseStorage().getReference().child("User Images").child(getUuid()).child(format);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 image.compress(Bitmap.CompressFormat.JPEG, 100, baos);

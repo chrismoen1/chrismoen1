@@ -126,17 +126,19 @@ public class SignIn extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null){
                     //Then the user doesn't exist and we send them to the login screen
-                    JSONObject user_data = new JSONObject();
-                    JSONObject containerf = new JSONObject();
+    //                JSONObject user_data = new JSONObject();
+      //              JSONObject containerf = new JSONObject();
+/*
 
                     try {
                         user_data.put("Name", user.getDisplayName());
                         containerf.put(user.getUid(),user_data);
                         DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
-                        reference1.child("UserData").updateChildren(jsonToMap(containerf));
+                        //reference1.child("UserData").updateChildren(jsonToMap(containerf));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+*/
 
                     Intent intent = new Intent(SignIn.this, OnboardingLogistics.class);
                     //String photoUrl = userData.getPhotoUrl().toString();
@@ -153,10 +155,10 @@ public class SignIn extends AppCompatActivity {
                 else{
                     //Then we go to another part of the UI which is the default launch page
                     //Then we pass in the image as well which will require calling the Firebase storage
-                    String first_name = dataSnapshot.child("First Name").getValue().toString();
-                    String last_name = dataSnapshot.child("Last Name").getValue().toString();
-                    String school_name = dataSnapshot.child("School Name").getValue().toString();
-                    String image_name = dataSnapshot.child("Image Name").getValue().toString();
+                    String first_name = dataSnapshot.child("FirstName").getValue().toString();
+                    String last_name = dataSnapshot.child("LastName").getValue().toString();
+                    String school_name = dataSnapshot.child("SchoolName").getValue().toString();
+                    String image_name = dataSnapshot.child("ImageName").getValue().toString();
 
                     Intent intent = new Intent(SignIn.this, MainActivity.class);
                     //String photoUrl = userData.getPhotoUrl().toString();
@@ -165,10 +167,10 @@ public class SignIn extends AppCompatActivity {
 
                     intent.putExtra("Name", name);
                     intent.putExtra("Uuid",uuid);
-                    intent.putExtra("First Name",first_name);
-                    intent.putExtra("Last Name",last_name);
-                    intent.putExtra("School Name",school_name);
-                    intent.putExtra("Image Name",image_name);
+                    intent.putExtra("FirstName",first_name);
+                    intent.putExtra("LastName",last_name);
+                    intent.putExtra("SchoolName",school_name);
+                    intent.putExtra("ImageName",image_name);
                     intent.putExtra("ACTIVITY_NAME", "SignIn");
 
                     startActivity(intent);
