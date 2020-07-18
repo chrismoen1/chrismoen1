@@ -97,7 +97,7 @@
 
                 android:fontFamily="@font/open_sans"
                 android:gravity="center"
-                android:text="Night Out With Folks"
+                android:text="Test"
                 android:textColor="#FFC107"
                 android:textSize="25sp"
                 android:textStyle="bold"

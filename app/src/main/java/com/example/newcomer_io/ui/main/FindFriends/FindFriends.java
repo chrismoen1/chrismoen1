@@ -47,8 +47,6 @@ public class FindFriends extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_friends);
 
-        //setUpRecyclerView();
-
         mSearch = findViewById(R.id.searchField);
         mSearch.setSingleLine(true);
 
@@ -60,7 +58,6 @@ public class FindFriends extends AppCompatActivity {
         mSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -70,8 +67,6 @@ public class FindFriends extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 firebaseUserSearch(s.toString());
-
-
             }
         });
 
@@ -149,6 +144,7 @@ public class FindFriends extends AppCompatActivity {
             this.userName.setText(name);
             this.location.setText(location);
 
+            //Load the user's profile photo into the image
             downloadImagePhoto(uuid,imagePath);
 
             this.followButton.setOnClickListener(new View.OnClickListener() {

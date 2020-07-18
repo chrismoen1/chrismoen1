@@ -20,6 +20,7 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
+import com.example.newcomer_io.ui.main.FindFriends.FindFriends;
 import com.example.newcomer_io.ui.main.GroupTiming.CreateStudyGroup;
 import com.example.newcomer_io.ui.main.JoinGroup.JoinGroup;
 import com.example.newcomer_io.ui.main.MainFragment;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
     //Lets set somme
     private TextView schoolName;
     private TextView displayName;
+    private TextView findFriends;
+
     private ImageView profilePhoto;
     private File outputFile;
 
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
         profilePhoto = findViewById(R.id.profilePhoto);
         displayName = findViewById(R.id.userName);
         schoolName = findViewById(R.id.schoolName);
-
+        findFriends = findViewById(R.id.findFriends);
         editIcon = findViewById(R.id.editProfileImage);
 
         Intent intent = getIntent();
@@ -170,6 +173,17 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
                 dialogFragment.show(getSupportFragmentManager(),"Image Options");
             }
         });
+
+        findFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Then we navigate to the next intent where we use find friends
+                Intent intent = new Intent(MainActivity.this, FindFriends.class);
+                intent.putExtra("Uuid",getUuid());
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void downloadImagePhoto(String uuid,String imageName) {
@@ -469,4 +483,12 @@ public class MainActivity extends AppCompatActivity implements ImageSelection.On
     }
     public String getImageName(){return this.image_name; }
     public void setImageName(String imageName){this.image_name = imageName; }
+
+    public TextView getFindFriends() {
+        return findFriends;
+    }
+
+    public void setFindFriends(TextView findFriends) {
+        this.findFriends = findFriends;
+    }
 }
